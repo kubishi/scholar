@@ -191,7 +191,7 @@ def main():
         # sort by deadline (first parse  10-Feb style dates)
         df["deadline"] = df["deadline"].apply(lambda x: datetime.strptime(x, "%d-%b") if x else None)
         
-        df["rank_index"] = df["core_rank"].apply(lambda x: CORE_RANKS.index(x) if x else len(CORE_RANKS))
+        df["rank_index"] = df["core_rank"].apply(lambda x: CORE_RANKS.index(x) if x in CORE_RANKS else len(CORE_RANKS))
         args.sort_by = "rank_index" if args.sort_by == "core_rank" else args.sort_by # sort by rank index if sorting by core rank
         ascending = args.sort_by in ["deadline", "deadline_month", "deadline_day"]
         df = df.sort_values(by=[args.sort_by], ascending=ascending)
