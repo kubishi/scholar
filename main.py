@@ -202,6 +202,10 @@ def main():
 
         cols = ["conference", "name", "core_rank", "deadline", "query_score"]
         print(df[cols].to_string(index=False))
+    else:
+        sys.argv.append("--help")
+        args = parser.parse_args()
+        return
 
 if __name__ == '__main__':
     main()
