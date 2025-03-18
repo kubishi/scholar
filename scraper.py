@@ -60,23 +60,23 @@ def extract_confrence_details(page_content):
                 "properties": {
                     "conference": {
                         "type": "string",
-                        "description": "The Arconym/abbreviation of the conference. Example: International Conference on Ad Hoc Networks and Wireless = ADHOC-NOW or International Conference on Cooperative Information Systems = CoopIS"
+                        "description": "The acronym/abbreviation of the conference. Example: International Conference on Ad Hoc Networks and Wireless = ADHOC-NOW or International Conference on Cooperative Information Systems = CoopIS."
                     },
                     "deadline": {
                         "type": "string",
-                        "description": "The date when the application submission is due. Application due date"
+                        "description": "The date when the application submission is due. Application due date."
                     },
                     "notification": {
                         "type": "string",
-                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference"
+                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference."
                     },
                     "start": {
                         "type": "string",
-                        "description": "Date of welcome reception and/or first day of conference"
+                        "description": "Date of welcome reception and/or first day of conference."
                     },
                     "end": {
                         "type": "string",
-                        "description": "The date of the last day of the conference. Alls whould be written in DD-MM_YYYY format"
+                        "description": "The date of the last day of the conference. All should be written in DD-MM_YYYY format."
                     },
                     "location": {
                         "type": "string",
@@ -84,11 +84,11 @@ def extract_confrence_details(page_content):
                     },
                     "name": {
                         "type": "string",
-                        "description": "The full, unabbreviated name for the confrence of interest. For example: Algorithmic Aspects of Wireless Sensor Networks, International Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems, ACM International Conference on Hybrid Systems: Computation and Control"
+                        "description": "The full, unabbreviated name for the conference of interest. For example: Algorithmic Aspects of Wireless Sensor Networks, International Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems, ACM International Conference on Hybrid Systems: Computation and Control."
                     },
                     "topics": {
                         "type": "string",
-                        "description": "Top 10 Main Computer Science topics covered in the confrence. Just list it out, no filler words. Just newline/enter in between each thing. "
+                        "description": "Top 10 Main Computer Science topics covered in the conference. Just list it out, no filler words. Just newline/enter in between each item."
                     },
 
                 },
@@ -117,7 +117,7 @@ def extract_confrence_details(page_content):
         tools=tools
         
     )
-    # .tool_calls is used when you are using a tool function. .content is just fot plain text
+    # .tool_calls is used when you are using a tool function. .content is just for plain text
     structured_data = completion.choices[0].message.tool_calls
     structured_data = json.loads(completion.choices[0].message.tool_calls[0].function.arguments)
     return structured_data
