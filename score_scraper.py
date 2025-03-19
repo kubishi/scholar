@@ -105,6 +105,6 @@ if __name__ == "__main__":
     merged_df = merge_data(core_df, era_df)
 
     # Save to CSV
-    merged_df.rename(columns={'Rank': 'CSA Score'}, inplace=True)
+    merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
 
     save_to_csv(merged_df, "conference_rankings_with_era.csv")
