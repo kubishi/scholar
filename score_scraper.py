@@ -100,13 +100,13 @@ if __name__ == "__main__":
     core_df = scrape_core_rankings()
     #core_df = pd.read_csv('csa.csv')
     # Extract ERA rankings
-    #era_df = extract_era_rankings()
+    era_df = extract_era_rankings()
     #era_df = pd.read_csv('era.csv')
 
     # Merge the data
-    #merged_df = merge_data(core_df, era_df)
+    merged_df = merge_data(core_df, era_df)
 
     # Save to CSV
-    #merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
+    merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
 
-    #save_to_csv(merged_df, "conference_rankings_with_era.csv")
+    save_to_csv(merged_df, "conference_rankings_with_era.csv")
