@@ -12,7 +12,7 @@ import json
 
 load_dotenv()
 
-MODELS = {
+MODELS = {''
     "text-embedding-3-small": {
         "size": 1536, 
     },
@@ -25,6 +25,7 @@ CITE_URL = "https://sites.google.com/view/isaac2024/home"
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Takes website and creates a parse tree from the HTML code
 def fetch_page_content(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -37,19 +38,20 @@ def fetch_page_content(url):
 # paragraphs = [p.get_text(strip=True) for p in soup.find_all("p")]
 # list_items = [li.get_text(strip=True) for li in soup.find_all("li")]
 
-# # Combine extracted data
+# Combine extracted data
 # page_content = f"Title: {title}\n\n"
 # page_content += "Headings:\n" + "\n".join(headings) + "\n\n"
 # page_content += "Paragraphs:\n" + "\n".join(paragraphs[:5]) + "\n\n"  # Limit paragraphs to avoid too much text
 # page_content += "List Items:\n" + "\n".join(list_items[:10])  # Limit to first 10 list items
 
+# Creates blank data to "reset" .csv files for new data
 def reset_csv():
     data_frame = pandas.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
     data_frame.to_csv('test.csv', index=False) 
     return data_frame
 
-
-def extract_confrence_details(page_content):
+# Uses OpenAI to find specific info from the webpage and prompts AI to analyze data
+def extract_conference_details(page_content):
     tools = [{
         "type": "function",
         "function": {
@@ -76,15 +78,15 @@ def extract_confrence_details(page_content):
                     },
                     "end": {
                         "type": "string",
-                        "description": "The date of the last day of the conference. All should be written in DD-MM_YYYY format."
+                        "description": "The date of the last day of the conference. All should be written in DD-MM-YYYY format."
                     },
                     "location": {
                         "type": "string",
-                        "description": "The city,country where the conference is taking place. For example: Frankfurt, Germany (or) Los Angeles, USA (or) Algiers, Algeria."
+                        "description": "The city, country where the conference is taking place. For example: Frankfurt, Germany (or) Los Angeles, USA (or) Algiers, Algeria."
                     },
                     "name": {
                         "type": "string",
-                        "description": "The full, unabbreviated name for the conference of interest. For example: Algorithmic Aspects of Wireless Sensor Networks, International Conference on Modeling, Analysis and Simulation of Wireless and Mobile Systems, ACM International Conference on Hybrid Systems: Computation and Control."
+                        "description": "The full, unabbreviated name for the conference of interest. For example: Algorithmic Aspects of Wireless Sensor Networks, Analysis and Simulation of Wireless and Mobile Systems, ACM International Conference on Hybrid Systems: Computation and Control."
                     },
                     "topics": {
                         "type": "string",
@@ -125,7 +127,7 @@ def extract_confrence_details(page_content):
 
 
 
-# Write the DataFrame to a CSV file
+# Writes the DataFrame to a CSV file
 # df.to_csv('test.csv', index=False) 
 def save_to_csv(data):
     df = pandas.DataFrame([data])
@@ -137,7 +139,7 @@ def save_to_csv(data):
 def main():
     page_content = fetch_page_content(CITE_URL)
     print(page_content)
-    extracted_results = extract_confrence_details(page_content)
+    extracted_results = extract_conference_details(page_content)
     print(extracted_results)
     save_to_csv(extracted_results)
     
