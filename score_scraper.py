@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import pdfplumber  # For extracting data from PDF
+import pdfplumber  
 import re
-
+          
 def scrape_core_rankings():
     BASE_URL = "https://portal.core.edu.au/conf-ranks/"
     PARAMS = {
@@ -44,7 +44,7 @@ def scrape_core_rankings():
 
     # Filter the DataFrame to include only Title, Source, and Rank
     filtered_df = df[["Title", "Acronym", "Rank"]]
-    save_to_csv(filtered_df, "csa")
+    save_to_csv(filtered_df, "csa.csv")
     return filtered_df
 
 def extract_era_rankings():
@@ -94,17 +94,19 @@ def save_to_csv(df, filename):
 
 # Main Function
 if __name__ == "__main__":
+    # Scrape h5 rankings:
+    
     # Scrape CORE rankings
     core_df = scrape_core_rankings()
     #core_df = pd.read_csv('csa.csv')
     # Extract ERA rankings
-    era_df = extract_era_rankings()
+    #era_df = extract_era_rankings()
     #era_df = pd.read_csv('era.csv')
 
     # Merge the data
-    merged_df = merge_data(core_df, era_df)
+    #merged_df = merge_data(core_df, era_df)
 
     # Save to CSV
-    merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
+    #merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
 
-    save_to_csv(merged_df, "conference_rankings_with_era.csv")
+    #save_to_csv(merged_df, "conference_rankings_with_era.csv")
