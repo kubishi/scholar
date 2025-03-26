@@ -4,6 +4,22 @@ import pandas as pd
 import random
 import time
 
+from fuzzywuzzy import fuzz
+import re
+
+def partial_match(name1, name2, threshold=85):
+    print(fuzz.token_set_ratio(name1, name2))
+    return fuzz.token_set_ratio(name1, name2) >= threshold
+
+
+def normalize_conference_name(name):
+    common_words = {"international", "conference", "symposium", "workshop", "on", "the"}
+    name = re.sub(r'[^\w\s]', '', name.lower())  # Remove punctuation
+    words = name.split()
+    words = [word for word in words if word not in common_words]  # Remove stopwords
+    return " ".join(sorted(words))  # Sort words for consistency
+
+
 def construct_search_url(query):
     base_url = "https://scholar.google.com.sg/citations"
     params = {
@@ -61,7 +77,7 @@ def scrape_venue_data(url, query, acronym):
             h5_name = row.find_next('td', class_='gsc_mvt_t')
             
             if h5_score_index and h5_name and h5_score_median:
-                if query in h5_name.text or acronym in h5_name.text: #reloop through the next row if the name or acronym isnt in the substring
+                if partial_match(query, h5_name.text) or acronym in h5_name.text: #reloop through the next row if the name or acronym isnt in the substring
                     return int(h5_score_index.text), int(h5_score_median.text)
                 
         # If no match found, try searching with the acronym

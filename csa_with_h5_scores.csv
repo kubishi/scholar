@@ -1,11 +1,11 @@
 Title,Acronym,Rank,h5_index,h5_median
-International Conference on Advanced Communications and Computation,INFOCOMP,Unranked,,
+International Conference on Advanced Communications and Computation,INFOCOMP,Unranked,48.0,68.0
 "International Conference on Ambient Systems, Networks and Technologies",ANT,Unranked,,
 AAAI Conference on Human Computation and Crowdsourcing,HCOMP,B,,
 "ACIS Conference on Software Engineering Research, Management and Applications",SERA,C,,
 "ACM Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication",SIGCOMM,A*,59.0,92.0
-ACM Conference on Computer and Communications Security,CCS,A*,60.0,78.0
-ACM Conference on Computer Supported Cooperative Work,CSCW,A,27.0,47.0
+ACM Conference on Computer and Communications Security,CCS,A*,39.0,57.0
+ACM Conference on Computer Supported Cooperative Work,CSCW,A,24.0,31.0
 ACM Conference on Economics and Computation,EC,A*,9.0,15.0
 ACM Conference on Embedded Networked Sensor Systems,SENSYS,A*,39.0,64.0
 ACM Conference on Embedded Software,EMSOFT,Journal published,,
@@ -19,7 +19,7 @@ ACM International Conference on Emerging Networking Experiments and Technologies
 ACM International Conference on Information and Knowledge Management,CIKM,A,91.0,133.0
 ACM International Conference on Interactive Surfaces and Spaces (was International Workshop on Horizontal Interactive Human-Computer Systems: Tabletop),ISS,Journal Published,2.0,7.0
 ACM International Conference on Knowledge Discovery and Data Mining,KDD,A*,,
-ACM International Conference on Mobile Computing and Networking,MOBICOM,A*,,
+ACM International Conference on Mobile Computing and Networking,MOBICOM,A*,24.0,42.0
 ACM International Conference on Recommender Systems,RecSys,A,,
 ACM International Conference on Research and Development in Information Retrieval,SIGIR,A*,103.0,149.0
 ACM International Conference on Supercomputing,ICS,A,26.0,37.0
@@ -29,7 +29,7 @@ ACM International Joint Conference on Pervasive and Ubiquitous Computing (PERVAS
 ACM International Symposium on Computer Architecture,ISCA,A*,62.0,96.0
 ACM International Symposium on High Performance Distributed Computing,HPDC,A,21.0,34.0
 ACM International Wireless Communications and Mobile Computing Conference,IWCMC,B,35.0,49.0
-ACM Multimedia,ACMMM,A*,28.0,46.0
+ACM Multimedia,ACMMM,A*,101.0,138.0
 ACM SIG International Conference on Computer Graphics and Interactive Techniques,SIGGRAPH,A*,25.0,43.0
 ACM SIGGRAPH/Eurographics Symposium on Computer Animation,SCA,B,,
 "ACM SIGMOBILE International Conference on Mobile Systems, Applications and Services",Mobisys,A,,
@@ -45,21 +45,21 @@ ACM Special Interest Group on Supporting Group Work (was SIGGRoup),Group,B,49.0,
 "ACM Symposium on Access Control Models and Technologies (previously ACM Workshop on Role-Based Access Control, RBAC, changed in 2000)",SACMAT,C,16.0,28.0
 ACM Symposium on Applied Computing,SAC,Multiconference,36.0,50.0
 ACM Symposium on Document Engineering,DocEng,B,13.0,21.0
-ACM Symposium on Mobile Ad Hoc Networking and Computing,MOBIHOC,A,,
+ACM Symposium on Mobile Ad Hoc Networking and Computing,MOBIHOC,A,24.0,42.0
 ACM Symposium on Principles of Distributed Computing,PODC,A*,30.0,51.0
 ACM Symposium on Solid and Physical Modelling,SPM,C,,
 ACM Symposium on Theory of Computing,STOC,A*,57.0,84.0
 ACM Symposium on User Interface Software and Technology,UIST,A*,51.0,72.0
-ACM Virtual Reality Software and Technology,VRST,A,,
+ACM Virtual Reality Software and Technology,VRST,A,26.0,38.0
 ACM Workshop on Hot Topics in Networks,HOTNETS,National: USA,22.0,32.0
 ACM-SIGACT Symposium on Principles of Programming Languages,POPL,A*,,
 ACM-SIGPLAN Conference on Programming Language Design and Implementation,PLDI,A*,51.0,82.0
 ACM-SIGRAPH Interactive 3D Graphics and Games,I3DG,B,,
-ACM/IEEE International Conference on Human-Robot Interaction,HRI,A,,
+ACM/IEEE International Conference on Human-Robot Interaction,HRI,A,54.0,76.0
 "ACM/IEEE International Conference on Modelling, Analysis and Simulation of Wireless and Mobile Systems",MSWIM,A,,
 ACM/IEEE Symposium on Edge Computing,SEC,unranked,17.0,26.0
 ACM/IFIP/USENIX International Middleware Conference,Middleware,A,22.0,54.0
-ACM/SIAM Symposium on Discrete Algorithms,SODA,A*,,
+ACM/SIAM Symposium on Discrete Algorithms,SODA,A*,55.0,77.0
 ACM/SPEC International Conference on Performance Engineering,ICPE,B,23.0,32.0
 ACS/IEEE International Conference on Computer Systems and Applications,AICCSA,C,,
 Advanced Concepts for Intelligent Vision Systems,ACIVS,B,,
@@ -73,13 +73,13 @@ American Medical Informatics Annual Fall Symposium,AMIA,National: USA,30.0,45.0
 Annual Computer Security Applications Conference,ACSAC,A,,
 Annual Conference on Computer Science Logic,CSL,B,16.0,19.0
 Annual Conference on Innovation and Technology in Computer Science Education,ITiCSE,B,,
-"Annual Conference on Privacy, Security and Trust",PST,C,,
+"Annual Conference on Privacy, Security and Trust",PST,C,29.0,52.0
 Annual International Workshop on Presence,ISPR,C,,
 Annual Meeting of the Cognitive Science Society,CogSci,B,32.0,46.0
 Annual Meeting of the Special Interest Group on Discourse and Dialog,SIGdial,B,31.0,48.0
 Applications of Information Visualization,IV-App,C,,
 Applications of Natural Language to Data Bases,NLDB,C,18.0,28.0
-Applied Computing Conference,ACC,C,11.0,23.0
+Applied Computing Conference,ACC,C,17.0,28.0
 Architectural Support for Programming Languages and Operating Systems,ASPLOS,A*,71.0,122.0
 Artificial Intelligence Applications and Innovations,AIAI,C,25.0,36.0
 "ArtsIT, Interactivity & Game Creation (was International Conference on Arts and Technology)",ArtsIT,C,,
@@ -96,7 +96,7 @@ Asian Conference on Computer Vision,ACCV,B,39.0,64.0
 Asian Conference on Intelligent Information and Database Systems,ACIIDS,B,19.0,32.0
 Asian Conference on Machine Learning,ACML,Unranked,23.0,43.0
 ASIAN Symposium on Programming Languages and Systems,APLAS,B,,
-"Asilomar Conference on Signals, Systems and Computing",ACSSC,National: USA,,
+"Asilomar Conference on Signals, Systems and Computing",ACSSC,National: USA,33.0,49.0
 Association for Computational Linguistics,ACL,A*,215.0,362.0
 Association for Computer-Aided Architectural Design Research in Asia (CAADRIA) annual conference,CAADRIA,C,,
 Australasian Computing Education Conference (ACE),ACE,Australasian B,17.0,30.0
@@ -105,12 +105,12 @@ Australasian Conference on Information Security and Privacy,ACISP,Australasian B
 Australasian Conference on Robotics and Automation,ACRA,Australasian C,,
 Australasian Database Conference,ADC,Australasian B,,
 Australasian Document Computing Symposium,ADCS,Australasian B,,
-Australasian Information Security Conference,AISC,Australasian C,,
+Australasian Information Security Conference,AISC,Australasian C,17.0,23.0
 Australasian Joint Conference on Artificial Intelligence,AI,Australasian B,220.0,341.0
-Australasian Language Technology Workshop,ALTA,Australasian C,,
+Australasian Language Technology Workshop,ALTA,Australasian C,11.0,16.0
 Australasian Speech Science and Technology,SST,Australasian C,,
 Australasian Symposium on Parallel and Distributed Computing (was AusGrid),AusPDC,Australasian C,,
-Australian Computer Human Interaction Conference,OZCHI,Australasian B,,
+Australian Computer Human Interaction Conference,OZCHI,Australasian B,18.0,24.0
 Australian Data Mining Conference,AusDM,Australasian C,,
 Australian Institute of Computer Ethics Conference,AICE,Australasian C,,
 Automated Software Engineering Conference,ASE,A*,54.0,74.0
@@ -147,7 +147,7 @@ Conference on Information Sciences and Systems,CISS,National: USA,21.0,41.0
 "Conference on Innovation in Clouds, Internet and Networks",ICIN,National: France,17.0,30.0
 Conference on Innovative Data Systems Research,CIDR,A,32.0,49.0
 Conference on Integer Programming and Combinatorial Optimization,IPCO,A,,
-Conference on Intelligent Computer Mathematics,CICM,C,15.0,27.0
+Conference on Intelligent Computer Mathematics,CICM,C,3.0,4.0
 "Conference on Interactive Theorem Proving (previously TPHOLs, changed in 2009)",ITP,A,,
 Conference on Learning Theory,COLT,A*,74.0,103.0
 Conference on Robot Learning,CoRL,Unranked,88.0,150.0
@@ -157,7 +157,7 @@ Conference on Software in Telecommunications and Computer Networks,SOFTCOM,Natio
 Conference on Theory and Applications of Models of Computation,TAMC,C,,
 Conference on Visualization and Data Analysis,VDA,National: USA,,
 "Cooperative Design, Visualization, and Engineering",CDVE,C,8.0,8.0
-Cryptographers Track at RSA Conference,CT-RSA,B,,
+Cryptographers Track at RSA Conference,CT-RSA,B,23.0,50.0
 Current Trends in Theory and Practice of Computer Science,SOFSEM,B,13.0,23.0
 Data Compression Conference,DCC,B,24.0,39.0
 Data Warehousing and Knowledge Discovery,DaWaK,B,12.0,20.0
@@ -170,7 +170,7 @@ Developments in Language Theory,DLT,C,8.0,10.0
 Digital Audio Effects Conference,DAFX,C,,
 Digital Games Research Conference,DIGRA,C,,
 Digital Image Computing Techniques and Applications,DICTA,Australasian C,20.0,29.0
-Discovery Science,DS,B,16.0,25.0
+Discovery Science,DS,B,34.0,43.0
 DNA Computing and Molecular Programming,DNA,B,49.0,78.0
 Dynamic Languages Symposium,DLS,C,,
 Educational Data Mining,EDM,B,32.0,45.0
@@ -185,17 +185,17 @@ Eurographics Symposium on Parallel Graphics and Visualization,EGPGV,C,,
 Eurographics/IEEE Symposium on Visualization,EuroVis,B,11.0,17.0
 Euromicro Conference on Real-Time Systems,ECRTS,B,21.0,36.0
 Euromicro Conference on Software Engineering and Advanced Applications,SEAA,B,23.0,36.0
-"Euromicro International Conference on Parallel, Distributed and Network Based Processing",PDP,C,6.0,9.0
+"Euromicro International Conference on Parallel, Distributed and Network Based Processing",PDP,C,16.0,29.0
 European Association for Computational Linguistics,EACL,A,56.0,88.0
 European Chapter on Combinatorial Optimization,ECCO,C,,
 European Conference on Artificial Intelligence,ECAI,A,36.0,66.0
 European Conference on Computational Biology,ECCB,C,,
-European Conference on Computer Supported Cooperative Work,ECSCW,B,,
+European Conference on Computer Supported Cooperative Work,ECSCW,B,11.0,14.0
 European Conference on Computer Vision,ECCV,A*,206.0,306.0
 European Conference on Digital Government (was European Conference on e-Government ECEG),ECDG,C,,
 European Conference on Evolutionary Computation in Combinatorial Optimisation,EvoCOP,B,,
 European Conference on Genetic Programming,EUROGP,B,,
-European Conference on Information Retrieval,ECIR,A,,
+European Conference on Information Retrieval,ECIR,A,42.0,60.0
 European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Database (PKDD and ECML combined from 2008),ECML PKDD,A,,
 European Conference on Modelling Foundations and Applications,ECMFA,B,,
 European Conference on Multi-Agent Systems,EUMAS,C,,
@@ -211,7 +211,7 @@ European SPI,EuroSPI,B,17.0,22.0
 European Symposium on Algorithms,ESA,A,25.0,30.0
 European Symposium on Artificial Neural Networks,ESANN,B,18.0,24.0
 European Symposium on Programming,ESOP,A,23.0,30.0
-European Symposium On Research In Computer Security,ESORICS,A,,
+European Symposium On Research In Computer Security,ESORICS,A,33.0,48.0
 European Workshop on Computational Geometry,EuroCG,C,,
 European-Japanese Conference on Information Modelling and Knowledge Bases,EJC,C,7.0,11.0
 Eurosys Conference,EuroSys,A,,
@@ -220,13 +220,13 @@ Extended Semantic Web Conference (was European Semantic Web Conference),ESWC,B,,
 Extending Database Technology,EDBT,A,29.0,38.0
 Eye Tracking Research and Applications,ETRA,B,,
 Field Programmable Logic and Applications,FPL,TBR,28.0,41.0
-Financial Cryptography and Data Security Conference,FC,A,,
+Financial Cryptography and Data Security Conference,FC,A,47.0,86.0
 Flexible Query-Answering Systems,FQAS,C,,
 Florida Artificial Intelligence Research Society Conference,FlAIRS,National: USA,,
 Formal Methods in Computer-Aided Design,FMCAD,B,18.0,23.0
 Forum on Specification and Design Languages,FDL,C,,
 Foundations of Genetic Algorithms,FOGA,A,,
-Foundations of Software Science and Computational Structures,FOSSACS,A,,
+Foundations of Software Science and Computational Structures,FOSSACS,A,17.0,23.0
 Foundations of Software Technology and Theoretical Computer Science,FST&TCS,National: India,11.0,15.0
 Frontiers in Education,FIE,C,72.0,109.0
 Fundamental Approaches to Software Engineering,FASE,B,18.0,23.0
@@ -237,9 +237,9 @@ Graph Drawing,GD,A,13.0,17.0
 Graphics Interface,GI,B,14.0,21.0
 Haskell Workshop,HASKELL,C,,
 HCist - International Conference on Health and Social Care Information Systems and Technologies,HCist,Unranked,,
-Health Informatics Conference,HIC,Australasian C,,
+Health Informatics Conference,HIC,Australasian C,23.0,36.0
 Heterogeneity in Computing Workshop,HCW,C,,
-Human System Interaction,HSI,C,14.0,24.0
+Human System Interaction,HSI,C,,
 Human-Agent Interaction,HAI,B,20.0,24.0
 IADIS International Conference Applied Computing,IADIS AC,C,,
 IberoAmerican Congress on Pattern Recognition,CIARP,C,12.0,14.0
@@ -250,10 +250,10 @@ IEEE Computer Security Foundations Symposium (was CSFW),CSF,A,,
 IEEE Conference of the Open Innovations Association FRUCT,FRUCT,Regional,24.0,32.0
 IEEE Conference on Cognitive and Computational Aspects of Situation Management,CogSIMA,National:USA,10.0,13.0
 IEEE Conference on Computational Complexity,CCC,A,25.0,34.0
-IEEE Conference on Computer Vision and Pattern Recognition,CVPR,A*,115.0,178.0
+IEEE Conference on Computer Vision and Pattern Recognition,CVPR,A*,440.0,689.0
 IEEE Conference on Local Computer Networks,LCN,B,22.0,25.0
 IEEE Conference on Mass Storage Systems and Technologies,MSST,National: USA,,
-"IEEE Conference on Systems, Man and Cybernetics",SMC,B,,
+"IEEE Conference on Systems, Man and Cybernetics",SMC,B,35.0,45.0
 IEEE Conference on Virtual Reality and 3D User Interfaces,VR,A*,1.0,1.0
 IEEE Congress on Evolutionary Computation,CEC,B,89.0,133.0
 IEEE Congress on Services,SERVICES,B,,
@@ -261,8 +261,8 @@ IEEE Consumer Communications and Networking Conference,IEEE CCNC,B,32.0,41.0
 IEEE European Symposium on Security and Privacy,EuroS&P,A,47.0,84.0
 IEEE European Test Symposium,ETS,TBR,16.0,20.0
 IEEE Global Internet Symposium,GI,C,14.0,21.0
-IEEE Global Telecommunications Conference,GLOBECOM,B,60.0,87.0
-IEEE Industrial Electronics Society,IECON,TBR,,
+IEEE Global Telecommunications Conference,GLOBECOM,B,18.0,29.0
+IEEE Industrial Electronics Society,IECON,TBR,30.0,48.0
 IEEE Industry Applications Society Annual Conference,IAS,National: USA,8.0,9.0
 "IEEE International Conference on Acoustics, Speech and Signal Processing",ICASSP,B,129.0,195.0
 IEEE International Conference on Advanced Learning Technologies,ICALT,B,22.0,28.0
@@ -274,12 +274,12 @@ IEEE International Conference on Blockchain and Cryptocurrency,ICBC,C,39.0,54.0
 IEEE International Conference on Cloud Computing,CLOUD,B,28.0,42.0
 IEEE International Conference on Cloud Computing in Emerging Markets,CCEM,National:India,,
 IEEE International Conference on Cloud Computing Technology and Science (International Conference on Cloud Computing pre 2010),CloudCom,C,13.0,21.0
-IEEE International Conference on Cluster Computing,CLUSTER,B,22.0,27.0
+IEEE International Conference on Cluster Computing,CLUSTER,B,29.0,43.0
 IEEE International Conference on Cognitive Informatics,ICCI,C,10.0,14.0
 IEEE International Conference on Computer and Information Technology,CIT,C,10.0,15.0
 IEEE International Conference on Computer Communications,INFOCOM,A*,80.0,115.0
-IEEE International Conference on Computer Design,ICCD,TBR,21.0,27.0
-IEEE International Conference on Computer Vision,ICCV,A*,80.0,135.0
+IEEE International Conference on Computer Design,ICCD,TBR,41.0,63.0
+IEEE International Conference on Computer Vision,ICCV,A*,291.0,484.0
 IEEE International Conference on Cybernetics and Intelligent Systems,CIS,C,12.0,15.0
 IEEE International Conference on Data Mining,ICDM,A*,50.0,88.0
 IEEE International Conference on Data Science and Advanced Analytics,DSAA,B,26.0,36.0
@@ -299,7 +299,7 @@ IEEE International Conference on Industrial Informatics,INDIN,TBR,21.0,30.0
 IEEE International Conference on Information Reuse and Integration,IRI,National: USA,21.0,28.0
 IEEE International Conference on Intelligence and Security Informatics,ISI,C,18.0,28.0
 IEEE International Conference on Intelligent Computer Communication and Processing,ICCP,National: Romania,,
-IEEE International Conference on Intelligent Systems,IEEE IS,C,13.0,15.0
+IEEE International Conference on Intelligent Systems,IEEE IS,C,86.0,125.0
 IEEE International Conference on Mobile Ad-hoc and Sensor Systems,MASS,B,20.0,25.0
 IEEE International Conference on Multimedia and Expo,ICME,A,46.0,67.0
 IEEE International Conference on Pervasive Computing and Communications,PERCOM,A*,29.0,36.0
@@ -312,13 +312,13 @@ IEEE International Conference on Robotics and Automation,ICRA,A*,122.0,194.0
 IEEE International Conference on Software Services Engineering (previously IEEE International Conference on Services Computing SCC),IEEE SSE,B,,
 IEEE International Conference on Visual Communications and Image Processing (was SPIE ... pre 2011),VCIP,C,18.0,25.0
 IEEE International Conference on Web Services,ICWS,A,26.0,42.0
-"IEEE International Conference on Wireless and Mobile Computing, Networking and Communications",WiMob,B,,
+"IEEE International Conference on Wireless and Mobile Computing, Networking and Communications",WiMob,B,19.0,27.0
 IEEE International Enterprise Distributed Object Computing Conference,EDOC,B,21.0,30.0
 IEEE International Geoscience and Remote Sensing Symposium,IGARSS,C,40.0,56.0
 IEEE International Joint Conference on Neural Networks,IJCNN,B,,
 IEEE International On-Line Testing Symposium,IOLTS,C,18.0,22.0
 IEEE International Parallel and Distributed Processing Symposium (was IPPS and SPDP),IPDPS,A,,
-IEEE International Performance Computing and Communications Conference,IPCCC,C,17.0,22.0
+IEEE International Performance Computing and Communications Conference,IPCCC,C,20.0,29.0
 IEEE International Requirements Engineering Conference,RE,A,32.0,49.0
 IEEE International Scientific Conference on Informatics,Informatics,National:Slovakia,167.0,224.0
 "IEEE International Symposium on a World of Wireless, Mobile and Multimedia Networks",WoWMoM,B,24.0,35.0
@@ -327,21 +327,21 @@ IEEE International Symposium on Artificial Life,IEEE Alife,C,,
 IEEE International Symposium on Circuits and Systems,ISCAS,TBR,39.0,52.0
 "IEEE International Symposium on Cluster, Cloud and Grid Computing",CCGRID,B,,
 IEEE International Symposium on Information Theory,ISIT,B,46.0,63.0
-IEEE International Symposium on Multimedia,ISM,C,15.0,27.0
+IEEE International Symposium on Multimedia,ISM,C,46.0,67.0
 IEEE International Symposium on Network Computing and Applications,NCA,B,17.0,27.0
 IEEE International Symposium on Parallel and Distributed Processing with Applications,ISPA,C,15.0,21.0
 IEEE International Symposium on Performance Analysis of Systems and Software,ISPASS,B,21.0,33.0
 IEEE International Symposium on Personal and Indoor Mobile Radio Conference,PIMRC,B,,
 IEEE International Symposium on Rapid System Prototyping (was IEEE Symposium on Rapid Prototyping),RSP,C,,
-IEEE International Symposium on Real-Time Distributed Computing,ISORC,C,,
+IEEE International Symposium on Real-Time Distributed Computing,ISORC,C,12.0,21.0
 IEEE International Symposium on Wearable Computers,ISWC,Journal Published,22.0,38.0
-IEEE International Test Conference,ITC,TBR,18.0,26.0
+IEEE International Test Conference,ITC,TBR,32.0,59.0
 IEEE International Working Conference on Mining Software Repositories,MSR,A,,
 IEEE International Working Conference on Software Visualisation,VISSOFT,B,,
 IEEE International Working Conference on Source Code Analysis and Manipulation,SCAM,C,15.0,22.0
 IEEE International Workshop on Quality of Service,IWQoS,B,22.0,30.0
 IEEE LAN/MAN Workshop,LANMAN,C,,
-IEEE Network Operations and Management Symposium,NOMS,B,,
+IEEE Network Operations and Management Symposium,NOMS,B,27.0,40.0
 IEEE Pacific Visualization Symposium (was APVIS),PacificVis,B,,
 IEEE Real-Time and Embedded Technology and Applications Symposium,RTAS,A,28.0,45.0
 IEEE Region 10 Conference,Tencon,C,30.0,39.0
@@ -356,14 +356,14 @@ IEEE Symposium on Computational Intelligence in Control and Automation,IEEE CICA
 IEEE Symposium on Computational Intelligence in Cyber Security,IEEE CICS,C,,
 IEEE Symposium on Computer Arithmetic,ARITH,C,,
 IEEE Symposium on Computers and Communications,ISCC,C,26.0,34.0
-IEEE Symposium on Field Programmable Custom Computing Machines,FCCM,B,,
+IEEE Symposium on Field Programmable Custom Computing Machines,FCCM,B,28.0,46.0
 IEEE Symposium on Foundations of Computer Science,FOCS,A*,55.0,74.0
 IEEE Symposium on High-Performance Interconnects,HOTI,National: USA,,
 IEEE Symposium on Logic in Computer Science,LICS,A*,30.0,36.0
 IEEE Symposium on Security and Privacy,SP,A*,112.0,179.0
 IEEE Symposium on Visual Languages and Human-Centric Computing (was VL),VL/HCC,B,,
 IEEE Vehicular Technology Conference,VTC,B,46.0,63.0
-IEEE Visualization,IEEE VIS,A,22.0,30.0
+IEEE Visualization,IEEE VIS,A,89.0,124.0
 IEEE VLSI Test Symposium,VTS,TBR,18.0,24.0
 IEEE Wireless Communications and Networking Conference,WCNC,B,24.0,36.0
 IEEE Workshop on Applications of Computer Vision,WACV,A,109.0,162.0
@@ -382,7 +382,7 @@ IFAC Conference on System Structure and Control,SSSC,C,,
 IFIP Information Security & Privacy Conference,IFIP SEC,B,,
 IFIP International Conference on Distributed Applications and Interoperable Systems,DAIS,C,,
 IFIP International Conference on Network and Parallel Computing,NPC,C,7.0,9.0
-IFIP International Conference on Networking,Networking,B,68.0,94.0
+IFIP International Conference on Networking,Networking,B,37.0,53.0
 "IFIP International Symposium on Computing Performance, Modelling, Measurement and Evaluation",PERFORMANCE,Journal Published,,
 "IFIP Joint International Conference on Formal Description Techniques and Protocol Specification, Testing, And Verification",FORTE,C,,
 IFIP TC13 Conference on Human-Computer Interaction,Interact,B,129.0,183.0
@@ -393,14 +393,14 @@ IFIP/IEEE International Conference on Performance Evaluation and Modeling in Wir
 IFIP/IEEE International Symposium on Integrated Management (even years sharing with NOMS),IM,B,3.0,3.0
 IFSA World Congress,IFSA,C,,
 IMA International Conference on Cryptography and Coding,IMACC,C,,
-Image and Vision Computing Conference,IVCNZ,Australasian C,,
+Image and Vision Computing Conference,IVCNZ,Australasian C,16.0,25.0
 Indian Conference on Human-Computer Interaction,IndiaHCI,National: India,,
 Inductive Logic Programming,ILP,B,,
 Industrial Simulation Conference,ISC,C,,
-Information Hiding and Multimedia Security Workshop,IH&MMSec,C,,
+Information Hiding and Multimedia Security Workshop,IH&MMSec,C,23.0,35.0
 Information Integration and Web-based Applications and Services,IIWAS,C,15.0,22.0
 Information Processing in Sensor Networks,IPSN,A*,26.0,45.0
-Information Security Conference,ISC,C,,
+Information Security Conference,ISC,C,46.0,66.0
 Information Security Practice and Experience Conference,ISPEC,C,10.0,10.0
 Information Security Symposium,CERIAS,National: USA,,
 Information Theory Workshop,ITW,B,24.0,29.0
@@ -412,20 +412,20 @@ Innovative Applications in AI,IAAI,C,,
 Int. Workshop on Formal Methods for Industrial Critical Systems,FMICS,C,,
 Integrated Formal Methods,IFM,B,12.0,17.0
 Intelligent Data Analysis,IDA,B,20.0,33.0
-Intelligent Distributed Computing,IDC,Unranked,,
+Intelligent Distributed Computing,IDC,Unranked,13.0,22.0
 Intelligent Systems in Molecular Biology,ISMB,journal published,,
 Intelligent Vehicles Conference,IEEE-IV,B,,
 Intelligent Virtual Agents,IVA,B,23.0,33.0
 Intenational Environmental Modelling and Software Society,iEMSs,C,,
 Interaction Design and Children (ACM),IDC,B,,
-Interactive Entertainment,IE,Australasian C,22.0,32.0
+Interactive Entertainment,IE,Australasian C,21.0,33.0
 International ACM SIGACCESS Conference on Computers and Accessibility,ASSETS,A,,
 International Baltic Conference on Databases and Information Systems,DB&IS,Regional - Baltic,,
 International Colloquium on Automata Languages and Programming,ICALP,A,33.0,45.0
 International Colloquium on Structural Information and Communication Complexity,SIROCCO,B,,
 International Colloquium on Theoretical Aspects of Computing,ICTAC,C,10.0,12.0
 International Computer Science Symposium in Russia,CSR,National: Russia,14.0,19.0
-International Computer Software and Applications Conference,COMPSAC,B,29.0,45.0
+International Computer Software and Applications Conference,COMPSAC,B,19.0,27.0
 International Computing Education Research Workshop,ICER,A,32.0,52.0
 "International Conference Abstract State Machines, Alloy, B, TLA, VDM, and Z (Previously International Conference of B and Z Users, ZB, changed in 2008)",ABZ,C,,
 International Conference and Exhibition on High Performance Computing in the Asia-Pacific Region,HPC Asia,C,12.0,18.0
@@ -436,11 +436,11 @@ International Conference in Business Process Management,BPM,A,,
 International Conference in Methodologies and Intelligent Systems for Technology Enhanced Learning,MIS4TEL,National: Spain,,
 International Conference of the Immersive Learning Research Network,iLRN,C,18.0,27.0
 International Conference on Advanced and Trusted Computing (was International Conference on Autonomic and Trusted Computing),ATC,C,10.0,16.0
-International Conference on Advanced Computing and Communications,AdCom,National: India,,
+International Conference on Advanced Computing and Communications,AdCom,National: India,48.0,68.0
 International Conference on Advanced Data Mining and Applications,ADMA,C,7.0,10.0
 International Conference on Advanced Information Networking and Applications (was ICOIN),AINA,B,21.0,25.0
 International Conference on Advanced Information Systems Engineering,CaiSE,A,27.0,38.0
-International Conference on Advanced Technologies For Signal & Image Processing,ATSIP,National: Tunisia,,
+International Conference on Advanced Technologies For Signal & Image Processing,ATSIP,National: Tunisia,13.0,17.0
 International Conference on Advances in Computer-Human Interactions,ACHI,C,,
 International Conference on Advances in Mobile Computing and Multimedia,MOMM,C,,
 International Conference on Affective Computing and Intelligent,ACII,C,30.0,41.0
@@ -450,7 +450,7 @@ International Conference on Algorithms and Complexity (was Italian Conference ),
 "International Conference on Analysis of Images, Social Networks and Texts",AIST,National: Russia,,
 International Conference on Applications of Evolutionary Computation,EvoApplications,B,17.0,25.0
 International Conference on Applied Cryptography and Network Security,ACNS,B,,
-International Conference on Artificial Intelligence,IC-AI,National: USA,100.0,162.0
+International Conference on Artificial Intelligence,IC-AI,National: USA,136.0,192.0
 International Conference on Artificial Intelligence and Law,ICAIL,C,23.0,36.0
 International Conference on Artificial Intelligence and Soft Computing,ICAISC,National: Poland,16.0,19.0
 International Conference on Artificial Intelligence and Statistics,AISTATS,A,100.0,162.0
@@ -459,7 +459,7 @@ International Conference on Artificial Intelligence in Medicine,AIME,B,,
 "International Conference on Artificial Intelligence in Music, Sound, Art and Design",EvoMUSART,C,,
 "International Conference on Artificial Intelligence: Methodology, Systems, Applications",AIMSA,National: Bulgaria,,
 International Conference on Artificial Neural Networks,ICANN,C,32.0,47.0
-International Conference on Artificial Reality and Telexistance & Eurographics Symposium on Virtual Environments,EGVE,C,,
+International Conference on Artificial Reality and Telexistance & Eurographics Symposium on Virtual Environments,EGVE,C,11.0,15.0
 International Conference on Automated Deduction,CADE,A,24.0,36.0
 International Conference on Automated Planning and Scheduling,ICAPS,A*,35.0,49.0
 "International Conference on Availability, Reliability and Security",ARES,B,34.0,53.0
@@ -467,8 +467,8 @@ International Conference on Automated Planning and Scheduling,ICAPS,A*,35.0,49.0
 International Conference on Case-Based Reasoning,ICCBR,C,17.0,24.0
 International Conference on Cloud Computing and Services Science,CLOSER,C,15.0,28.0
 "International Conference on Collaborative Computing: Networks, Applications and Worksharing",CollaborateCom,C,11.0,14.0
-International Conference on COMmunication Systems & NETworkS,COMSNETS,National:India,28.0,37.0
-International Conference on Communication Systems and Applications,ICCSA,C,,
+International Conference on COMmunication Systems & NETworkS,COMSNETS,National:India,48.0,68.0
+International Conference on Communication Systems and Applications,ICCSA,C,8.0,21.0
 International Conference on Compiler Construction,CC,B,21.0,26.0
 "International Conference on Compilers, Architecture, and Synthesis for Embedded Systems",CASES,B,,
 "International Conference on Complex, Intelligent and Software Intensive Systems",CISIS,C,15.0,23.0
@@ -478,33 +478,33 @@ International Conference on Computational Collective Intelligence,ICCCI,B,15.0,2
 International Conference on Computational Creativity,ICCC,C,19.0,27.0
 International Conference on Computational Intelligence and Security,CIS,National: China,12.0,15.0
 International Conference on Computational Linguistics,COLING,B,65.0,93.0
-International Conference on Computational Molecular Biology,RECOMB,B,,
-International Conference on Computational Science,ICCS,Multiconference,28.0,37.0
-International Conference on Computational Science and its Applications,ICCSA,C,,
+International Conference on Computational Molecular Biology,RECOMB,B,21.0,34.0
+International Conference on Computational Science,ICCS,Multiconference,28.0,54.0
+International Conference on Computational Science and its Applications,ICCSA,C,28.0,37.0
 International Conference on Computer Analysis of Images and Patterns,CAIP,C,16.0,24.0
-International Conference on Computer Communication and Networks,ICCCN,B,,
-"International Conference on Computer Safety, Reliability and Security",SAFECOMP,B,,
+International Conference on Computer Communication and Networks,ICCCN,B,38.0,54.0
+"International Conference on Computer Safety, Reliability and Security",SAFECOMP,B,20.0,38.0
 International Conference on Computer Supported Cooperative Work in Design,CSCWD,C,17.0,23.0
 International Conference on Computer Supported Education,CSEDU,B,21.0,39.0
-International Conference on Computer Vision and Graphics,ICCVG,National: Poland,,
-International Conference on Computer Vision Systems,ICVS,C,,
+International Conference on Computer Vision and Graphics,ICCVG,National: Poland,14.0,25.0
+International Conference on Computer Vision Systems,ICVS,C,16.0,18.0
 International Conference on Computer-Human Interaction Research and Applications,CHIRA,C,8.0,12.0
-International Conference on Computers and their Applications,CATA,National: USA,,
+International Conference on Computers and their Applications,CATA,National: USA,10.0,27.0
 International Conference on Computers Helping People with Special Needs,ICCHP,C,12.0,14.0
-International Conference on Computers in Education,ICCE,C,,
+International Conference on Computers in Education,ICCE,C,10.0,15.0
 International Conference on Computing and Combinatorics,COCOON,National:China,9.0,12.0
-International Conference on Computing and Informatics,ICOCI,C,,
-International Conference on Conceptual Modelling,ER,A,3.0,4.0
+International Conference on Computing and Informatics,ICOCI,C,32.0,46.0
+International Conference on Conceptual Modelling,ER,A,20.0,32.0
 International Conference on Concurrency Theory,CONCUR,A,18.0,22.0
 "International Conference on Control, Automation, Robotics and Vision",ICARCV,C,13.0,16.0
 "International Conference on Control, Decision and Information Technologies",CoDIT,C,19.0,22.0
 International Conference on Cooperative Information Systems,CoopIS,B,,
 International Conference on Coordination Models and Languages,Coordination,C,161.0,222.0
-International Conference on Cryptology and Network Security,CANS,B,,
+International Conference on Cryptology and Network Security,CANS,B,46.0,66.0
 International Conference on Cryptology in India,INDOCRYPT,National: India,17.0,27.0
 International Conference on Cyberworlds (was International Symposium on Cyberworlds),CW,C,,
 International Conference on Data Engineering,ICDE,A*,69.0,94.0
-"International Conference on Data Science, Technology and Applications",DATA,C,,
+"International Conference on Data Science, Technology and Applications",DATA,C,10.0,21.0
 International Conference on Database and Expert Systems Applications,DEXA,C,15.0,32.0
 International Conference on Database Systems for Advanced Applications,DASFAA,B,23.0,35.0
 International Conference on Database Theory,ICDT,A,19.0,30.0
@@ -513,10 +513,10 @@ International Conference on Dependability of Computer Systems,DEPCoS,National: P
 International Conference on Digital Society,ICDS,C,5.0,6.0
 International Conference on Distributed Computing and Artificial Intelligence,DCAI,National(Spain),20.0,29.0
 International Conference on Distributed Computing and Internet Technologies,ICDCIT,National: India,,
-International Conference on Distributed Computing and Networking,ICDCN,National: India,,
+International Conference on Distributed Computing and Networking,ICDCN,National: India,13.0,20.0
 International Conference on Distributed Computing Systems,ICDCS,A,48.0,72.0
 International Conference on Dublin Core and Metadata Applications,DC,C,37.0,66.0
-International Conference on Electronic Commerce,ICEC,C,,
+International Conference on Electronic Commerce,ICEC,C,13.0,18.0
 International Conference on Embedded and Real Time Computing Systems and Applications,RTCSA,B,13.0,17.0
 International Conference on Embedded Wireless Systems and Networks (wasEuropean Conference on Wireless Sensor Networks),EWSN,B,,
 International Conference on Emerging Ubiquitous Systems and Pervasive Networks,EUSPN,Unranked,,
@@ -529,7 +529,7 @@ International Conference on Formal Methods and Models for Co-Design,MEMOCODE,C,,
 International Conference on Formal Ontology in Information Systems,FOIS,B,,
 International Conference on Formal Structures for Computation and Deduction,FSCD,B,16.0,28.0
 International Conference on Frontiers of Handwriting Recognition,ICFHR,B,,
-International Conference on Frontiers of Information Technology,FIT,National: Pakistan,7.0,10.0
+International Conference on Frontiers of Information Technology,FIT,National: Pakistan,8.0,10.0
 International Conference on Functional Programming,ICFP,A,,
 International Conference on Generative Programming and Component Engineering,GPCE,B,,
 International Conference on Graph Transformations,ICGT,B,,
@@ -540,15 +540,15 @@ International Conference on High Performance Computing,HiPC,National: India,24.0
 International Conference on High Performance Scientific Computing,HPSC,National: Vietnam,20.0,37.0
 International Conference on Human Factors in Computing Systems,CHI,A*,129.0,183.0
 International Conference on Human-Computer Interaction with Mobile Devices and Services,MobileHCI,B,,
-International Conference on Hybrid Artificial Intelligence Systems,HAIS,National: Spain,,
+International Conference on Hybrid Artificial Intelligence Systems,HAIS,National: Spain,11.0,18.0
 International Conference on Hybrid Intelligent Systems,HIS,C,15.0,20.0
 International Conference on Image Analysis and Processing,ICIAP,National: Italy,19.0,31.0
 International Conference on Image and Graphics,ICIG,National: China,13.0,20.0
-International Conference on Image and Signal Processing,ICISP,C,12.0,16.0
+International Conference on Image and Signal Processing,ICISP,C,17.0,29.0
 International Conference on Implementation and Application of Automata,CIAA,C,,
 International Conference on Indoor Positioning and Indoor Navigation,IPIN,C,20.0,28.0
 International Conference on Industrial and Engineering Applications of Artificial Intelligence and Expert Systems,IEA/AIE,C,16.0,23.0
-International Conference on Informatics & Data-Driven Medicine,IDDM,C,,
+International Conference on Informatics & Data-Driven Medicine,IDDM,C,22.0,32.0
 "International Conference on Informatics in Control, Automation and Robotics",ICINCO,C,14.0,19.0
 International Conference on Information and Communication Technologies and Development,ICTD,C,20.0,35.0
 International Conference on Information and Communication Technologies for Ageing Well and e-Health,ICT4AWE,C,11.0,14.0
@@ -557,18 +557,18 @@ International Conference on Information and Communications Security,ICICS,C,,
 International Conference on Information and Knowledge Engineering,IKE,National: USA,,
 International Conference on Information Fusion,FUSION,C,23.0,40.0
 International Conference on Information Processing and Management of Uncertainty,IPMU,C,12.0,17.0
-International Conference on Information Security and Cryptography,SECRYPT,C,11.0,13.0
-International Conference on Information Security and Cryptology,ICISC,National: Korea,11.0,20.0
+International Conference on Information Security and Cryptography,SECRYPT,C,46.0,66.0
+International Conference on Information Security and Cryptology,ICISC,National: Korea,46.0,66.0
 International Conference on Information Systems Security,ICISS,National: India,22.0,34.0
 International Conference on Information Systems Security and Privacy,ICISSP,C,22.0,34.0
-International Conference on Information Technology and Applications,ICITA,Australasian C,,
-International Conference on Information Visualisation,IV,C,8.0,14.0
+International Conference on Information Technology and Applications,ICITA,Australasian C,11.0,15.0
+International Conference on Information Visualisation,IV,C,15.0,22.0
 International Conference on Innovations for Community Services (was Innovative Internet Computer Systems IICS until 2014),I4CS,C,,
 International Conference on Integration of Artificial Intelligence and Operations Research Techniques in Constraint Programming for Combinatorial Optimization Problems,CPAIOR,B,,
 International Conference on Intelligent Data Engineering and Automated Learning,IDEAL,C,14.0,25.0
 "International Conference on Intelligent Software Methodologies, Tools, and Techniques (was International Conference on Software Methods and Tools)",SoMeT,C,10.0,15.0
 International Conference on Intelligent Systems and Knowledge Engineering,ISKE,National: China,9.0,11.0
-International Conference on Intelligent Systems Designs and Applications,ISDA,C,,
+International Conference on Intelligent Systems Designs and Applications,ISDA,C,13.0,22.0
 International Conference on Intelligent Text Processing and Computational Linguistics,CICLING,C,,
 International Conference on Intelligent Tutoring Systems,ITS,B,17.0,24.0
 International Conference on Intelligent User Interfaces,IUI,A,52.0,90.0
@@ -578,7 +578,7 @@ International Conference on Internet Computing in Science and Engineering,ICICSE
 International Conference on Internet Monitoring and Protection,ICIMP,C,,
 "International Conference on Internet of Things, Big Data and Security",IoTBDS,C,,
 International Conference on Internet Technologies and Applications,ITA,National: USA,2.0,4.0
-International Conference on Knowledge Engineering and Knowledge Management,EKAW,B,,
+International Conference on Knowledge Engineering and Knowledge Management,EKAW,B,10.0,17.0
 International Conference on Knowledge Engineering and Ontology Development,KEOD,C,,
 "International Conference on Knowledge Science, Engineering and Management",KSEM,C,,
 International Conference on Knowledge-Based and Intelligent Information and Engineering Systems,KES,B,11.0,14.0
@@ -591,25 +591,25 @@ International Conference on Logic Programming and Non-monotonic Reasoning,LPNMR,
 International Conference on Machine Learning,ICML,A*,268.0,424.0
 International Conference on Machine Learning and Applications,ICMLA,C,35.0,55.0
 International Conference on Machine Learning and Cybernetics,ICMLC,National: China,12.0,18.0
-International Conference on Machine Vision,ICMV,C,17.0,27.0
+International Conference on Machine Vision,ICMV,C,268.0,424.0
 International Conference on Managed Programming Languages and Runtimes (was ManLang and previously Principles and Practice of Programming in Java: PPPJ),MPLR,C,,
 International Conference on Management of Data,COMAD,National: India,73.0,109.0
 International Conference on Management of Digital EcoSystems,MEDES,C,12.0,20.0
 International Conference on Mathematical Foundations of Programming Semantics,MFPS,B,,
 International Conference on Methods and Models in Automation and Robotics,MMAR,National:Poland,11.0,14.0
-International Conference on Mobile and Ubiquitous Systems: Networks and Services,Mobiquitous,C,,
+International Conference on Mobile and Ubiquitous Systems: Networks and Services,Mobiquitous,C,15.0,21.0
 International Conference on Mobile Data Management,MDM,B,19.0,28.0
-International Conference on Mobile Systems and Pervasive Computing,MobiSPC,Unranked,,
+International Conference on Mobile Systems and Pervasive Computing,MobiSPC,Unranked,15.0,21.0
 "International Conference on Mobile Ubiquitous Computing, Systems, Services and Technologies",UBICOMM,C,,
 International Conference on Model and Data Engineering,MEDI,C,10.0,15.0
 "International Conference on Model Driven Engineering Languages and Systems (Previously UML, changed in 2005)",MODELS,A,,
 International Conference on Model-Driven Engineering and Software Development,MODELSWARD,C,13.0,17.0
-International Conference on Modelling and Simulation,ECMS,Multiconference,11.0,15.0
+International Conference on Modelling and Simulation,ECMS,Multiconference,18.0,27.0
 International Conference on Modelling Decisions for Artificial Intelligence,MDAI,B,,
 International Conference on Multimedia Modelling,MMM,B,,
 International Conference on Multimedia Retrieval (previously MIR),ICMR,B,,
 International Conference on Multimodal Interaction (was International Conference on Multimodal Interfaces),ICMI,B,31.0,44.0
-International Conference on Natural Computation,ICNC,National: China,9.0,12.0
+International Conference on Natural Computation,ICNC,National: China,13.0,19.0
 International Conference on Network and Service Management (amalgamation of DSOM and related workshops from 2010),CNSM,B,,
 International Conference on network and System Security,NSS,B,,
 International Conference on Network Protocols,ICNP,B,27.0,41.0
@@ -622,7 +622,7 @@ International Conference on Pairing-based Cryptography,Pairing,C,,
 International Conference on Parallel and Distributed Processing Techniques and Applications,PDPTA,National: USA,,
 International Conference on Parallel and Distributed Systems,ICPADS,B,21.0,33.0
 International Conference on Parallel Architecture and Compilation Techniques,PACT,B,21.0,31.0
-International Conference on Parallel Processing,ICPP,B,24.0,32.0
+International Conference on Parallel Processing,ICPP,B,38.0,50.0
 International Conference on Parallel Processing and Applied Mathematics,PPAM,National: Poland,10.0,13.0
 International Conference on Pattern Recognition,ICPR,B,56.0,91.0
 International Conference on Pattern Recognition Applications and Methods,ICPRAM,C,21.0,30.0
@@ -630,7 +630,7 @@ International Conference on Practical Applications of Computational Biology & Bi
 International Conference on Practice and Theory in Public Key Cryptography,PKC,B,35.0,49.0
 International Conference on Principles and Practice of Constraint Programming,CP,A,20.0,29.0
 International Conference on Principles and Practice of Declarative Programming,PPDP,C,,
-International Conference on Principles of Distributed Systems,OPODIS,B,,
+International Conference on Principles of Distributed Systems,OPODIS,B,18.0,24.0
 International Conference on Principles of Practice in Multi-Agent Systems (prior to 2009 was Pacific Rim International Workshop on Multi-Agents),PRIMA,B,13.0,22.0
 "International Conference on Probabilistic, Combinatorial, and Asymptotic Methods in the Analysis of Algorithms (was Conference on Analysis of Algorithms)",AofA,C,,
 International Conference on Process Mining,ICPM,B,24.0,34.0
@@ -656,16 +656,16 @@ International Conference on Software and Data Technologies,ICSoft,C,,
 International Conference on Software and System Processes (was ICSP prior to 2011),ICSSP,B,,
 International Conference on Software Architecture (was previously WICSA),ICSA,A,,
 International Conference on Software Engineering,ICSE,A*,84.0,118.0
-International Conference on Software Engineering Advances,ICSEA,C,,
+International Conference on Software Engineering Advances,ICSEA,C,14.0,20.0
 International Conference on Software Engineering and Formal Methods,SEFM,B,,
-International Conference on Software Engineering and Knowledge Engineering,SEKE,C,14.0,23.0
-"International Conference on Software Engineering, Artificial Intelligence, Networking and Parallel/Distributed Computing",SNPD,C,,
-International Conference on Software Language Engineering,SLE,B,,
+International Conference on Software Engineering and Knowledge Engineering,SEKE,C,17.0,24.0
+"International Conference on Software Engineering, Artificial Intelligence, Networking and Parallel/Distributed Computing",SNPD,C,13.0,20.0
+International Conference on Software Language Engineering,SLE,B,24.0,36.0
 International Conference on Software Quality Management,SQM,C,,
 International Conference on Software Reuse,ICSR,B,,
 "International Conference on Software Testing, Verification and Validation",ICST,A,32.0,59.0
-International Conference on Sustainable Energy Information Technology,SEIT,Unranked,,
-International Conference on Systems Engineering,ICSEng,C,,
+International Conference on Sustainable Energy Information Technology,SEIT,Unranked,16.0,23.0
+International Conference on Systems Engineering,ICSEng,C,27.0,38.0
 International Conference on Technical Debt,TechDebt,B,,
 International Conference on Testing Software and Systems,ICTSS,C,,
 International Conference on Tests and Proofs,TAP,C,,
@@ -684,7 +684,7 @@ International Conference on Theory and Practice of Digital Libraries (was ECDL u
 International Conference on Tools with Artificial Intelligence,ICTAI,B,28.0,38.0
 "International Conference on Trust, Privacy and Security in Digital Business",TrustBus,B,,
 "International Conference on Trust, Security and Privacy in Computing and Communications",TrustCom,B,29.0,52.0
-International Conference on Ubiquitous Intelligence and Computing,UIC,C,2.0,7.0
+International Conference on Ubiquitous Intelligence and Computing,UIC,C,4.0,4.0
 International Conference on Unconventional Computation and Natural Computation (was International Conference on Unconventional Computation),UC,C,28.0,49.0
 "International Conference on User Modelling, Adaptation, and Personalization (was AH and UM)",UMAP,B,31.0,46.0
 International Conference on Vehicle Technology and Intelligent Transport Systems,VEHITS,C,16.0,18.0
@@ -693,14 +693,14 @@ International Conference on Virtual Execution Environments,VEE,B,,
 International Conference on Virtual Rehabilitation,ICVR,Unranked,10.0,16.0
 International Conference on VLSI Design,VLSID,National: India,,
 International Conference on Web and Social Media,ICWSM,A,56.0,88.0
-International Conference on Web Engineering,ICWE,B,15.0,18.0
+International Conference on Web Engineering,ICWE,B,18.0,32.0
 International Conference on Web Information Systems and Technologies,WEBIST,C,14.0,20.0
 International Conference on Web Information Systems Engineering,WISE,B,18.0,25.0
-International Conference on Wireless Networks and Mobile Communications,WINCOM,National:Morocco,11.0,13.0
+International Conference on Wireless Networks and Mobile Communications,WINCOM,National:Morocco,19.0,27.0
 "International Conference: Sciences of Electronics, Technologies of information and Telecommunication",SETIT,Unranked,,
 "International Conferences in Central Europe on Computer Graphics, Visualization and Computer Vision",WSCG,National: Czecholslovakia,,
-International Congress on Computational and Applied Mathematics,ICCAM,C,,
-International Congress on Modelling and Simulation,MODSIM,Australasian C,,
+International Congress on Computational and Applied Mathematics,ICCAM,C,1.0,2.0
+International Congress on Modelling and Simulation,MODSIM,Australasian C,5.0,10.0
 International Cross-Domain Conference for Machine Learning and Knowledge Extraction,CD-MAKE,C,20.0,34.0
 International CSI Computer Conference,CSICC,National: Iran,13.0,20.0
 International Database Engineering and Applications Symposium,IDEAS,C,20.0,32.0
@@ -711,14 +711,14 @@ International Joint Conference on Artificial Intelligence,IJCAI,A*,136.0,192.0
 International Joint Conference on Automated Reasoning,IJCAR,A,,
 "International Joint Conference on Autonomous Agents and Multiagent Systems (previously the International Conference on Multiagent Systems, ICMAS, changed in 2000)",AAMAS,A*,,
 International Joint Conference on Biometrics,IJCB,B,,
-International Joint Conference on Computational Intelligence,IJCCI,C,13.0,19.0
+International Joint Conference on Computational Intelligence,IJCCI,C,136.0,192.0
 "International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management",IC3K,C,10.0,17.0
 International Joint Conference on Natural Language Processing,IJCNLP,B,32.0,56.0
 International Joint Conference on Rough Sets (2014 International Conference on Rough Sets and Current Trends in Computing joined with 3 others),IJCRS (was RSCTC),C,,
 International Joint Conference on Rules and Reasoning,RuleML+RR,B,,
 International KES Conference on Agents and Multiagent systems - Technologies and Applications,KES AMSTA,C,,
-International Machine Vision and Image Processing Conference,IMVIP,National: ireland,,
-International Natural Language Generation Conference,INLG,B,,
+International Machine Vision and Image Processing Conference,IMVIP,National: ireland,4.0,9.0
+International Natural Language Generation Conference,INLG,B,29.0,45.0
 International Network Optimization Conference,INOC,C,,
 International Picture Coding Symposium,PCS,C,16.0,30.0
 International Semantic Web Conference,ISWC,A,37.0,67.0
@@ -728,7 +728,7 @@ International Symposium on Algorithms and Computation,ISAAC,A,15.0,17.0
 International Symposium on Algorithms and Experiments for  Wireless Networks,Algosensors,C,,
 International Symposium on Applied Computational Intelligence and Informatics,SACI,National: Romania,13.0,19.0
 International Symposium on Applied Machine Intelligence and Informatics,SAMI,National: slovakia,,
-International Symposium on Artificial Intelligence and Mathematics,ISAIM,National: USA,,
+International Symposium on Artificial Intelligence and Mathematics,ISAIM,National: USA,9.0,14.0
 International Symposium on Artificial Life and Robotics,AROB,C,,
 International Symposium on Automated Technology for Verification and Analysis,ATVA,B,,
 International Symposium on Automation and Robotics in Construction,ISARC,C,25.0,31.0
@@ -738,7 +738,7 @@ International Symposium on Combinatorial Optimisation,ISCO,C,,
 International Symposium on Computational Geometry,SoCG,A,,
 International Symposium on Computer Architecture and High Performance Computing,SBAC-PAD,C,12.0,18.0
 International Symposium on Distributed Computing (was WDAG),DISC,A,22.0,30.0
-International Symposium on Distributed Simulation and Real Time Applications,DS-RT,C,,
+International Symposium on Distributed Simulation and Real Time Applications,DS-RT,C,14.0,21.0
 International Symposium on Empirical Software Engineering and Measurement,ESEM,A,28.0,45.0
 International Symposium on Experimental Algorithms,SEA,B,9.0,13.0
 International Symposium on Formal Methods (was Formal Methods Europe FME),FM,A,,
@@ -750,19 +750,19 @@ International Symposium on High Performance Computer Architecture,HPCA,A*,50.0,8
 International Symposium on Information Assurance and Security,IAS,C,8.0,9.0
 International Symposium on Information Theory and Its Applications,ISITA,C,20.0,27.0
 International Symposium on Innovations in Intelligent Systems and Applications,INISTA,C,18.0,23.0
-International Symposium on Intelligent Systems and Informatics,SISY,National: serbia,12.0,18.0
+International Symposium on Intelligent Systems and Informatics,SISY,National: serbia,27.0,67.0
 International Symposium on Latin American Theoretical Informatics,LATIN,B,,
-"International Symposium on Leveraging Applications of Formal Methods, Verification and Validation",ISoLA,C,,
+"International Symposium on Leveraging Applications of Formal Methods, Verification and Validation",ISoLA,C,18.0,23.0
 International Symposium on Logic-based Program Synthesis and Transformation,LOPSTR,C,,
 International Symposium on Mathematical Foundations of Computer Science,MFCS,A,19.0,24.0
 International Symposium on Memory Management,ISMM,C,,
 International Symposium on Microarchitecture,MICRO,TBR,61.0,96.0
-"International Symposium on Modelling and Optimization in Mobile, Ad Hoc, and Wireless Networks",WiOpt,B,,
-"International Symposium on Networks, Computers and Communications",ISNCC,C,19.0,31.0
-International Symposium on Neural Networks,ISNN,C,14.0,20.0
+"International Symposium on Modelling and Optimization in Mobile, Ad Hoc, and Wireless Networks",WiOpt,B,16.0,29.0
+"International Symposium on Networks, Computers and Communications",ISNCC,C,28.0,36.0
+International Symposium on Neural Networks,ISNN,C,64.0,95.0
 "International Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software",Onward,C,,
 International Symposium on Open Collaboration (was International Symposiums on Wikis),OPENSYM,C,,
-International Symposium on Parallel and Distributed Computing,ISPDC,C,12.0,30.0
+International Symposium on Parallel and Distributed Computing,ISPDC,C,15.0,26.0
 International Symposium on Parameterized and Exact Computation (was IWPEC pre 2004),IPEC,B,,
 International Symposium on Robotics Research,ISRR,C,,
 International Symposium on Search Based Software Engineering,SSBSE,B,,
@@ -788,7 +788,7 @@ International Teletraffic Congress,ITC,Unranked,,
 International Visualization in Transportation Symposium,TRB,National: USA,,
 International Wordnet Conference (Global Wordnet Conference),GWC,C,,
 International Work-Conference on Artificial and Natural Neural Networks,IWANN,National: Spain,16.0,26.0
-International Work-conference on the Interplay between Natural and Artificial Computation,IWINAC,National,,
+International Work-conference on the Interplay between Natural and Artificial Computation,IWINAC,National,13.0,19.0
 International Workshop on Algebraic and Combinatorial Coding Theory,ACCT,National,,
 International Workshop on Approximation Algorithms for Combinatorial Optimization Problems and International Conference on Randomization and Computation,APPROX/RANDOM,A,18.0,26.0
 International Workshop on Combinations of Intelligent Methods and Applications,CIMA,C,,
@@ -806,20 +806,20 @@ International Workshop on Formal Methods for interactive Systems,FMIS,C,,
 International Workshop on Graph-Theoretic Concepts in Computer Science,WG,B,14.0,16.0
 International workshop on High-Level Parallel Programming and Applications,HLPP,C,,
 International Workshop on High-Level Parallel Programming Models and Supportive Environments,HIPS,C,,
-International Workshop on Information Security Applications,WISA,National: korea,11.0,12.0
+International Workshop on Information Security Applications,WISA,National: korea,26.0,46.0
 International Workshop on Modelling in Software Engineering,MISE,C,,
 International Workshop on MultiAgent Based Simulation,MABS,C,,
 International Workshop on Multimedia Signal Processing,MMSP,C,,
 International Workshop on Post-Quantum Cryptography,PQCrypto,C,25.0,43.0
 International Workshop on Principles of Diagnosis,DX,C,,
-International Workshop on Requirements Engineering: Foundation for Software Quality,REFSQ,B,,
-International Workshop on Security,IWSEC,National: Japan,,
+International Workshop on Requirements Engineering: Foundation for Software Quality,REFSQ,B,20.0,29.0
+International Workshop on Security,IWSEC,National: Japan,47.0,86.0
 International Workshop on Soft Computing Applications,SOFA,National: Romania,,
 International Workshop on Software and Compilers for Embedded Systems,SCOPES,C,,
 International Workshop on the Algorithmic Foundations of Robotics,WAFR,C,,
 International Workshop on Visualization for Cyber Security,VizSec,C,,
 International Workshop on Web and Wireless Geographical Information Systems,W2GIS,C,,
-International Workshops on Enabling Technologies: Infrastructures for Collaborative Enterprises,WETICE,C,,
+International Workshops on Enabling Technologies: Infrastructures for Collaborative Enterprises,WETICE,C,16.0,24.0
 International World Wide Web Conference,WWW,A*,112.0,169.0
 Internet Measurement Conference,IMC,A,45.0,70.0
 Interspeech (combined EuroSpeech and ICSLP in 2000),Interspeech,A,,
@@ -828,7 +828,7 @@ ISCA International Conference on Computer Applications in Industry and Engineeri
 Joint Conference of the International Workshop on Software Measurement and the International Conference on Software Process and Product Measurement (IWSM and Mensura combined from 2007),IWSM Mensura,C,,
 "Joint Conference on Computer Vision, Imaging and Computer Graphics Theory and Applications (GRAPP and VISAPP combined from 2008)",VISIGRAPP,Multiconference,,
 KES International Symposium on Intelligent Decision Technologies,KES IDT,C,,
-Knowledge capture,K-CAP,B,,
+Knowledge capture,K-CAP,B,16.0,21.0
 Knowledge Domain Visualisation,KDViz,National: UK,,
 Knowledge Visualization and Visual Thinking,KV,C,,
 Language Resources and Evaluation Conference,LREC,B,59.0,85.0
@@ -837,18 +837,18 @@ Latin American Conference on Informatics,CLEI,C,11.0,20.0
 "Latin-American Algorithms, Graphs and Optimization Symposium",LAGOS,C,,
 Logic Programming and Automated Reasoning,LPAR,B,,
 Logical Foundations of Computer Science,LFCS,National: USA,,
-"Logics in Artificial Intelligence, European Conference",JELIA,A,,
+"Logics in Artificial Intelligence, European Conference",JELIA,A,13.0,18.0
 Machine Translation Summit,MT SUMMIT,C,,
-Machine Vision Applications,MVA,National: japan,,
+Machine Vision Applications,MVA,National: japan,43.0,76.0
 "Machines, Computations and Universality (was Universal Machines and Computations)",MCU,C,3.0,4.0
 Malaysia International Conference on Communications,MICC,Regional,,
 Mathematics of Program Construction,MPC,B,,
 Measurement and Modeling of Computer Systems,SIGMETRICS,A*,40.0,58.0
-Medical Image Computing and Computer-Assisted Intervention,MICCAI,A,33.0,62.0
-Mensch & Computer,MuC,National: Germany,,
+Medical Image Computing and Computer-Assisted Intervention,MICCAI,A,96.0,141.0
+Mensch & Computer,MuC,National: Germany,22.0,28.0
 Mobile and Ubiquitous Multimedia (ACM),MUM,B,,
 Modelling and Optimization: Theory and Applications,MOPTA,National: USA,,
-Multimedia and Network Information Systems,MISSI,National: Poland,,
+Multimedia and Network Information Systems,MISSI,National: Poland,6.0,14.0
 National Conference of the American Association for Artificial Intelligence,AAAI,A*,220.0,341.0
 National Conference of The Australian Society for Operations Research,ASOR,Australasian C,,
 Network and Operating System Support for Digital Audio and Video,NOSSDAV,B,,
@@ -865,7 +865,7 @@ Pacific Symposium on Biocomputing,PSB,National: USA,23.0,46.0
 Pacific-Asia Conference on Knowledge Discovery and Data Mining,PAKDD,B,30.0,45.0
 Pacific-Rim Symposium on Image and Video Technology,PSIVT,C,,
 Parallel Problem Solving from Nature,PPSN,A,19.0,35.0
-Passive and Active Measurement Conference,PAM,B,,
+Passive and Active Measurement Conference,PAM,B,20.0,29.0
 Pattern Languages of Programs,PLOP,C,13.0,23.0
 Portuguese Conference on Artificial Intelligence,EPIA,National: Portugal,16.0,21.0
 Practical Applications of Agents and Multiagent Systems,PAAMS,National: Spain,13.0,21.0
@@ -892,7 +892,7 @@ Simulation Technology and Training Conference,SimTecT,Australasian C,,
 SKLOIS Conference on Information Security and Cryptology,Inscrypt,National: China,8.0,15.0
 Smart Card Research and Advanced Application Conference,CARDIS,C,,
 Software Process Improvement and Capability Determination,SPICE,C,,
-Software Product Lines Conference,SPLC,B,,
+Software Product Lines Conference,SPLC,B,25.0,36.0
 "Software Quality, Reliability, and Security (was International Conference on Quality Software, QSIC, that merged with SERE 2015)",QRS,C,,
 Static Analysis Symposium,SAS,B,14.0,26.0
 Structural and Syntactical Pattern Recognition,SSPR,B,,
@@ -901,7 +901,7 @@ Symposium of Asian Association for Algorithms and Computation,AAAC,C,,
 Symposium on Advances in DB and Information Systems,ADBIS,C,16.0,24.0
 Symposium on Geometry Processing,SGP,B,,
 Symposium on High Performance Chips,HOTCHIPS (HCS),C,,
-"Symposium on Networked Systems, Design and Implementation",NSDI,National: USA,,
+"Symposium on Networked Systems, Design and Implementation",NSDI,National: USA,62.0,88.0
 Symposium on Parallelism in Algorithms and Architectures,SPAA,B,22.0,34.0
 Symposium on Reliable Distributed Systems,SRDS,B,18.0,28.0
 "Symposium on Stabilization, Safety, and Security of Distributed Systems",SSS,C,,
@@ -918,10 +918,10 @@ The Theory and Application of Diagrams,DIAGRAMS,C,,
 Theoretical Aspects of Rationality and Knowledge,TARK,A,,
 Theory of Cryptography Conference,TCC,A,1.0,7.0
 Tools and Algorithms for Construction and Analysis of Systems,TACAS,A,35.0,58.0
-Usable Security and Privacy,USEC,National: USA,,
+Usable Security and Privacy,USEC,National: USA,38.0,58.0
 Usenix Annual Technical Conference,USENIX,A,55.0,102.0
 Usenix Network and Distributed System Security Symposium,NDSS,A*,73.0,130.0
-Usenix Security Symposium,USENIX-Security,A*,,
+Usenix Security Symposium,USENIX-Security,A*,106.0,154.0
 Usenix Symposium on Operating Systems Design and Implementation,OSDI,A*,54.0,84.0
 USENIX Workshop on Hot Topics in Operating Systems,HotOS,A,,
 Utility and Cloud Computing,UCC,Unranked,23.0,29.0
@@ -929,7 +929,7 @@ Utility and Cloud Computing,UCC,Unranked,23.0,29.0
 Visual Analytics,EuroVA,C,,
 Visual Information Communication and Interaction,VINCI,C,14.0,24.0
 Visualization In Science and Education,GRC,National: USA,,
-Web and Big Data,APWEB,C,11.0,22.0
+Web and Big Data,APWEB,C,20.0,27.0
 Winter Simulation Conference,WSC,C,,
 Workshop in Information Security Theory and Practices,WISTP,C,,
 Workshop on Algorithm Engineering and Experiments,ALENEX,A,,
