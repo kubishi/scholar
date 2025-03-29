@@ -21,7 +21,7 @@ MODELS = {''
     }
 }
 
-CITE_URL = "https://sites.google.com/view/isaac2024/home"
+CITE_URL = "https://cse.iitm.ac.in/~icdcn2024/"
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -29,8 +29,15 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def fetch_page_content(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-    page_content = soup.prettify()
+    for script_or_style in soup(["script", "style"]):
+        script_or_style.extract()
+    page_content = soup.get_text(separator="\n")
+    page_content = "\n".join(
+        line.strip() for line in page_content.splitlines() if line.strip()
+    )
+    #page_content = soup.prettify() #GETS MORE INFO BUT IS MUCH SLOWER
     return page_content
+
 
 # Specifically targeting different HTML tags
 # title = soup.find("title").get_text(strip=True) if soup.find("title") else "No Title Found"
@@ -62,7 +69,7 @@ def extract_conference_details(page_content):
                 "properties": {
                     "conference": {
                         "type": "string",
-                        "description": "The acronym/abbreviation of the conference. Example: International Conference on Ad Hoc Networks and Wireless = ADHOC-NOW or International Conference on Cooperative Information Systems = CoopIS."
+                        "description": "No years or dates in this area should be included. The acronym/abbreviation of the conference. Example: International Conference on Ad Hoc Networks and Wireless = ADHOC-NOW or International Conference on Cooperative Information Systems = CoopIS."
                     },
                     "deadline": {
                         "type": "string",
@@ -132,8 +139,27 @@ def extract_conference_details(page_content):
 def save_to_csv(data):
     df = pandas.DataFrame([data])
     existing_df = pandas.read_csv('test.csv')
+
+
+    if data["conference"] in existing_df["conference"].values:
+        print("Skipped Confrence:",  data["conference"])
+        return
+
+
+    
     df = pandas.concat([existing_df, df], ignore_index = True)
     df.to_csv("test.csv", index = False)
+    # Index = False means each row is not assigned an index val
+    print("blorg", existing_df["conference"].values)
+
+    # h5_scores = pandas.read_csv('csa_with_h5_scores.csv')
+    # bloop = pandas.read_csv('test copy.csv')
+    # bloop["h5_index"] = h5_scores["h5_index"]
+    # bloop["h5_median"] = h5_scores["h5_median"]
+    # bloop.to_csv("test copy.csv", index = False)
+    
+
+
 
 
 def main():
@@ -142,6 +168,7 @@ def main():
     extracted_results = extract_conference_details(page_content)
     print(extracted_results)
     save_to_csv(extracted_results)
+
     
 
 if __name__ == '__main__':
