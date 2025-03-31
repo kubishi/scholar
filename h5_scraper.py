@@ -3,13 +3,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import random
 import time
-
 from fuzzywuzzy import fuzz
 import re
 
 def partial_match(name1, name2, threshold=85):
-    print(fuzz.token_set_ratio(name1, name2))
-    return fuzz.token_set_ratio(name1, name2) >= threshold
+    x = fuzz.token_set_ratio(name1, name2)
+    print(x)
+    return x >= threshold
 
 
 def normalize_conference_name(name):
@@ -97,15 +97,13 @@ def scrape_venue_data(url, query, acronym):
                     h5_name = row.find_next('td', class_='gsc_mvt_t')
 
                     if h5_score_index and h5_name and h5_score_median:
-                        if acronym in h5_name.text:  # Only use the acronym search
+                        if "(" + acronym + ")" in h5_name.text:  # Only use the acronym search
                             return int(h5_score_index.text), int(h5_score_median.text)
         
     else:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
         return None, None
-
-
-        
+    
 # URL of the Google Scholar ENG+CS papers page
 url = "https://scholar.google.com.sg/citations?view_op=top_venues&hl=en&vq=eng"
 
@@ -117,7 +115,7 @@ h5_median = []
 
 for query, acronym in zip(core_df["Title"], core_df["Acronym"]):
     # Construct the search URL
-    search_url = construct_search_url(query)
+    search_url = construct_search_url(normalize_conference_name(query))
     print(f"Search URL: {search_url}")
 
     # Scrape the data
@@ -135,4 +133,11 @@ for query, acronym in zip(core_df["Title"], core_df["Acronym"]):
 
 core_df["h5_index"] = h5_index
 core_df["h5_median"] = h5_median
-core_df.to_csv('csa_with_h5_scores.csv', index=False)
+core_df.to_csv('normalizeh5scores.csv', index=False)
+
+df_core = pd.read_csv('conference_rankings_with_era.csv')  
+df_h5 = pd.read_csv("normalizeh5scores.csv")
+df_merged = pd.merge(df_core, df_h5[['Title', 'Acronym', 'h5_index', 'h5_median']], 
+                     on=['Title'], how='left')
+
+df_merged.to_csv("Conference_Scores.csv", index=False)
