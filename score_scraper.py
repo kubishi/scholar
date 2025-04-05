@@ -6,85 +6,66 @@ import re
 import random
 import time
 from fuzzywuzzy import fuzz
+import io
 
 #URLS
 CORE_URL = "https://portal.core.edu.au/conf-ranks/"
 ERA_PDF_URL = "http://www.conferenceranks.com/data/era2010_conference_list.pdf"
 SCHOLAR_URL = "https://scholar.google.com.sg/citations"
-     
+
+CORE_Sources = ["CORE2023", "CORE2021", "CORE2020", "CORE2018", "CORE2017", "CORE2014", "CORE2013", "ERA2010"]
+
 def scrape_core_rankings():
-    PARAMS = {
-        "search": "",
-        "by": "all",
-        "source": "CORE2023", #Used to get different year rankings
-        "sort": "atitle",
-        "page": 1,
-    }
+    all_data = []  # List to store all dataframes
+    final_df = None
+    for source in CORE_Sources:
+        PARAMS = {
+            "search": "",
+            "by": "all",
+            "source": source, #Used to get different year rankings
+            "sort": "atitle",
+            "page": 1,
+        }
 
-    all_rows = []
-    page_number = 1
+        all_rows = []
+        page_number = 1
 
-    while True:
-        print(f"Scraping CORE rankings page {page_number}...")
-        PARAMS["page"] = page_number
-        response = requests.get(CORE_URL, params=PARAMS)
-        soup = BeautifulSoup(response.text, "html.parser")
+        while True:
+            print(f"Scraping {source} rankings page {page_number}...")
+            PARAMS["page"] = page_number
+            response = requests.get(CORE_URL, params=PARAMS)
+            soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find the table
-        table = soup.find("table")
-        if not table:
-            break  # Stop if no more data is found
+            # Find the table
+            table = soup.find("table")
+            if not table:
+                break  # Stop if no more data is found
 
-        # Extract headers (only once)
-        if "headers" not in scrape_core_rankings.__dict__:
-            scrape_core_rankings.headers = [th.text.strip() for th in table.find_all("th")]
+            # Extract headers (only once)
+            if "headers" not in scrape_core_rankings.__dict__:
+                scrape_core_rankings.headers = [th.text.strip() for th in table.find_all("th")]
 
-        # Extract rows
-        for row in table.find_all("tr", class_=["evenrow", "oddrow"]):
-            cells = [cell.text.strip() for cell in row.find_all("td")]
-            all_rows.append(cells)
+            # Extract rows
+            for row in table.find_all("tr", class_=["evenrow", "oddrow"]):
+                cells = [cell.text.strip() for cell in row.find_all("td")]
+                all_rows.append(cells)
 
-        page_number += 1
+            page_number += 1
 
-    # Create a DataFrame
-    df = pd.DataFrame(all_rows, columns=scrape_core_rankings.headers)
+        # Create a DataFrame
+        df = pd.DataFrame(all_rows, columns=scrape_core_rankings.headers)
 
-    # Filter the DataFrame to include only Title, Source, and Rank
-    filtered_df = df[["Title", "Acronym", "Rank"]]
-    save_to_csv(filtered_df, "csa.csv")
-    return filtered_df
-
-def extract_era_rankings():
-    response = requests.get(ERA_PDF_URL)
-    with open("era2010_conference_list.pdf", "wb") as f:
-        f.write(response.content)
-
-    era_data = []
-    with pdfplumber.open("era2010_conference_list.pdf") as pdf:
-        for page in pdf.pages:
-            text = page.extract_text()
-            if text:
-                for line in text.split("\n"):
-                    line = line.strip()
-                    if line:
-                        # Use regex to extract the ERA score
-                        era_score_match = re.search(r'\b(A|B|C|D|E|F|Not ranked)\b', line) 
-
-                        if era_score_match:
-                            era_score = era_score_match.group()
-
-                            # Extract the title (everything before the ERA score)
-                            # Capture the title before the ERA score and after the id
-                            title_match = re.search(r'^\d+\s+(.*?)(?=\s+[A-Z]{2,})', line[:era_score_match.start()])
-                            if title_match:
-                                title = title_match.group(1).strip()
-                                era_data.append({"Title": title, "ERA Score": era_score})
-
-
-    # Create a DataFrame
-    era_df = pd.DataFrame(era_data)
-    save_to_csv(era_df, "era.csv")
-    return era_df
+        # Filter the DataFrame to include only Title, Source, and Rank
+        filtered_df = df[["Title", "Acronym", "Rank"]]
+        filtered_df.rename(columns={'Rank': source}, inplace=True)
+        all_data.append(filtered_df)
+    for df in all_data:
+        if final_df is None:
+            final_df = df
+        else:
+            final_df = pd.merge(final_df, df, on=["Title", "Acronym"], how="outer")
+    save_to_csv(final_df, "csa.csv")
+    return final_df
 
 def partial_match(name1, name2, threshold=85):
     x = fuzz.token_set_ratio(name1, name2)
@@ -93,7 +74,8 @@ def partial_match(name1, name2, threshold=85):
 
 def normalize_conference_name(name):
     common_words = {"international", "conference", "symposium", "workshop", "on", "the"}
-    name = re.sub(r'[^\w\s]', '', name.lower())  # Remove punctuation
+    name = re.sub(r'\([^)]*\)', '', name) #remove things in parentheses
+    name = re.sub(r'[^\w\s]', '', name.lower()) #remove punctuation 
     words = name.split()
     words = [word for word in words if word not in common_words]  # Remove stopwords
     return " ".join(sorted(words))  # Sort words for consistency
@@ -118,6 +100,7 @@ def scrape_h5data(url, query, acronym):
     ]
 
     # Headers to mimic a real browser request
+    #You can get away without using this super fancy header, but should help from getting google ip banning
     headers = {
         "User-Agent": random.choice(user_agents),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -130,7 +113,7 @@ def scrape_h5data(url, query, acronym):
         "Sec-Fetch-Site": "same-origin",
         "Sec-Fetch-User": "?1",
         "Upgrade-Insecure-Requests": "1",
-        "DNT": "1",  # Do Not Track
+        "DNT": "1", 
     }
 
     # Send a GET request to the URL with headers
@@ -183,12 +166,12 @@ def scrape_h5data(url, query, acronym):
 
 def extract_all_h5scores(core_df): 
     """Get h5 scores for all conferences from the core df."""
-    
+    temp_df = pd.DataFrame(columns=["Title", "Acronym", "h5_index", "h5_median"])
     h5_index = []
     h5_median = []
-    
+
     #Loop through all conferences
-    for query, acronym in zip(core_df["Title"], core_df["Acronym"]):
+    for query, acronym in zip(core_df["Title"], core_df["Acronym"].fillna("")):
         # Construct the search URL
         search_url = construct_search_url(normalize_conference_name(query))
         print(f"Search URL: {search_url}")
@@ -199,47 +182,38 @@ def extract_all_h5scores(core_df):
             h5_score, h5_score_median = result
             print("Scores:", h5_score, h5_score_median)
         else:
-            
             h5_score, h5_score_median = None, None
+            
         h5_index.append(h5_score if h5_score else None)
         h5_median.append(h5_score_median if h5_score_median else None)
-        
+        new_row = pd.DataFrame({"Title": [query], "Acronym": [acronym], "h5_index": [h5_score], "h5_median": [h5_score_median]})
+        temp_df = pd.concat([temp_df, new_row], ignore_index=True)
+        save_to_csv(temp_df, "temp_Conference_Scores.csv")
         time.sleep(random.uniform(2, 5)) #randomized delays so hopefully I dont get IP banned
 
     core_df["h5_index"] = h5_index
     core_df["h5_median"] = h5_median
     return core_df
 
-def merge_data(core_df, era_df):
-    """Merge multiple DataFrames on the 'Title' column."""
-    # Merge the DataFrames on the 'Title' column
-    merged_df = pd.merge(core_df, era_df, on='Title', how='left')
-    return merged_df
-
 def save_to_csv(df, filename):
-    """Save df to a CSV."""
-    df.to_csv(filename, index=False)
-    print(f"Data saved to {filename}")
+    try:
+        df.to_csv(filename, index=False)
+        print(f"Data saved to {filename}")
+    except Exception as e:
+        print(f"Error saving file: {e}")
 
-# Main Function
-if __name__ == "__main__":
+def main():
     # Scrape CORE rankings
-    print("Fetching CORE rankings...")
-    core_df = scrape_core_rankings()
-    #core_df = pd.read_csv('csa.csv')
-    # Extract ERA rankings
-    print("\nFetching ERA scores...")
-
-    era_df = extract_era_rankings()
-    #era_df = pd.read_csv('era.csv')
+    print("Fetching CORE + ERA rankings ...")
+    #core_df = scrape_core_rankings()
+    core_df = pd.read_csv('csa.csv')
+    
     # Scrape h5 rankings:
     print("\nFetching h5 scores...")
     h5_with_core_df = extract_all_h5scores(core_df)
 
-    # Merge the data
-    merged_df = merge_data(h5_with_core_df, era_df)
-
     # Save to CSV
-    merged_df.rename(columns={'Rank': 'Core'}, inplace=True)
-
-    save_to_csv(merged_df, "Conference_Scores.csv")
+    save_to_csv(h5_with_core_df, "Conference_Scores.csv")
+    
+if __name__ == "__main__":
+    main()

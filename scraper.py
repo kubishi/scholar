@@ -127,12 +127,8 @@ def extract_conference_details(page_content):
         
     )
     # .tool_calls is used when you are using a tool function. .content is just for plain text
-    structured_data = completion.choices[0].message.tool_calls
     structured_data = json.loads(completion.choices[0].message.tool_calls[0].function.arguments)
     return structured_data
-
-
-
 
 # Writes the DataFrame to a CSV file
 # df.to_csv('test.csv', index=False) 
@@ -159,17 +155,12 @@ def save_to_csv(data):
     # bloop.to_csv("test copy.csv", index = False)
     
 
-
-
-
 def main():
     page_content = fetch_page_content(CITE_URL)
     print(page_content)
     extracted_results = extract_conference_details(page_content)
     print(extracted_results)
     save_to_csv(extracted_results)
-
-    
 
 if __name__ == '__main__':
     main()
