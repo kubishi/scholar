@@ -127,10 +127,9 @@ def upload_data():
     
     # remove None values from each record
     conferences = [{k: v for k, v in conf.items() if v is not None} for conf in conferences]
-
     topics = [conf["topics"] for conf in conferences]
     embeddings = get_embeddings(topics)
-    for conf, emb in zip(conferences, embeddings):
+    for conf, emb in zip(conferences, embeddings): # List of tuples
         conf["embedding"] = emb
 
     # add deadline month and day fields
