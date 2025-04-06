@@ -1,12 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import pdfplumber  
+import pandas as pd 
 import re
 import random
 import time
 from fuzzywuzzy import fuzz
-import io
 
 #URLS
 CORE_URL = "https://portal.core.edu.au/conf-ranks/"

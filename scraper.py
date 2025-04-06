@@ -1,15 +1,11 @@
 from openai import OpenAI
-
 import os
 from bs4 import BeautifulSoup
-import time
-import datetime
 import requests
 from dotenv import load_dotenv
-import pandas
+import pandas as pd
 import json
-
-
+from searchURL import search_conference_website
 load_dotenv()
 
 MODELS = {''
@@ -20,10 +16,10 @@ MODELS = {''
         "size": 3072,
     }
 }
-
-CITE_URL = "https://cse.iitm.ac.in/~icdcn2024/"
+scored_conferences = pd.read_csv("Conference_Scores.csv")
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 # Takes website and creates a parse tree from the HTML code
 def fetch_page_content(url):
@@ -53,7 +49,7 @@ def fetch_page_content(url):
 
 # Creates blank data to "reset" .csv files for new data
 def reset_csv():
-    data_frame = pandas.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
+    data_frame = pd.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
     data_frame.to_csv('test.csv', index=False) 
     return data_frame
 
@@ -127,40 +123,54 @@ def extract_conference_details(page_content):
         
     )
     # .tool_calls is used when you are using a tool function. .content is just for plain text
-    structured_data = json.loads(completion.choices[0].message.tool_calls[0].function.arguments)
-    return structured_data
+    try:
+        # Safely access tool_calls
+        if completion.choices[0].message.tool_calls:
+            structured_data = json.loads(completion.choices[0].message.tool_calls[0].function.arguments)
+            return structured_data
+        else:
+            print("No tool calls were made or the tool failed to respond.")
+            return {}
+    except (IndexError, TypeError, json.JSONDecodeError) as e:
+        print(f"Error extracting conference details: {e}")
+        return {}
 
 # Writes the DataFrame to a CSV file
 # df.to_csv('test.csv', index=False) 
 def save_to_csv(data):
-    df = pandas.DataFrame([data])
-    existing_df = pandas.read_csv('test.csv')
+    # Log the data for inspection
+    print("Data received for saving:", data)
 
-
-    if data["conference"] in existing_df["conference"].values:
-        print("Skipped Confrence:",  data["conference"])
+    # Check if 'conference' key exists in the data dictionary
+    if not data or "conference" not in data:
+        print("Error: Missing 'conference' key in data.")
         return
 
+    df = pd.DataFrame([data])
+    try:
+        existing_df = pd.read_csv('test.csv')
+    except FileNotFoundError:
+        # If the file doesn't exist, create a new one
+        existing_df = pd.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
 
-    
-    df = pandas.concat([existing_df, df], ignore_index = True)
-    df.to_csv("test.csv", index = False)
-    # Index = False means each row is not assigned an index val
-    print("blorg", existing_df["conference"].values)
+    # Check for duplicate entry
+    if data["conference"] in existing_df["conference"].values:
+        print("Skipped Conference:", data["conference"])
+        return
 
-    # h5_scores = pandas.read_csv('csa_with_h5_scores.csv')
-    # bloop = pandas.read_csv('test copy.csv')
-    # bloop["h5_index"] = h5_scores["h5_index"]
-    # bloop["h5_median"] = h5_scores["h5_median"]
-    # bloop.to_csv("test copy.csv", index = False)
-    
+    # Append new data and save
+    df = pd.concat([existing_df, df], ignore_index=True)
+    df.to_csv("test.csv", index=False)
+    print("Data saved successfully.")
 
 def main():
-    page_content = fetch_page_content(CITE_URL)
-    print(page_content)
-    extracted_results = extract_conference_details(page_content)
-    print(extracted_results)
-    save_to_csv(extracted_results)
-
+    for name, acronym in zip(scored_conferences["Title"], scored_conferences["Acronym"].fillna("")):
+        print(name, acronym)
+        CITE_URL = search_conference_website(name, acronym)
+        print(CITE_URL)
+        page_content = fetch_page_content(CITE_URL)
+        extracted_results = extract_conference_details(page_content)
+        print(extracted_results)
+        save_to_csv(extracted_results)
 if __name__ == '__main__':
     main()
