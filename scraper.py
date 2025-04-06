@@ -16,8 +16,6 @@ MODELS = {''
         "size": 3072,
     }
 }
-scored_conferences = pd.read_csv("Conference_Scores.csv")
-
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
@@ -136,41 +134,52 @@ def extract_conference_details(page_content):
         return {}
 
 # Writes the DataFrame to a CSV file
-# df.to_csv('test.csv', index=False) 
-def save_to_csv(data):
-    # Log the data for inspection
-    print("Data received for saving:", data)
-
+def save_to_csv(data, url):
     # Check if 'conference' key exists in the data dictionary
     if not data or "conference" not in data:
         print("Error: Missing 'conference' key in data.")
         return
 
+    # Add the URL to the data dictionary
+    data["url"] = url
+
+    # Create a DataFrame from the data dictionary
     df = pd.DataFrame([data])
     try:
+        # Try to read the existing CSV file
         existing_df = pd.read_csv('test.csv')
     except FileNotFoundError:
-        # If the file doesn't exist, create a new one
-        existing_df = pd.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
+        # If the file doesn't exist, create a new one with necessary columns
+        existing_df = pd.DataFrame(columns=[
+            "conference", "url", "deadline", "notification", 
+            "start", "end", "location", "topics"
+        ])
 
-    # Check for duplicate entry
+    # Check for duplicate entry based on the 'conference' field
     if data["conference"] in existing_df["conference"].values:
-        print("Skipped Conference:", data["conference"])
-        return
+        # Update the existing row instead of appending
+        existing_df.loc[existing_df["conference"] == data["conference"], "url"] = url
+        print("Updated existing conference entry:", data["conference"])
+    else:
+        # Append new data to the existing DataFrame
+        existing_df = pd.concat([existing_df, df], ignore_index=True)
+        print("Added new conference entry:", data["conference"])
 
-    # Append new data and save
-    df = pd.concat([existing_df, df], ignore_index=True)
-    df.to_csv("test.csv", index=False)
+    # Save the updated DataFrame back to the CSV file
+    existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
+scored_conferences = pd.read_csv("Conference_Scores.csv")
 def main():
     for name, acronym in zip(scored_conferences["Title"], scored_conferences["Acronym"].fillna("")):
         print(name, acronym)
         CITE_URL = search_conference_website(name, acronym)
-        print(CITE_URL)
+        if not CITE_URL:
+            print(f"URL not found for {name}")
+            continue
         page_content = fetch_page_content(CITE_URL)
         extracted_results = extract_conference_details(page_content)
         print(extracted_results)
-        save_to_csv(extracted_results)
+        save_to_csv(extracted_results, CITE_URL)
 if __name__ == '__main__':
     main()
