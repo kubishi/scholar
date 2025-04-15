@@ -200,6 +200,14 @@ def save_to_csv(df, filename):
     except Exception as e:
         print(f"Error saving file: {e}")
 
+def clean_df(df):
+    
+    ranking_columns = ['CORE2023', 'CORE2021', 'CORE2020', 'CORE2018', 'CORE2017', 'CORE2014', 'CORE2013']
+    
+    #Remove any conferences that only have ERA, or h5 metrics. 
+    filtered_df = df[df[ranking_columns].notna().any(axis=1)]
+    return filtered_df
+
 def main():
     # Scrape CORE rankings
     print("Fetching CORE + ERA rankings ...")
@@ -209,6 +217,8 @@ def main():
     # Scrape h5 rankings:
     print("\nFetching h5 scores...")
     h5_with_core_df = extract_all_h5scores(core_df)
+    
+    h5_with_core_df = clean_df(h5_with_core_df)
 
     # Save to CSV
     save_to_csv(h5_with_core_df, "Conference_Scores.csv")
