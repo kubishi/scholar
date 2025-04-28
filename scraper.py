@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import pandas as pd
 import json
 from searchURL import search_conference_website
+from braveSearch import brave_search_conference_website
+import time
 load_dotenv()
 
 MODELS = {''
@@ -52,7 +54,7 @@ def reset_csv():
     return data_frame
 
 # Uses OpenAI to find specific info from the webpage and prompts AI to analyze data
-def extract_conference_details(page_content):
+def extract_conference_details(page_content: str):
     tools = [{
         "type": "function",
         "function": {
@@ -169,17 +171,19 @@ def save_to_csv(data, url):
     existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
-scored_conferences = pd.read_csv("Conference_Scores.csv")
+scored_conferences = pd.read_csv("data.csv")
 def main():
     for name, acronym in zip(scored_conferences["Title"], scored_conferences["Acronym"].fillna("")):
+        time.sleep(2)
         print(name, acronym)
-        CITE_URL = search_conference_website(name, acronym)
+        CITE_URL = brave_search_conference_website(name, acronym)
+        print(CITE_URL)
         if not CITE_URL:
             print(f"URL not found for {name}")
             continue
         page_content = fetch_page_content(CITE_URL)
         extracted_results = extract_conference_details(page_content)
         print(extracted_results)
-        save_to_csv(extracted_results, CITE_URL)
+        # save_to_csv(extracted_results, CITE_URL)
 if __name__ == '__main__':
     main()

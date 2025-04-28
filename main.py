@@ -24,6 +24,7 @@ MODELS = {
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 
+
 thisdir = pathlib.Path(__file__).parent.resolve()
 datapath = thisdir / 'data.csv'
 pc = Pinecone(api_key=PINECONE_API_KEY)
