@@ -32,6 +32,6 @@ def search_conference_website(conf_name, conf_acronym):
             return(url_match.group(0))
     return None
 
-print(search_conference_website("1st International Conference on Building Energy and Environment", "COBEE"))
+
 
 

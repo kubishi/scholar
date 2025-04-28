@@ -1,93 +1,111 @@
-conference,url,deadline,notification,start,end,location,topics, new_name
-COBEE,https://cobee2025.cobee2025.org/?utm_source=openai,01-10-2024,26-11-2024,06-07-2025,10-07-2025,"Eindhoven, Netherlands","Building energy systems
-Environmental sustainability
-Architectural design and technology
-Facility management
-Energy efficiency
-Policy and regulations
-Renewable energy integration
-Indoor environmental quality
-Smart buildings
-Climate impact assessment",6th International Conference on Building Energy and Environment
-ICBRB,https://cognitionconferences.com/biomedicalrobotics/?utm_source=openai,"March 20, 2024",,20-10-2025,22-10-2025,"Rome, Italy","Innovations in Robotic-Assisted Surgery
-Biomechatronics: Integrating Robotics with Human Physiology
-Advances in Prosthetics: Enhancing Mobility with Robotics
-Wearable Robotics: A New Era in Rehabilitation
-Artificial Intelligence in Biomedical Robotics: A Game-Changer in Healthcare
-Robot-Assisted Rehabilitation for Neurological Disorders
-Exoskeletons for Mobility & Rehabilitation: Latest Trends
-Bionic Limbs: From Concept to Clinical Applications
-Robotic Systems for Minimally Invasive Surgery
-Human-Robot Interaction: Enhancing the Patient Experience
-Advanced Sensors in Biomechatronics for Real-Time Health Monitoring
-The Future of Telemedicine: Robotics in Remote Surgery and Care",International Conference on Biomedical Robotics & Biomechatronics
-CI,https://ci.acm.org/2025/?utm_source=openai,01-04-2025,01-05-2025,04-08-2025,06-08-2025,"La Jolla, CA","collective intelligence
-human computation
-crowdsourcing
-diverse intelligence
-cognitive science
-computer science
-sociology
-ecology
-network science
-economics",ACM Collective Intelligence 2025
-AAEE,https://aaee2025.org/?utm_source=openai,11-04-2025,23-05-2025,07-12-2025,10-12-2025,"Brisbane, Australia","Engineering education
-Human centred skills
-Generative AI
-Industry changes
-Pedagogy
-Student experiences
-Engineering profession
-Diversity in education
-Systems view of engineering education
-Cognitive aspects of learning",36th Australasian Association for Engineering Education Annual Conference
-CF,https://www.computingfrontiers.org/2025/?utm_source=openai,20-01-2025,15-03-2025,28-05-2025,30-05-2025,"Cagliari, Sardinia, Italy","novel computational models and algorithms
-new application paradigms
-computer architecture
-computing hardware
-memory technologies
-networks
-storage solutions
-compilers and environments
-AI for system optimizations
-security and privacy",22nd ACM International Conference on Computing Frontiers
-SIGCOMM,https://conferences.sigcomm.org/sigcomm/2025/?utm_source=openai,18-05-2025,24-01-2025,08-09-2025,11-09-2025,"Coimbra, Portugal","Data Communication
-Networking Protocols
-Network Architectures
-Internet of Things
-Wireless Networks
-Network Security
-Network Management
-Quality of Service
-High-Performance Networks
-Next-Generation Networking",ACM Conference on Data Communication
-CSCW,https://cscw.acm.org/2025/?utm_source=openai,"May 13, 2025",Early 2025,18-10-2025,22-10-2025,"Bergen, Norway","Design and use of technologies for collaborative work
-Technical challenges in CSCW
-Social dynamics in collaborative settings
-Material aspects of collaborative technologies
-Theoretical foundations of CSCW
-Support for community and organizational work
-Technological interventions in social computing
-User experience design for cooperative systems
-Evaluation methods in CSCW
-Emerging trends in cooperative work environments",28th ACM Conference on Computer-Supported Cooperative Work and Social Computing
-ACM CCS,https://www.sigsac.org/ccs/CCS2025/?utm_source=openai,"Submission site for cycle A is opened! - December 22, 2024; Submission site for cycle B is opened! - March 31, 2025",,"October 13, 2025","October 17, 2025","Taipei, Taiwan","Information Security
-Computer Security
-Network Security
-Cryptography
-Privacy
-Risk Management
-Data Protection
-Vulnerability Analysis
-Access Control
-Incident Response",The ACM Conference on Computer and Communications Security
-JCDL,https://jcdl.hosting.acm.org/?utm_source=openai,Not specified,Not specified,16-12-2024,20-12-2024,Hong Kong,"digital libraries
-technical issues
-practical issues
-social issues
-ACM Digital Libraries
-IEEE-CS Advances in Digital Libraries
-Best Paper Award
-Best Student Paper Award
-Best International Paper Award
-Best Poster award",Joint Conference on Digital Libraries
+conference,url,deadline,notification,start,end,location,topics, new_name,name
+ISSAC,https://www.issac-conference.org/2025/,"January 30th, 2025","April 23rd, 2025",28-07-2025,01-08-2025,"Guanajuato, Mexico","Exact and symbolic linear, polynomial and differential algebra
+Symbolic-numeric, homotopy, perturbation and series methods
+Computational algebraic geometry, polynomial and semialgebraic optimization
+Computational group theory and number theory, quantifier elimination and logic
+Computer arithmetic
+Summation, recurrence equations, integration, solution of ODEs & PDEs
+Symbolic methods in other areas of pure and applied mathematics
+Complexity of algebraic algorithms and algebraic complexity
+Design of symbolic computation packages and systems
+Applications that stretch the current limits of computer algebra algorithms or systems.",,International Symposium on Symbolic and Algebraic Computation
+CoopIS,https://coopisconference.org/,TBA,TBA,20-10-2025,22-10-2025,"Marbella, Spain","Cooperative Information Systems
+Distributed Systems
+Coordination Technologies
+Collaborative Decision Making
+Enterprise Architecture
+Business Process Management
+Conceptual Modelling
+Cloud Computing
+Service Oriented Computing
+Internet of Things",,International Conferences on Cooperative Information Systems
+AAMAS,https://aamas2025.org/,09-10-2024,23-12-2024,19-05-2025,23-05-2025,"Detroit, Michigan, USA","Agents and Multiagent Systems
+Agent Technologies
+Autonomous Agents
+Machine Learning for Agents
+Robotics and Agents
+Agent-Based Simulation
+Social Agent Systems
+Game Theory and Multiagent Systems
+Distributed AI
+Negotiation and Coordination",,24th International Conference on Autonomous Agents and Multiagent Systems
+PODC,https://www.podc.org/,05-05-2025,17-04-2025,16-06-2025,20-06-2025,"Huatulco, Mexico","biological distributed algorithms and systems
+blockchain and decentralized finance protocols
+coding and reliable communication
+communication networks
+combinatorics and topology of distributed computing
+concurrency, synchronization, and persistence
+design and analysis of distributed algorithms
+distributed and cloud storage
+distributed and concurrent data structures
+distributed computation for large-scale data",,ACM Symposium on Principles of Distributed Computing
+SIROCCO,https://www.torontomu.ca/sirocco-2025/,02-11-2024,31-01-2025,01-06-2025,04-06-2025,"Delphi, Greece","Structural knowledge
+Communication
+Computing in decentralized systems
+Methodological approaches
+Solution approaches
+Understanding computing and communication
+Multi-entity communication
+Interplay between structural knowledge and communication
+Challenges in computer science
+Innovations in communication complexity",,32nd International Colloquium On Structural Information and Communication Complexity
+WALCOM,http://www.walcom-conference.org/,Not specified,Not specified,18-03-2024,20-03-2024,"Kanazawa, Japan","Algorithms
+Computation
+Computer Science
+Data Structures
+Theory of Computation
+Optimization
+Graph Theory
+Complexity Theory
+Parallel Computing
+Applications of Algorithms",,International Conference and Workshops on Algorithms and Computation
+ICDCN,https://cse.iith.ac.in/icdcn-2025/,Not Mentioned,Not Mentioned,04-01-2025,07-01-2025,"Hyderabad, India","Distributed Computing
+Networking
+Communication Networks
+Research and Development
+Distributed Systems
+Algorithms
+Security and Privacy
+Cloud Computing
+Edge Computing
+Data Management",,International Conference on Distributed Computing and Networking
+ICALP,https://conferences.au.dk/icalp2025,08-02-2025,14-04-2025,08-07-2025,11-07-2025,"Aarhus, Denmark","Automata Theory
+Formal Languages
+Computational Complexity
+Algorithms
+Data Structures
+Graph Theory
+Randomized Algorithms
+Quantum Computing
+Approximation Algorithms
+Cryptography",,"52nd EATCS International Colloquium on Automata, Languages, and Programming"
+LATIN,http://www.wikicfp.com/cfp/program?id=1941,"October 9, 2023","December 20, 2023","March 18, 2024","March 22, 2024","Puerto Varas, Chile","algorithmic game theory
+approximation algorithms
+analytic combinatorics and analysis of algorithms
+automata theory and formal languages
+combinatorial algorithms
+combinatorial optimization
+combinatorics and graph theory
+complexity theory
+computational geometry
+computational social choice",,16th Latin American Theoretical Informatics Symposium
+ALGOWIN,https://www.algosensors-symposium.org/,TBA,TBA,15-09-2025,19-09-2025,"Warsaw, Poland","Algorithmic aspects of wireless networks
+Design and analysis of algorithms
+Models of computation
+Experimental analysis
+Algorithmic issues in sensor networks
+Algorithmic issues in sensor-actuator networks
+Algorithmic issues in autonomous robots
+Static and mobile computational entities
+Broad scope of wireless networks
+Algorithmic challenges in wireless communications",,International Symposium on Algorithmics of Wireless Networks 2025
+CIAC,https://easyconferences.eu/ciac2025/,"November 25, 2024","January 31, 2025",10-06-2025,12-06-2025,"Rome, Italy","Computational complexity
+Efficient algorithms
+Data structures
+Algorithm design
+Algorithm analysis
+Experimental algorithms
+Complexity theory
+Algorithmic applications
+Approximation algorithms
+Randomized algorithms",,14th International Conference on Algorithms and Complexity
