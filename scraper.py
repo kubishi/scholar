@@ -8,6 +8,7 @@ import json
 from searchURL import search_conference_website
 from braveSearch import brave_search_conference_website
 import time
+import random
 load_dotenv()
 
 MODELS = {''
@@ -23,7 +24,31 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Takes website and creates a parse tree from the HTML code
 def fetch_page_content(url):
-    response = requests.get(url)
+     # Headers to mimic a real browser request
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+    ]
+
+    # Headers to mimic a real browser request
+    #You can get away without using this super fancy header, but should help from getting google ip banning
+    headers = {
+        "User-Agent": random.choice(user_agents),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Referer": "https://scholar.google.com/",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+        "DNT": "1", 
+    }
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     for script_or_style in soup(["script", "style"]):
         script_or_style.extract()
