@@ -1,0 +1,100 @@
+Title,Acronym,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median
+3-D Digital Imaging and Modelling,3DIM,,,,C,C,C,C,C,,
+A Satellite workshop on Formal Approaches to Testing of Software,FATES,,,,C,C,C,C,C,,
+AAAI Conference on Human Computation and Crowdsourcing,HCOMP,B,B,,,,,,,,
+"ACIS Conference on Software Engineering Research, Management and Applications",SERA,C,C,C,C,C,C,C,C,,
+ACM Annual Computer Science Conference,CSC,,,,C,C,C,C,C,,
+"ACM Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication",SIGCOMM,A*,A*,A*,A*,A*,A*,A*,A,,
+ACM Conference on Computer Supported Cooperative Work,CSCW,A,A,A,A,A,A,A,A,24.0,31.0
+ACM Conference on Computer and Communications Security,CCS,A*,A*,A*,A*,A*,A*,A*,A,92.0,136.0
+ACM Conference on Digital Libraries,JCDL,,,,A*,A*,A*,A*,,23.0,33.0
+ACM Conference on Economics and Computation,EC,A*,A*,A*,A*,B,B,B,B,3.0,3.0
+ACM Conference on Embedded Networked Sensor Systems,SENSYS,A*,A*,A*,A*,A*,A*,A*,A,39.0,64.0
+ACM Conference on Embedded Software,EMSOFT,Journal published,Journal published,A,A,A,A,A,A,,
+ACM Conference on Hypertext and Social Media,Hypertext,,,,A,A,A,A,A,,
+ACM Conference on Object Oriented Programming Systems Languages and Applications,OOPSLA,A,A,A*,A*,A*,A*,A*,A,,
+ACM Conference on Security and Privacy in Wireless and Mobile Networks,ACM_WiSec,B,,,,,,,,,
+ACM Digital Rights Management Workshop,DRM,,,,C,C,C,C,C,,
+ACM Information Technology Education,SIGITE,National: USA,National: USA,National: USA,C,C,C,C,C,,
+ACM Int'l Symposium on Field Programmable Gate Arrays,FPGA,TBR,,,,,,,,40.0,62.0
+"ACM International Conference on Advances in Computer Entertainment (merged with DIMEA, Digital Interactive Media in Entertainment and Arts, in 2009)",ACE,C,B,B,B,B,B,B,B,,
+ACM International Conference on Advances in Geographic Information Systems,SIGSPATIAL,A,A,National: USA,A,B,B,B,B,,
+ACM International Conference on Emerging Networking Experiments and Technologies,CoNEXT,A,A,A,A,A,A,A,A,30.0,43.0
+ACM International Conference on Information and Knowledge Management,CIKM,A,A,A,A,A,A,A,A,91.0,133.0
+ACM International Conference on Interactive Surfaces and Spaces (was International Workshop on Horizontal Interactive Human-Computer Systems: Tabletop),ISS,Journal Published,Journal Published,A,A,A,A,B,B,14.0,19.0
+ACM International Conference on Knowledge Discovery and Data Mining,KDD,A*,A*,A*,A*,A*,A*,A*,A,124.0,213.0
+ACM International Conference on Mobile Computing and Networking,MOBICOM,A*,A*,A*,A*,A*,A*,A*,A,24.0,42.0
+ACM International Conference on Recommender Systems,RecSys,A,A,B,B,B,B,B,B,53.0,81.0
+ACM International Conference on Research and Development in Information Retrieval,SIGIR,A*,A*,A*,A*,A*,A*,A*,A,103.0,149.0
+ACM International Conference on Supercomputing,ICS,A,A,A,A,A,A,A,A,26.0,37.0
+ACM International Conference on Systems for Energy-Efficient Built Environments,BuildSys,,,,A,,,,,,
+ACM International Conference on Web Search and Data Mining,WSDM,A,A*,A*,A*,A*,A*,B,B,77.0,130.0
+"ACM International Conference on the Foundations of Software Engineering (was ESEC/FSE, changed 2024; duplicate previously listed as ESEC, removed from DB)",FSE,A*,A*,A*,A*,B,A,A,A,62.0,103.0
+ACM International Joint Conference on Pervasive and Ubiquitous Computing (PERVASIVE and UbiComp combined from 2013),UbiComp,journal published,journal published,journal published,A*,A*,A*,A*,A,27.0,44.0
+ACM International Symposium on Computer Architecture,ISCA,A*,A*,A*,A*,A*,A*,A*,A,62.0,96.0
+ACM International Symposium on High Performance Distributed Computing,HPDC,A,A,A,A,A,A,A,A,21.0,34.0
+ACM International Wireless Communications and Mobile Computing Conference,IWCMC,B,B,B,B,B,B,B,B,35.0,49.0
+ACM International Workshop On Multimedia Databases,MMDB,,,,C,C,C,C,C,,
+ACM Multimedia,ACMMM,A*,A*,A*,A*,A*,A*,A*,A,101.0,138.0
+ACM SIG International Conference on Computer Graphics and Interactive Techniques,SIGGRAPH,A*,A*,A*,A*,A*,A*,A*,A,,
+ACM SIGCHI_NZ Conference on Human-Computer Interaction,SIGCHI-NZ,,,,Australasian,Australasian,Australasian,Australasian,C,,
+ACM SIGGRAPH/Eurographics Symposium on Computer Animation,SCA,B,B,B,B,B,B,B,B,,
+ACM SIGIR Workshop on XML and Information Retrieval,SIGIR/XML,,,,C,C,C,C,C,,
+ACM SIGMIS Computers and People Research,ACM-SIGMIS CPR,,,,B,B,B,B,B,,
+"ACM SIGMOBILE International Conference on Mobile Systems, Applications and Services",Mobisys,A,B,B,B,B,B,B,B,,
+ACM SIGMOD-SIGACT-SIGART Conference on Principles of Database Systems,PODS,A*,A*,A*,A*,A*,A*,A*,A,24.0,30.0
+ACM SIGOPS Symposium on Operating Systems Principles,SOSP,A*,A*,A*,A*,A*,A*,A*,A,,
+"ACM SIGPLAN Conference on Languages, Tools, and Compilers for Embedded Systems",LCTES,B,B,A,A,A,A,A,A,,
+ACM SIGPLAN Workshop on Partial Evaluation and Program Manipulation,PEPM,C,C,B,B,B,B,B,B,,
+ACM SIGPLAN Workshop on Types in Language Design and Implementation (was TIC),TLDI,,,,C,C,C,C,C,,
+ACM SIGSIM Conference on Principles of Advanced Discrete Simulation (was Parallel and Distributed Simulation),PADS,B,B,B,B,B,B,B,B,,
+ACM SIGSOFT Workshop on Program Analysis for Software Tools and Engineering,PASTE,,,,,B,B,B,B,,
+ACM SIGUCCS Conference on User Services,SIGUCCS,National: USA,National: USA,National: USA,C,C,C,C,C,,
+ACM Special Interest Group on Computer Science Education Conference,SIGCSE,A,A,A,A,A,A,A,A,,
+ACM Special Interest Group on Management of Data Conference,SIGMOD,A*,A*,A*,A*,A*,A*,A*,A,,
+ACM Special Interest Group on Supporting Group Work (was SIGGRoup),Group,B,,,B,B,B,B,B,,
+"ACM Symposium on Access Control Models and Technologies (previously ACM Workshop on Role-Based Access Control, RBAC, changed in 2000)",SACMAT,C,C,C,C,C,C,C,C,16.0,28.0
+ACM Symposium on Applied Computing,SAC,Multiconference,Multiconference,B,B,B,B,B,B,36.0,50.0
+ACM Symposium on Document Engineering,DocEng,B,B,B,B,B,B,A,,13.0,21.0
+ACM Symposium on Mobile Ad Hoc Networking and Computing,MOBIHOC,A,A,A,A,A,A,A,A,24.0,42.0
+ACM Symposium on Principles of Database Systems,SPDS,,,,C,C,C,C,C,24.0,30.0
+ACM Symposium on Principles of Distributed Computing,PODC,A*,A*,A*,A*,A*,A*,A*,A,30.0,51.0
+ACM Symposium on Software Reusability,SSR,,,,A,A,A,A,,,
+ACM Symposium on Solid and Physical Modelling,SPM,C,B,B,B,B,B,B,B,,
+ACM Symposium on Theory of Computing,STOC,A*,A*,A*,A*,A*,A*,A*,A,57.0,84.0
+ACM Symposium on User Interface Software and Technology,UIST,A*,A*,A,A,A,A,A,A,51.0,72.0
+ACM Virtual Reality Software and Technology,VRST,A,A,A,A,A,A,A,A,26.0,38.0
+ACM Workshop on Formal Methods in Security Engineering: From Specifications to Code,FMSE,,,,C,C,C,C,C,,
+ACM Workshop on Hot Topics in Networks,HOTNETS,National: USA,National: USA,National: USA,A,A,A,A,A,22.0,32.0
+ACM Workshop on Hot Topics in Software Upgrades,HotSWUp,,,,C,C,C,C,C,,
+ACM Workshop on Role Based Access Control (now SACMAT),RBAC,,,,,,C,C,C,,
+ACM Workshop on Scalable Trusted Computing,STC,,,,B,B,B,B,B,,
+ACM Workshop on Secure Web Services,SWS,,,,C,C,C,C,C,,
+ACM Workshop on Web Information and Data Management,WIDM,,,,B,B,B,B,B,,
+ACM-SIGACT Symposium on Principles of Programming Languages,POPL,A*,A*,A*,A*,A*,A*,A*,A,,
+ACM-SIGPLAN Conference on Programming Language Design and Implementation,PLDI,A*,A*,A*,A*,A*,A*,A*,A,51.0,82.0
+ACM-SIGRAPH Interactive 3D Graphics and Games,I3DG,B,B,B,B,B,B,A*,A,,
+ACM/IEEE International Conference on Distributed Smart Cameras,ICDSC,,B,B,B,B,B,B,B,,
+ACM/IEEE International Conference on Human-Robot Interaction,HRI,A,,,,,,,,54.0,76.0
+"ACM/IEEE International Conference on Modelling, Analysis and Simulation of Wireless and Mobile Systems",MSWIM,A,A,A,A,A,A,A,A,,
+ACM/IEEE Symposium on Edge Computing,SEC,unranked,unranked,,,,,,,17.0,26.0
+ACM/IFIP/USENIX International Middleware Conference,Middleware,A,A,A,A,A,A,A,A,,
+ACM/SIAM Symposium on Discrete Algorithms,SODA,A*,A*,A*,A*,A*,A*,A*,A,55.0,77.0
+ACM/SPEC International Conference on Performance Engineering,ICPE,B,B,,,,,,,23.0,32.0
+ACM/SPIE Multimedia Computing and Networking,MMCN,,,,A,A,A,A,A,,
+ACS/IEEE International Conference on Computer Systems and Applications,AICCSA,C,C,C,C,C,C,C,C,,
+ASIAN Symposium on Programming Languages and Systems,APLAS,B,B,B,B,B,B,B,B,,
+Accounting and Finance Association of Australia and New Zealand Conference,AFAANZ,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Active and Real-Time Database Systems,ARTDB,,,,C,C,C,C,C,,
+Advanced Concepts for Intelligent Vision Systems,ACIVS,B,B,B,B,B,B,B,B,,
+Advanced Course on Artificial Intelligence,ACAI,,,,C,C,C,C,C,,
+Advanced Research in VLSI,ARVLSI,,,,C,C,C,C,C,,
+Advanced Visual Interfaces,AVI,B,B,B,B,B,B,B,B,15.0,22.0
+Advances in Cryptology,CRYPTO,A*,A*,A*,A*,A*,A*,A*,A,61.0,95.0
+Advances in Information Systems,ADVIS,,,,C,C,C,C,C,27.0,36.0
+Advances in Intelligent Systems,AIS,,,,C,C,C,C,C,40.0,48.0
+Advances in Modal Logic,AiML,B,B,A,A,A,A,A,A,,
+Advances in Neural Information Processing Systems (was NIPS),NeurIPS,A*,A*,A*,A*,A*,A*,A*,A,,
+Advances in the Theory of Computing,AITC,,,,C,C,C,C,C,,
+Agent-Oriented Information Systems Workshop,AOIS,,,,,,B,B,B,,
+Algebraic Methodology and Software Technology,AMAST,,,,C,C,C,C,C,,

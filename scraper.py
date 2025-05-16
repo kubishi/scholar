@@ -8,7 +8,6 @@ import json
 from searchURL import search_conference_website
 from braveSearch import brave_search_conference_website
 import time
-import random
 load_dotenv()
 
 MODELS = {''
@@ -23,54 +22,28 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # Takes website and creates a parse tree from the HTML code
-def fetch_page_content(url):
-     # Headers to mimic a real browser request
-    user_agents = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-    ]
-
-    # Headers to mimic a real browser request
-    #You can get away without using this super fancy header, but should help from getting google ip banning
+def fetch_page_content(url, max_retries=3, delay=2):
     headers = {
-        "User-Agent": random.choice(user_agents),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
-        "Referer": "https://scholar.google.com/",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-User": "?1",
-        "Upgrade-Insecure-Requests": "1",
-        "DNT": "1", 
-    }
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
-    for script_or_style in soup(["script", "style"]):
-        script_or_style.extract()
-    page_content = soup.get_text(separator="\n")
-    page_content = "\n".join(
-        line.strip() for line in page_content.splitlines() if line.strip()
-    )
-    #page_content = soup.prettify() #GETS MORE INFO BUT IS MUCH SLOWER
-    return page_content
-
-
-# Specifically targeting different HTML tags
-# title = soup.find("title").get_text(strip=True) if soup.find("title") else "No Title Found"
-# headings = [h.get_text(strip=True) for h in soup.find_all(["h1", "h2", "h3"])]
-# paragraphs = [p.get_text(strip=True) for p in soup.find_all("p")]
-# list_items = [li.get_text(strip=True) for li in soup.find_all("li")]
-
-# Combine extracted data
-# page_content = f"Title: {title}\n\n"
-# page_content += "Headings:\n" + "\n".join(headings) + "\n\n"
-# page_content += "Paragraphs:\n" + "\n".join(paragraphs[:5]) + "\n\n"  # Limit paragraphs to avoid too much text
-# page_content += "List Items:\n" + "\n".join(list_items[:10])  # Limit to first 10 list items
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+                "Referer": "https://research.kubishi.com"
+            }
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, "html.parser")
+            for script_or_style in soup(["script", "style"]):
+                script_or_style.extract()
+            page_content = soup.get_text(separator="\n")
+            page_content = "\n".join(
+                line.strip() for line in page_content.splitlines() if line.strip()
+            )
+            return page_content
+        except (requests.RequestException, Exception) as e:
+            print(f"Attempt {attempt + 1} failed for {url}: {e}")
+            time.sleep(delay)
+    print(f"Skipping {url} after {max_retries} failed attempts.")
+    return None
 
 # Creates blank data to "reset" .csv files for new data
 def reset_csv():
@@ -196,7 +169,7 @@ def save_to_csv(data, url):
     existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
-scored_conferences = pd.read_csv("data.csv")
+scored_conferences = pd.read_csv("100conference.csv")
 def main():
     for name, acronym in zip(scored_conferences["Title"], scored_conferences["Acronym"].fillna("")):
         time.sleep(2)
@@ -207,8 +180,9 @@ def main():
             print(f"URL not found for {name}")
             continue
         page_content = fetch_page_content(CITE_URL)
-        extracted_results = extract_conference_details(page_content)
-        print(extracted_results)
-        # save_to_csv(extracted_results, CITE_URL)
+        if page_content:
+            extracted_results = extract_conference_details(page_content)
+            print(extracted_results)
+            save_to_csv(extracted_results, CITE_URL)
 if __name__ == '__main__':
     main()

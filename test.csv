@@ -1,35 +1,491 @@
 conference,url,deadline,notification,start,end,location,topics, new_name,name
-ISSAC,https://www.issac-conference.org/2025/,"January 30th, 2025","April 23rd, 2025",28-07-2025,01-08-2025,"Guanajuato, Mexico","Exact and symbolic linear, polynomial and differential algebra
-Symbolic-numeric, homotopy, perturbation and series methods
-Computational algebraic geometry, polynomial and semialgebraic optimization
-Computational group theory and number theory, quantifier elimination and logic
-Computer arithmetic
-Summation, recurrence equations, integration, solution of ODEs & PDEs
-Symbolic methods in other areas of pure and applied mathematics
-Complexity of algebraic algorithms and algebraic complexity
-Design of symbolic computation packages and systems
-Applications that stretch the current limits of computer algebra algorithms or systems.",,International Symposium on Symbolic and Algebraic Computation
-CoopIS,https://coopisconference.org/,TBA,TBA,20-10-2025,22-10-2025,"Marbella, Spain","Cooperative Information Systems
-Distributed Systems
-Coordination Technologies
-Collaborative Decision Making
-Enterprise Architecture
-Business Process Management
-Conceptual Modelling
+3D-IMAGING,https://spie.org/DCS/conferencedetails/three-dimensional-imaging-visualization-and-display,15-09-2025,14-10-2025,03-08-2025,07-08-2025,"San Diego, California","algorithms for 3D image processing systems
+augmented/virtual Reality, and head mounted displays
+devices for 3D imaging/TV/video/visualization systems
+hardware for 3D visualization/TV/video/imaging systems
+applications of optical devices for 3D visualization/TV/video/imaging systems
+holographic applications in 3D visualization/TV/video/imaging
+electro-holography methods/displays
+digital holography for 3D imaging, microscopy
+3D image sensing systems
+3D image processing",,"Three-Dimensional Imaging, Visualization, and Display"
+FASE,https://etaps.org/2025/conferences/fase/,,,,,,"applications of AI to software engineering
+software engineering foundations for AI-based systems
+software quality and testing
+software engineering as an engineering discipline
+ethical and responsible software engineering
+requirements engineering
+software architectures
+specification, design, and implementation of particular classes of systems
+model-driven engineering
+software processes
+software evolution",,28th International Conference on Fundamental Approaches to Software Engineering
+HCOMP,https://aaai.org/conference/hcomp/,Not specified,Not specified,16-10-2024,19-10-2024,"Pittsburgh, Pennsylvania, USA","Artificial Intelligence
+Human Computation
+Crowdsourcing
+Social Issues in AI
+Philosophical Issues in AI
+Economic Issues in AI
+Theoretical AI
+Applied AI
+Research Practices
+Technical Program",,AAAI Conference on Human Computation and Crowdsourcing
+SERA,https://acisinternational.org/conferences/sera-2025/,"March 28, 2025","April 11, 2025",29-05-2025,31-05-2025,"Las Vegas, USA","Software Engineering
+Management
+Applications
+Research Results
+Industry Practices
+Cross-fertilization
+Technology Enabling Areas
+Submission Instructions
+Keynote Speakers
+Accepted Papers
+Conference Program",,"23rd IEEE/ACIS International Conference on Software Engineering, Management and Applications"
+WebSci,https://www.acm.org/conferences,Not specified,Not specified,20-05-2025,24-05-2025,"New Brunswick, New Jersey, USA","Web Science
+Interdisciplinary Research
+Human-centric Web Research
+Web Ethics
+Web Policy
+Data and Society
+Web Technologies
+Social Impact
+Digital Interaction
+Web Applications",,17th ACM Web Science Conference
+SIGCOMM,http://www.wikicfp.com/cfp/program?id=2660,31-01-2025,24-01-2025,08-09-2025,11-09-2025,"Coimbra, Portugal","network communication
+network systems
+network life cycle
+computer networks
+networking techniques
+network architecture
+protocol design
+performance evaluation
+deployment experiences
+network applications",,"Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication"
+CSCW,https://cscw.acm.org/2025/,"May 13, 2025",Not specified,"October 18, 2025","October 22, 2025","Bergen, Norway","Collaborative Work
+Social Computing
+Design of Technologies
+Research in Computer-Supported Cooperative Work
+Technical Challenges
+Social Challenges
+Material Challenges
+Theoretical Challenges
+Support for Collaborative Activities
+Community and Network Impacts",,The 28th ACM SIGCHI Conference on Computer-Supported Cooperative Work & Social Computing
+CCS,https://www.sigsac.org/ccs/CCS2025/,2025-03-31,2025-04-27,2025-10-13,2025-10-17,"Taipei, Taiwan","Information Security
+Computer Security
+Network Security
+Cryptography
+Security Protocols
+Access Control
+Privacy Protection
+Malware Analysis
+Secure Systems
+Risk Management",,ACM Conference on Computer and Communications Security
+JCDL,https://www.jcdl.org/,TBD,TBD,16-12-2024,20-12-2024,Hong Kong,"Digital Libraries
+Technical Issues
+Practical Issues
+Social Issues
+ACM Digital Libraries
+IEEE-CS Advances in Digital Libraries
+Best Paper Awards
+Student Paper Awards
+International Paper Awards
+Poster Awards",,Joint Conference on Digital Libraries
+EC,https://www.sigecom.org/,TBD,TBD,06-03-2025,06-03-2025,TBD,"Economics and Computation
+Algorithmic Game Theory
+Market Design
+Mechanism Design
+Auction Theory
+Social Choice
+Fair Division
+Data Economics
+Computational Economics
+Predictive Modeling",,ACM Conference on Economics and Computation
+SenSys,https://myhuiban.com/conference/61?lang=en_us,2024-11-07,2025-01-21,2025-05-06,2025-05-06,"Irvine, California, USA","Sensors and Networked Sensing Systems
+Platforms, Networking, and Communication Protocols
+Embedded AI, Information Processing, and Machine Learning
+Algorithms, Data, and Theory
+Applications and Real-world Deployments
+Security, and Privacy in Embedded Sensing Systems
+Novel Paradigms and Architectures for Embedded Sensing Systems",,ACM Conference on Embedded Networked Sensor Systems
+EMSOFT,https://esweek.org/emsoft/,30-03-2025,13-07-2025,28-09-2025,03-10-2025,"Taipei, Taiwan","Embedded Software Development
+Cyber-Physical Systems
+Software Design
+Software Analysis
+Networking
+Physical Dynamics
+Real-Time Systems
+Hardware-Software Co-Design
+Systems Programming
+Control Systems
+IoT and Applications",,International Conference on Embedded Software
+HT,https://ht.acm.org/ht2025/,"May 9, 2025","June 20, 2025","September 15, 2025","September 19, 2025","Chicago, USA","Hypertext theory
+Systems
+Applications
+Publishing
+Artworks
+Social media
+Intelligent media
+Narrative systems
+Authoring
+Reading
+Workflows",,36th ACM Conference on Hypertext and Social Media
+OOPSLA,http://www.wikicfp.com/cfp/program?id=2270,"Oct 20, 2023","Apr 5, 2024","Jan 1, 2024","Jan 1, 2024","Pasadena, California, United States","Object-Oriented Programming
+Systems
+Languages
+Applications
+Software Engineering
+Programming Languages
+Software Development
+Human-Computer Interaction
+Database Systems
+AI in Software Engineering
+Compiler Construction",,"Conference on Object-Oriented Programming Systems, Languages, and Applications"
+WiSec,http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=182924&copyownerid=55241,"Nov 21, 2024","Jan 15, 2025",30-06-2025,03-07-2025,"Arlington, Virginia, USA","Confidentiality, integrity, availability
+Authentication, identity, authorization, access control models and policies, localization, key management (agreement or distribution)
+Privacy of systems, devices, users, their locations and other attributes
+Exploitation of systems, including through reverse engineering, fuzzing, hardware or software vulnerabilities, protocol vulnerabilities, side channels, fault injection, resource exhaustion, jamming, or other means.
+Abuse of and through systems, including messaging abuse (spam, robocalls, etc.), theft of service, and fraud
+Defenses for exploitation and abuse
+Experiences developing, testing, and deploying production-ready or large-scale secure wireless systems
+Formal analysis, formal verification, and proof-based security approaches
+Information theoretical approaches for security
+Usable security and privacy, human factors
+Application of Machine Learning, e.g., for attack detection or privacy violations
+Economic and social impacts to security and privacy",,18th ACM Conference on Security and Privacy in Wireless and Mobile Networks
+DRM,https://dblp.org/db/conf/drm/index.html,,,,,"Chicago, USA","Digital Rights Management
+Information Security
+Data Protection
+Intellectual Property Rights
+Privacy
+Access Control
+Cryptography
+Digital Content Management
+Policy and Legal Issues
+Emerging Technologies",,ACM Digital Rights Management Workshop
+SIGCITE,https://www.sigite.org/,TBD,TBD,06-11-2025,08-11-2025,"Sacramento, California","Cybersecurity
+Information Technology Education
+IT Programs
+IT Curriculum
+IT Accreditation
+IT Research
+IT Pedagogy
+IT Practice
+Industry Collaboration
+Emerging Technologies",,ACM Special Interest Group on Cybersecurity & Information Technology Education
+ISFPGA,https://www.isfpga.org/,"October 8, 2024","November 30, 2024","February 27, 2025","March 1, 2025","Monterey, California, USA","FPGA technology
+Workshops and tutorials
+Camera-ready submissions
+Paper acceptance
+Travel accommodations
+Program overview
+Workshop proposals
+Tutorial proposals
+Registration details
+Social events
+Best paper awards",,ACM/SIGDA International Symposium on Field-Programmable Gate Arrays
+ACM SIGSPATIAL 2024,https://sigspatial2024.sigspatial.org/,30-05-2024,23-08-2024,29-10-2024,01-11-2024,"Atlanta, GA, USA","Geographic Information Systems
+Geospatial Data
+Data Storage
+Query Processing
+Visualization
+User Interfaces
+Applications
+Map Processing
+Spatial Analysis
+Data Mining",,ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems
+CIKM,http://www.cikmconference.org/,,,,,"Seoul, Korea","Application of knowledge representation techniques to semantic modeling
+Development and management of heterogeneous knowledge bases
+Automatic acquisition of data and knowledge bases (especially raw text)
+Object-oriented DBMS
+Optimization techniques
+Transaction management
+High performance OLTP systems
+Security techniques
+Performance evaluation
+Hypermedia
+Unconventional applications",,Conference on Information and Knowledge Management
+ISS,https://resurchify.com/conference_ranking_details.php?id=8,,,,,,"Interactive surfaces
+Human-computer interaction
+Tabletop interaction
+User experience
+User interface design
+Multimodal interaction
+Augmented reality
+Collaborative systems
+Smart environments
+Digital media",,ACM International Conference on Interactive Surfaces and Spaces
+MobiCom,https://www.sigmobile.org/mobicom/2025/,18-03-2025,24-06-2025,04-11-2025,08-11-2025,"Hong Kong, China","Mobile Computing
+Wireless Networking
+Network Algorithms
+Systems Architecture
+Mobile Applications
+Performance Evaluation
+Security in Mobile Networks
+Battery Management in Mobile Devices
+Wireless Communication
+Edge Computing",,31st Annual International Conference on Mobile Computing and Networking
+RecSys,https://recsys.acm.org/,,,22-09-2025,26-09-2025,"Prague, Czech Republic","Recommendation Algorithms
+User Modeling
+Evaluation of Recommender Systems
+Collaborative Filtering
+Content-Based Recommendation
+Context-Aware Recommendation
+Social Recommendation
+Recommender Systems in E-commerce
+Machine Learning for Recommendation
+Cross-Domain Recommendation",,19th ACM Recommender Systems Conference
+SIGIR,https://sigir.org/sigir2022/,21-01-2022,14-02-2022,11-07-2022,15-07-2022,"Madrid, Spain","Information Retrieval
+Hybrid Conference Format
+Short Papers
+Full Papers
+Workshops
+Tutorials
+Doctoral Consortium
+Industry Track
+Poster Presentations
+Social Events
+Best Paper Awards",,The 45th International ACM SIGIR Conference on Research and Development in Information Retrieval
+ICS,https://www.ics-conference.org/,,,,,"Saltlake City, Utah","Architecture
+Productivity
+Systems
+Applications
+Theoretical underpinnings",,International Conference on Supercomputing
+BuildSys,https://buildsys.acm.org/2024/,29-11-2024,31-12-2024,07-11-2024,08-11-2024,"Hangzhou, China","Energy-efficient systems
+Smart cities
+Networked sensors
+Building controls
+Urban infrastructure
+Cyber-physical systems
+Sustainability
+Data-driven urban planning
+Geospatial analytics
+Machine learning",,"11th ACM International Conference on Systems for Energy-Efficient Buildings, Cities, and Transportation"
+WSDM,https://www.wsdm-conference.org/2025/,"August 14, 2024","October 23, 2024","March 10, 2025","March 14, 2025","Hannover, Germany","Web Search
+Web Mining and Content Analysis
+Web of Things, Ubiquitous and Mobile Computing
+Privacy, Fairness, Interpretability
+Social Networks
+Intelligent Assistants
+Crowdsourcing and Human Computation
+Emerging and Creative Applications
+Information Integrity
+Foundation Models",,18th ACM International Conference on Web Search and Data Mining
+FSE,https://conf.researchr.org/series/fse,TBD,TBD,23-06-2025,27-06-2025,"Trondheim, Norway","Software Engineering Innovations
+Trends in Software Engineering
+Experiences in Software Engineering
+Challenges in Software Engineering
+Research Results in Software Engineering
+AI in Software Engineering
+DevOps in Software Engineering
+Human Factors in Software Engineering
+Quality Assurance in Software Engineering
+Software Engineering Education",,ACM International Conference on the Foundations of Software Engineering
+HPDC,https://hpdc.sci.utah.edu/2025/,09-12-2024,06-02-2025,20-07-2025,23-07-2025,"Notre Dame, IN, USA","High-Performance Computing
+Parallel and Distributed Systems
+Research Design
+Implementation
+Evaluation
+Performance Metrics
+High-end Computing
+Scalability
+Networking
 Cloud Computing
-Service Oriented Computing
-Internet of Things",,International Conferences on Cooperative Information Systems
-AAMAS,https://aamas2025.org/,09-10-2024,23-12-2024,19-05-2025,23-05-2025,"Detroit, Michigan, USA","Agents and Multiagent Systems
-Agent Technologies
-Autonomous Agents
-Machine Learning for Agents
-Robotics and Agents
-Agent-Based Simulation
-Social Agent Systems
-Game Theory and Multiagent Systems
-Distributed AI
-Negotiation and Coordination",,24th International Conference on Autonomous Agents and Multiagent Systems
-PODC,https://www.podc.org/,05-05-2025,17-04-2025,16-06-2025,20-06-2025,"Huatulco, Mexico","biological distributed algorithms and systems
+Data Management",,34th ACM International Symposium on High-Performance Parallel and Distributed Computing
+IWCMC,https://iwcmc.net/2025/index.php,10-02-2025,15-03-2025,12-05-2025,16-05-2025,"Abu Dhabi, UAE","Wireless Communications
+Mobile Computing
+Machine Learning
+Emerging Topics
+Applications of Communications
+Networks
+Sensor Networks
+Autonomous Communications
+Peer-to-Peer Networking
+Internet and Information Systems",,International Wireless Communications & Mobile Computing Conference
+WSC,https://www.acm.org/conferences,TBA,TBA,20-05-2025,24-05-2025,"New Brunswick, USA","Web Science
+Societal Impacts of the Web
+Web Algorithms and Systems
+Human-Centric Web Research
+Ethical Web Science
+Web Mining
+Web Security and Privacy
+Web Accessibility
+Data Management on the Web
+Web Data and Knowledge",,17th ACM Web Science Conference
+ACM MM,https://acmmm2025.org/,11-04-2025,28-04-2025,27-10-2025,31-10-2025,"Dublin, Ireland","video
+haptics
+virtual reality
+augmented reality
+audio
+speech
+music
+sensor data
+social data
+human-computer interaction",,33rd ACM International Conference on Multimedia
+SIGGRAPH 2025,https://www.siggraph.org/,,,10-08-2025,14-08-2025,"Vancouver, Canada","Computer Graphics
+Interactive Techniques
+Digital Art
+Visual Effects
+Animation
+Game Development
+Human-Computer Interaction
+Augmented Reality
+Virtual Reality
+Simulation",,ACM SIGGRAPH 2025
+CHINZ,https://sigchinz.acm.org/conferences/,,,09-12-2021,09-12-2021,Zoom,,,CHINZ2021 Workshop
+SCA,https://computeranimation.org/,"April 7, 2025","May 12, 2025","August 8, 2025","August 10, 2025","Vancouver, Canada","Computer Animation
+Time-based phenomena
+Software innovations
+Technology in computer graphics
+Community interaction
+Research collaboration
+High-quality papers
+Poster presentations
+Best Paper Awards
+Proceedings publication",,ACM SIGGRAPH/EG Symposium on Computer Animation
+CPR,https://sigmis.org/cpr/,13-02-2025,08-03-2025,28-05-2025,30-05-2025,"Waco, Texas, USA","Managing the impacts of automation and AI
+Tackling security and privacy issues in an increasingly complex world
+Envisioning the future IT workforce and its ongoing development
+IT workforce development
+Complex organization-technology interplay
+User behavior towards information technology
+Impact of technology on organizational structure
+AI and automation in the workplace
+Information systems education
+Security and privacy management
+Evolution of IT professions",,ACM SIGMIS Computers and People Research 2025
+MobiSys,https://www.sigmobile.org/mobisys/2024/,"November 30th, 2023 AoE","March 6th, 2024",04-06-2024,06-06-2024,"Toranomon Hills, Minato City, Japan","Mobile computing
+Wireless systems
+Mobile applications
+Mobile services
+Implementation techniques
+Evaluation methods
+Design methodologies
+Usage studies
+Research innovations
+System architectures",,"22nd ACM International Conference on Mobile Systems, Applications, and Services"
+PODS,http://www.wikicfp.com/cfp/program?id=2378,,,,,,"Database theory
+Computational logic
+Finite model theory
+Complexity theory
+Algorithm design
+Data structure analysis
+Data management technology
+Research methodologies
+Database systems optimization
+Empirical studies in databases",,Symposium on Principles of Database Systems
+SOSP,https://sigops.org/s/conferences/sosp/2025/,"April 17, 2025","July 15, 2025","October 13, 2025",16-10-2025,"Seoul, Republic of Korea","Operating Systems
+Computer Systems
+Software Engineering
+Distributed Systems
+Embedded Systems
+System Security
+Cloud Computing
+Virtualization
+Resource Management
+Networking",,31st Symposium on Operating Systems Principles
+LCTES,https://pldi25.sigplan.org/home/LCTES-2025,21-03-2025,21-04-2025,16-06-2025,17-06-2025,"Seoul, South Korea","Programming language challenges
+Domain-specific languages
+Compilation for embedded systems
+Runtime systems for embedded systems
+Embedded systems design
+Verification and validation of embedded systems
+Security for embedded systems
+Architectures for embedded systems
+Optimizations in embedded systems
+Machine learning and embedded systems",,"26th ACM SIGPLAN/SIGBED International Conference on Languages, Compilers, Tools and Theory of Embedded Systems"
+PEPM,https://popl25.sigplan.org/home/pepm-2025,14-10-2024,18-11-2024,19-01-2025,25-01-2025,"Denver, Colorado, United States","Program and model manipulation techniques
+Techniques that treat programs/models as data objects
+Program analysis techniques for program/model manipulation
+Semantics based and machine-learning based program synthesis
+Modeling, analysis, transformation techniques for distributed/concurrent protocols
+Application of program manipulation techniques
+Case studies in program manipulation
+Tool demonstrations related to program manipulation
+Ethics in programming languages
+High-level abstraction in low-level systems",,The 2025 ACM SIGPLAN Workshop on Partial Evaluation and Program Manipulation
+PLDI,https://pldi25.sigplan.org/,16-05-2025,Unknown,16-06-2025,20-06-2025,"Seoul, South Korea","Programming languages
+Programming systems
+Design
+Implementation
+Theory
+Applications
+Performance
+Research artifacts
+Workshops
+Student research competition",,46th ACM SIGPLAN Conference on Programming Language Design and Implementation
+PADS,https://sigsim.acm.org/conf/pads/,,,,,,,,International Conference on Principles of Advanced Discrete Simulation
+SIGUCCS,https://siguccs.org/wp/,TBD,TBD,06-04-2025,09-04-2025,"Denver, USA","Information Technology Services
+Higher Education
+Innovation
+Collaboration
+Professional Development
+Diversity and Inclusion
+Networking
+Technology Management
+Helpdesk Services
+CIO Leadership",,Annual Conference of the Special Interest Group on University and College Computing Services
+SIGCSE,https://www.sigcse.org/,TBA,TBA,26-02-2025,01-03-2025,"Pittsburgh, PA, USA","Computing education
+Teaching methodologies
+Curriculum development
+Assessment strategies
+Diversity in computing
+Innovative teaching tools
+Online teaching practices
+Student engagement
+Faculty development
+Research in computing education",,Technical Symposium of the Special Interest Group on Computer Science Education
+SIGMOD/PODS,https://sigmod.org/,Not specified,Not specified,Not specified,Not specified,Not specified,"Database Management Systems
+Data Management Technology
+Software Development
+Academic Research
+Industrial Research
+Data Management Applications
+Data Systems
+Database Principles
+Database Techniques
+User Practices",,ACM Special Interest Group on Management of Data Conference
+SIG,https://www.acm.org/special-interest-groups,TBD,TBD,TBD,TBD,TBD,"Computing innovation
+Technical communities
+Networking opportunities
+Research dissemination
+Best practices
+Conferences and workshops
+Publications and resources
+Emerging technologies
+Collaboration in computing disciplines
+Supporting professional development",,Special Interest Groups
+SAC,https://myhuiban.com/conference/218?lang=en_us,2024-10-04,2024-10-30,2025-03-31,2025-03-31,"Sicily, Italy","Intelligent Robotics and Multi-Agent Systems
+Artificial Intelligence for Education
+Data Streams
+Cyber-Physical Systems
+Applications of Evolutionary Computation
+Safe, Secure and Robust Artificial Intelligence
+Databases and Big Data Management
+Web Engineering
+Social Network and Media Analysis
+Software Verification and Testing",,ACM Symposium On Applied Computing
+DocEng,https://doceng.org/,,,,,,"document engineering
+systems for documents
+principles of document management
+tools for document creation
+processes for document maintenance
+cutting-edge ideas in document engineering
+tools and techniques for document management
+user experiences in document engineering
+research in document engineering
+practitioner insights in document engineering",,ACM Symposium on Document Engineering
+MobiHoc,https://www.sigmobile.org/mobihoc/2024/,14-04-2024,28-07-2024,14-10-2024,17-10-2024,"Athens, Greece","Dynamic networks
+Computing
+Algorithmic foundations
+Protocol design
+Networking research
+Mobile computing
+Keynote addresses
+Panel discussions
+Workshops
+Emerging interest",,"25th International Symposium on Theory, Algorithmic Foundations, and Protocol Design for Mobile Networks and Mobile Computing"
+PODC,https://www.podc.org/,05-05-2025,17-04-2025,16-06-2025,20-06-2025,"Santa María Huatulco, Mexico","biological distributed algorithms and systems
 blockchain and decentralized finance protocols
 coding and reliable communication
 communication networks
@@ -39,73 +495,287 @@ design and analysis of distributed algorithms
 distributed and cloud storage
 distributed and concurrent data structures
 distributed computation for large-scale data",,ACM Symposium on Principles of Distributed Computing
-SIROCCO,https://www.torontomu.ca/sirocco-2025/,02-11-2024,31-01-2025,01-06-2025,04-06-2025,"Delphi, Greece","Structural knowledge
-Communication
-Computing in decentralized systems
-Methodological approaches
-Solution approaches
-Understanding computing and communication
-Multi-entity communication
-Interplay between structural knowledge and communication
-Challenges in computer science
-Innovations in communication complexity",,32nd International Colloquium On Structural Information and Communication Complexity
-WALCOM,http://www.walcom-conference.org/,Not specified,Not specified,18-03-2024,20-03-2024,"Kanazawa, Japan","Algorithms
-Computation
-Computer Science
-Data Structures
-Theory of Computation
-Optimization
-Graph Theory
-Complexity Theory
-Parallel Computing
-Applications of Algorithms",,International Conference and Workshops on Algorithms and Computation
-ICDCN,https://cse.iith.ac.in/icdcn-2025/,Not Mentioned,Not Mentioned,04-01-2025,07-01-2025,"Hyderabad, India","Distributed Computing
-Networking
-Communication Networks
-Research and Development
-Distributed Systems
-Algorithms
-Security and Privacy
-Cloud Computing
-Edge Computing
-Data Management",,International Conference on Distributed Computing and Networking
-ICALP,https://conferences.au.dk/icalp2025,08-02-2025,14-04-2025,08-07-2025,11-07-2025,"Aarhus, Denmark","Automata Theory
-Formal Languages
-Computational Complexity
-Algorithms
-Data Structures
-Graph Theory
-Randomized Algorithms
-Quantum Computing
-Approximation Algorithms
-Cryptography",,"52nd EATCS International Colloquium on Automata, Languages, and Programming"
-LATIN,http://www.wikicfp.com/cfp/program?id=1941,"October 9, 2023","December 20, 2023","March 18, 2024","March 22, 2024","Puerto Varas, Chile","algorithmic game theory
+SPM,https://spm2022.sciencesconf.org/,,,27-06-2022,29-06-2022,Online,"Geometric Modeling
+Physical Modeling
+Design Applications
+Analysis Applications
+Manufacturing Applications
+Biomedical Applications
+Geophysical Applications
+Digital Entertainment Applications
+Solid Modeling
+Shape Modeling",,Symposium on Solid and Physical Modeling
+STOC,https://acm-stoc.org/stoc2025/,04-11-2024,01-02-2025,23-06-2025,27-06-2025,"Prague, Czech Republic","algorithms and data structures
+computational complexity
+randomness in computing
+algorithmic graph theory and combinatorics
+analysis of Boolean functions
 approximation algorithms
-analytic combinatorics and analysis of algorithms
-automata theory and formal languages
-combinatorial algorithms
-combinatorial optimization
-combinatorics and graph theory
-complexity theory
-computational geometry
-computational social choice",,16th Latin American Theoretical Informatics Symposium
-ALGOWIN,https://www.algosensors-symposium.org/,TBA,TBA,15-09-2025,19-09-2025,"Warsaw, Poland","Algorithmic aspects of wireless networks
-Design and analysis of algorithms
-Models of computation
-Experimental analysis
-Algorithmic issues in sensor networks
-Algorithmic issues in sensor-actuator networks
-Algorithmic issues in autonomous robots
-Static and mobile computational entities
-Broad scope of wireless networks
-Algorithmic challenges in wireless communications",,International Symposium on Algorithmics of Wireless Networks 2025
-CIAC,https://easyconferences.eu/ciac2025/,"November 25, 2024","January 31, 2025",10-06-2025,12-06-2025,"Rome, Italy","Computational complexity
-Efficient algorithms
-Data structures
-Algorithm design
-Algorithm analysis
-Experimental algorithms
-Complexity theory
-Algorithmic applications
-Approximation algorithms
-Randomized algorithms",,14th International Conference on Algorithms and Complexity
+cryptography
+computational learning theory
+continuous and discrete optimization
+economics and computation",,57th ACM Symposium on Theory of Computing
+UIST,https://en.wikipedia.org/wiki/ACM_Symposium_on_User_Interface_Software_and_Technology,,,,08-10-2023,"San Francisco, USA","Human-Computer Interaction
+User Interfaces
+Interaction Techniques
+User Experience Design
+Novel User Interfaces
+User-Centered Design
+Accessibility
+Augmented and Virtual Reality
+Input Technologies
+Mobile Interfaces",,ACM Symposium on User Interface Software and Technology
+VRST,https://vrst.acm.org/,,,12-11-2025,14-11-2025,"Montreal, Canada","Virtual Reality
+Augmented Reality
+Human-Computer Interaction
+Engineering
+Design
+Psychology
+Education
+Medicine
+Arts
+Interdisciplinary Collaboration",,ACM Symposium on Virtual Reality Software and Technology
+FMSE,https://www.resurchify.com/conference_ranking_details.php?id=805,,,,,,,,ACM Workshop on Formal Methods in Security Engineering: From Specifications to Code
+STC,http://www.wikicfp.com/cfp/program?id=2778&s=STC&f=Scalable+Trusted+Computing,"Jul 16, 2012",,"Oct 15, 2012",15-10-2012,"Raleigh, NC, USA","security policies and models of trusted computing
+architecture and implementation technologies for trusted platform
+limitations, alternatives and tradeoffs regarding trusted computing
+trusted computing in cloud and data center
+cloud-based attestation services
+trusted smartphone devices and systems
+trust in smart grid, energy, and Internet of Things
+trusted emerging and future Internet infrastructure
+trusted online social network
+trust in authentications, users and computing services",,The Seventh ACM Workshop on Scalable Trusted Computing
+POPL,https://conf.researchr.org/home/POPL-2025,20-12-2024,TBD,19-01-2025,25-01-2025,"Denver, Colorado, United States","Theoretical frameworks
+Experimental papers
+Formal frameworks
+Programming language design
+Implementation of programming languages
+Application of programming languages
+Understanding programming languages
+Experience reports
+Principled contributions
+Enduring contributions",,ACM SIGPLAN Symposium on Principles of Programming Languages
+I3D,https://i3dsymposium.org/2024/,5 January 2024,3 March 2024,08-05-2024,10-05-2024,"Philadelphia, PA, USA","Real time 3D computer graphics
+Human-computer interaction
+3D rendering techniques
+Virtual reality
+Augmented reality
+Simulation
+Game development
+Animation
+Computer graphics algorithms
+User experience design",,ACM SIGGRAPH Symposium on Interactive 3D Graphics and Games
+ICDSC,http://www.wikicfp.com/cfp/program?id=1340,TBD,TBD,03-09-2018,06-09-2018,"Eindhoven, Netherlands","Smart cameras in Internet of Things (IoT), Industry 4.0 and smart transport
+Smart cameras as IoT sensors
+Intelligent traffic cameras
+Smart IoT security camera for smart homes
+Smart cameras for Industry 4.0
+Vision sensors in Vehicular Ad- hoc Networks (VANETs)
+Mobile Vision, 3D and Robotics
+3D reconstruction of everything
+Driver assistance, autonomous driving
+Social robots
+Drone distributed smart cameras
+Structure- from- motion in mobile devices
+Visual landmark localization
+Active vision and mobile / body- worn cameras
+Position discovery and middleware apps
+Smart image sensors and vision chips
+Circuits and systems for image sensing
+Parallel processing hard ware
+Camera beyond visual spectrum
+HW/S W codesign for embedded vision
+Reconfigurable vision processing architectures
+High-performance image sensors
+Neuromorphic cameras and networks
+Machine learning in distributed camera networks
+Deep learning on smart cameras
+Transforming embedded vision through deep learning
+Distributed learning algorithms in visual sensor networks
+Novel machine learning technology implementation on smart cameras
+Machine learning for low-powered sensors
+Artificial intelligence and deep learning at the edge
+Distributed smart cameras and network architectures
+Camera system designs and architectures
+Architectures for camera networks
+Embedded vision programming
+Distributed video coding
+Self-reconfiguring camera networks
+Self-organizing smart cameras
+Wireless and mobile image sensor network s
+Context-aware networks
+Distributed video analytics
+Resource management and task allocation
+Data aggregation and information fusion
+Collaborative object recognition and extraction
+Emerging applications
+Process splitting in camera vs cloud
+Virtual reality and augmented reality
+Smart cameras and semantic information
+Smart cities and smart cameras
+Camera- based health and wellness monitoring
+AI and video analytics for smart cameras
+Social media and big data
+Smart cameras for situational intelligence and interaction",,International Conference on Distributed Smart Cameras
+MIDDLEWARE,https://middleware-conf.github.io/,,,,,"Hong Kong, China","design
+implementation
+deployment
+evaluation
+distributed systems
+system platforms
+architecture
+communication environments
+system software
+middleware",,ACM/IFIP/USENIX International Middleware Conference
+ICPE,https://icpe2025.spec.org/,,,05-05-2025,09-05-2025,"Toronto, Canada","Software performance modeling
+Performance prediction
+Performance measurement
+Benchmark-based performance evaluation
+System and software design
+Cloud core performance
+Edge performance
+Mobile device performance
+Data center performance
+Web application performance",,16th ACM/SPEC International Conference on Performance Engineering
+MMCN,https://resurchify.com/conference_ranking_details.php?id=23,,,,,,"Multimedia Computing
+Networking
+Signal Processing
+Computer Vision
+Human-Computer Interaction
+Virtual Reality
+Data Science
+Artificial Intelligence
+Distributed Systems
+Web Technologies",,ACM/SPIE Multimedia Computing and Networking
+AICCSA,http://www.wikicfp.com/cfp/program?id=98,19-05-2025,30-06-2025,19-10-2025,22-10-2025,"Doha, Qatar","Ubiquitous, Parallel and Distributed Computing
+Security, Privacy, and Trust
+Data science, knowledge engineering, and ontologies
+Artificial Intelligence & Cognitive Systems
+Natural Language Processing
+Multimedia, Computer Vision, and Image Processing",,ACS/IEEE International Conference on Computer Systems and Applications
+APLAS,https://conf.researchr.org/track/aplas-2025/aplas-2025-aplas-2025,31-05-2025,18-07-2025,27-10-2025,30-10-2025,"Bengaluru, India","programming paradigms and styles
+methods and tools to specify and reason about programs and languages
+programming language foundations
+methods and tools for implementation
+concurrency and distribution
+applications and emerging topics",,The 23rd Asian Symposium on Programming Languages and Systems
+AFAANZ,https://www.afaanz.org/,07-02-2025,28-03-2025,06-07-2025,08-07-2025,Australia and New Zealand,"Accounting Education
+Data Analytics
+Auditing and Assurance
+Financial Reporting
+Management Accounting
+ESG
+Tax
+Qualitative Research in Accounting Network
+Public Sector and Not-For-Profit Accounting
+Accounting for Indigenous Perspectives",,2025 Accounting and Finance Association of Australia and New Zealand Conference
+ARTDB-95,https://www.amazon.com/Active-Real-Time-Database-Systems-ARTDB-95/dp/3540199837,,,09-06-1995,11-06-1995,"Skövde, Sweden","Database Systems
+Active Database Systems
+Real-Time Database Systems
+Data Management
+Distributed Databases
+Temporal Databases
+Database Interaction
+Concurrency Control
+Transaction Management
+Query Processing",,Active and Real-Time Database Systems
+ACIVS,http://acivs.org/,,,,,,,,Advanced Concepts for Intelligent Vision Systems
+IEEE CAI,https://cai.ieee.org/2025/,,,05-05-2025,07-05-2025,"Santa Clara, California, USA","HEALTHCARE/LIFE SCIENCES
+TRANSPORTATION/AEROSPACE
+ENGINEERING AND MANUFACTURING
+SUSTAINABILITY
+BUSINESS INTELLIGENCE
+HUMAN-CENTERED AI
+ROBOTICS AND UAV
+COMPUTER VISION
+SECURITY AND SAFETY
+AI INFRASTRUCTURE
+AI, TESTING AND AUTOMATION",,IEEE Conference on Artificial Intelligence
+ISVLSI,https://www.ieee-isvlsi.org/ISVLSI_2025_Website/index.html,10-02-2025,10-05-2025,06-07-2025,09-07-2025,"Kalamata, Greece","VLSI circuits
+system level design
+nano- and molecular devices
+security
+artificial intelligence
+Internet-of-Things
+design methodologies
+EDA tools
+emerging technologies
+machine learning",,IEEE Computer Society Annual Symposium on VLSI
+AVI,http://www.wikicfp.com/cfp/program?id=265,"Jan 24, 2024","Jan 17, 2024","Jun 3, 2024","Jun 07, 2024","Genoa, Italy","Adaptive and Context-Aware Interfaces
+Affective Visual Interfaces
+Computer Supported Cooperative Work
+Conversational Interfaces
+Full-body Interaction
+Human-AI Interaction
+Information Visualization
+Intelligent Interfaces
+Engineering of Visual Interfaces and Interaction
+Interaction Design Tools",,International Conference on Advanced Visual Interfaces
+WAGMI,https://ninjapromo.io/best-crypto-conferences,,,22-01-2025,24-01-2025,"Miami, Florida","cryptocurrency, blockchain, market volatility, scalability, energy consumption",,WAGMI Miami
+ICITE,https://conferenceindex.org/conferences/information-systems,17-05-2025,17-06-2025,17-05-2025,17-05-2025,"Sydney, Australia","Information Technology
+Engineering
+Software Development
+Systems Analysis
+Networking
+Database Management
+Data Analytics
+Cloud Computing
+Cybersecurity
+Artificial Intelligence",,International Conference on Information Technology and Engineering
+ICIS,https://icis2025.aisconferences.org/,12-03-2025,,,,"Nashville, USA","Artificial Intelligence
+Digital Integration
+Interoperability
+Fintech
+Supply Chain and Logistics
+Digital Entertainment
+Social Media Ecosystems
+Healthcare
+Innovation
+Research",,International Conference on Information Systems
+AiML,http://www.aiml.net/,TBD,TBD,19-08-2024,22-08-2024,"Prague, Czech Republic","Modal Logic
+Relational Structures
+Mathematical Discipline
+Applied Modal Logic
+Description Languages
+Pure Modal Logic
+New Developments
+Conference Series
+Logical Aspects
+Multi-Agent Systems",,Advances in Modal Logic 2024
+NeurIPS,https://en.wikipedia.org/wiki/Conference_on_Neural_Information_Processing_Systems,,,December,December,"Vancouver, Canada","Machine learning
+Statistics
+Artificial intelligence
+Computational neuroscience
+Cognitive science
+Psychology
+Computer vision
+Statistical linguistics
+Information theory
+Deep learning",,Conference on Neural Information Processing Systems
+AITC,https://www.clocate.com/international-artificial-intelligence-technology-conference-aitc/84577/,20 May 2025,,15-07-2025,17-07-2025,"Hohhot, China","Artificial Intelligence tools & Applications
+AI Algorithms
+Bioinformatics
+Automatic Control
+CAD Design & Testing
+Natural Language Processing
+Data Mining and Machine Learning Tools
+Computer Vision and Speech Understanding
+Heuristic and AI Planning Strategies and Tools
+Fuzzy Logic
+Hybrid Intelligent Systems",,7th International Artificial Intelligence Technology Conference
+AAMAS,https://aamas2025.org/,09-10-2024,23-12-2024,19-05-2025,23-05-2025,"Detroit, Michigan, USA","agents technology
+multiagent systems
+artificial intelligence
+robotics
+machine learning
+communication
+coordination
+planning
+negotiation
+simulation",,24th International Conference on Autonomous Agents and Multiagent Systems
+AMAST,https://link.springer.com/book/10.1007/978-1-4471-3227-1,Unknown,Unknown,21-06-1993,25-06-1993,"Enschede, The Netherlands","Software Engineering/Programming and Operating Systems
+Theory of Computation
+Software Engineering
+Logics and Meanings of Programs
+Mathematical Logic and Formal Languages",,Third International Conference on Algebraic Methodology and Software Technology
