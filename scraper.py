@@ -134,14 +134,26 @@ def extract_conference_details(page_content: str):
         return {}
 
 # Writes the DataFrame to a CSV file
-def save_to_csv(data, url):
+def save_openai_to_csv(data, url, CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median):
     # Check if 'conference' key exists in the data dictionary
     if not data or "conference" not in data:
         print("Error: Missing 'conference' key in data.")
         return
+    
+# CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median
 
     # Add the URL to the data dictionary
     data["url"] = url
+    data["CORE2023"] = CORE2023
+    data["CORE2021"] = CORE2021
+    data["CORE2020"] = CORE2020
+    data["CORE2018"] = CORE2018
+    data["CORE2017"] = CORE2017
+    data["CORE2014"] = CORE2014
+    data["CORE2013"] = CORE2013
+    data["ERA2010"] = ERA2010
+    data["h5_index"] = h5_index
+    data["h5_median"] = h5_median
 
     # Create a DataFrame from the data dictionary
     df = pd.DataFrame([data])
@@ -151,8 +163,14 @@ def save_to_csv(data, url):
     except FileNotFoundError:
         # If the file doesn't exist, create a new one with necessary columns
         existing_df = pd.DataFrame(columns=[
-            "conference", "url", "deadline", "notification", 
-            "start", "end", "location", "topics"
+                    "conference",
+                    "name",
+                    "deadline",
+                    "notification",
+                    "start",
+                    "end",
+                    "location",
+                    "topics"
         ])
 
     # Check for duplicate entry based on the 'conference' field
@@ -169,9 +187,27 @@ def save_to_csv(data, url):
     existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
+
+
+
+
+
 scored_conferences = pd.read_csv("100conference.csv")
 def main():
-    for name, acronym in zip(scored_conferences["Title"], scored_conferences["Acronym"].fillna("")):
+    for name, acronym, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median in zip(
+        scored_conferences["Title"], 
+        scored_conferences["Acronym"].fillna(""), 
+        scored_conferences["CORE2023"].fillna(""),
+        scored_conferences["CORE2021"].fillna(""),
+        scored_conferences["CORE2020"].fillna(""),
+        scored_conferences["CORE2018"].fillna(""),
+        scored_conferences["CORE2017"].fillna(""),
+        scored_conferences["CORE2014"].fillna(""),
+        scored_conferences["CORE2013"].fillna(""),
+        scored_conferences["ERA2010"].fillna(""),
+        scored_conferences["h5_index"].fillna(""),
+        scored_conferences["h5_median"].fillna(""),
+    ):
         time.sleep(2)
         print(name, acronym)
         CITE_URL = brave_search_conference_website(name, acronym)
@@ -183,6 +219,8 @@ def main():
         if page_content:
             extracted_results = extract_conference_details(page_content)
             print(extracted_results)
-            save_to_csv(extracted_results, CITE_URL)
+            save_openai_to_csv(extracted_results, CITE_URL, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median)
+
+
 if __name__ == '__main__':
     main()
