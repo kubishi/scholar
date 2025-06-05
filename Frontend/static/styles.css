@@ -1,0 +1,15 @@
+body {
+  background-color: white;
+}
+
+.navbar {
+  background-color: lightgrey;
+}
+
+.kubishi_logo {
+  margin-right: 5px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+/*# sourceMappingURL=styles.css.map */

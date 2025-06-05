@@ -1,0 +1,100 @@
+conference,name,url,deadline,notification,start,end,location,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median,topics
+HCOMP,AAAI Conference on Human Computation and Crowdsourcing,https://aaai.org/conference/hcomp/,29-02-2024,29-03-2024,16-10-2024,19-10-2024,"Pittsburgh, Pennsylvania",B,B,,,,,,,,,"Artificial Intelligence
+Human Computation
+Crowdsourcing
+Machine Learning
+Data Science
+User Interfaces
+Social Computing
+AI Ethics
+Natural Language Processing
+Computer Vision"
+3DV,International Conference on 3D Vision,https://3dvconf.github.io/2025/,12-08-2024,05-11-2024,25-03-2025,28-03-2025,Singapore,,,,C,C,C,C,C,,,"3D computer vision
+graphics
+optical sensors
+signal processing
+geometric modeling
+reconstruction
+visualization
+analysis
+rendering
+interaction"
+AST,6th ACM/IEEE International Conference on Automation of Software Testing,https://conf.researchr.org/home/ast-2025,09-11-2024,12-01-2025,26-04-2025,04-05-2025,"Ottawa, Ontario, Canada",,,,C,C,C,C,C,,,"AI for Automated Software Testing
+Testing of AI-based systems
+Effective testing through explainable AI
+Education to software testing with the advent of AI-based technology
+Automated software testing for sustainability, resource efficiency, energy consumption
+Codeless and low code test automation
+Test Automation in Software Process and Evolution, DevOps, Agile, CI/CD flows
+Test-driven development
+Model-based testing
+Formal methods, model checking and theories for testing and test automation"
+SERA,"IEEE/ACIS International Conference on Software Engineering, Management and Applications",https://acisinternational.org/conferences/sera-2025/,28-03-2025,11-04-2025,29-05-2025,31-05-2025,"Las Vegas, USA",C,C,C,C,C,C,C,C,,,"Software Engineering
+Management Applications
+Research Results
+Industry Practices
+Cross-fertilization of Ideas
+Key Technology Areas
+New Ideas
+Research Collaboration
+Experience Sharing
+Academic Exchange"
+PLDI,Programming Languages Mentoring Workshop at PLDI 2025,https://www.acm.org/upcoming-conferences,TBA,TBA,01-06-2025,31-08-2025,Republic of Korea,,,,C,C,C,C,C,,,"Programming Languages
+Mentoring
+Software Development
+Code Optimization
+Language Design
+Compiler Construction
+Programming Paradigms
+Type Systems
+Software Engineering
+Language Implementation"
+SIGCOMM,ACM Special Interest Group on Data Communication Conference,https://conferences.sigcomm.org/sigcomm/2025/,24-01-2025,28-05-2025,08-09-2025,11-09-2025,"Coimbra, Portugal",A*,A*,A*,A*,A*,A*,A*,A,,,"Data Communication
+Networking
+Internet Protocols
+Wireless Networks
+Network Performance
+Network Security
+Network Architecture
+Content Distribution
+Peer-to-Peer Networks
+Cloud Networking"
+CSCW,ACM Conference on Computer-Supported Cooperative Work and Social Computing,https://www.myhuiban.com/conference/937?lang=en_us,01-07-2025,06-08-2025,18-10-2025,18-10-2025,"Bergen, Norway",A,A,A,A,A,A,A,A,24.0,31.0,"Social and crowd computing
+CSCW and social computing system development
+Methodologies and tools
+Critical, historical, ethnographic analyses
+Empirical investigations
+Domain-specific social, cooperative, and collaborative applications
+Ethics and policy implications
+CSCW and social computing systems based on emerging technologies
+Crossing boundaries"
+ACM CCS,ACM Conference on Computer and Communications Security,https://www.sigsac.org/ccs/CCS2023/,01-09-2023,01-10-2023,26-11-2023,30-11-2023,"Copenhagen, Denmark",A*,A*,A*,A*,A*,A*,A*,A,92.0,136.0,"Information Security
+Cybersecurity
+Network Security
+Data Privacy
+Cryptography
+Access Control
+Incident Response
+Cloud Security
+Emerging Threats
+Security Protocols"
+JCDL,Joint Conference on Digital Libraries,https://www.jcdl.org/,01-10-2024,01-11-2024,16-12-2024,20-12-2024,Hong Kong,,,,A*,A*,A*,A*,,23.0,33.0,"Digital Libraries
+Information Retrieval
+Digital Archiving
+Data Management
+User Experience
+Metadata
+Preservation
+Open Access
+Library Science
+Social Issues"
+EC,Twenty-Sixth ACM Conference on Economics and Computation,https://ec25.sigecom.org/,03-02-2025,17-05-2025,07-07-2025,10-07-2025,"Stanford, CA, USA",A*,A*,A*,A*,B,B,B,B,3.0,3.0,"Economics
+Computation
+Game Theory
+Market Design
+Mechanism Design
+Algorithmic Game Theory
+Social Choice
+Incentive Design
+Market Efficiency
+Auction Theory"

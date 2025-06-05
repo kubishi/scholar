@@ -67,7 +67,7 @@ def extract_conference_details(page_content: str):
                     },
                     "deadline": {
                         "type": "string",
-                        "description": "The date when the application submission is due. Application due date."
+                        "description": "The date when the application submission is due. Application due date. Format in dd-mm-yyyy"
                     },
                     "notification": {
                         "type": "string",
@@ -209,7 +209,6 @@ def main():
         scored_conferences["h5_median"].fillna(""),
     ):
         time.sleep(2)
-
         print(name, acronym)
         CITE_URL = brave_search_conference_website(name, acronym)
         print(CITE_URL)

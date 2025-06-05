@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+
+{% block body%}
+
+<nav class="navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        Kubishi Scholar
+      </a>
+    </div>
+  </nav>
+
+<div class="container">
+    <h1 class="my-2 text-center">Kubishi Scholar</h1>
+    <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
+
+    <form method="GET" action="/" class="mb-1">
+        <div class="input-group">
+            <input class="form-control" type="text" name="query" value="{{query}}" placeholder="Search academic topics..." required>
+            <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
+
+            <div class="result-amount">
+                <input class="form-control" type="number" name="num_results" value="{{num_results or '' }}" placeholder="Count" style="max-width: 100px;" max= 10>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        {% for article in articles %}
+
+            <div class="d-flex justify-content-start align-items-center mb-3">
+                <h5 class="mb-0">{{ article.id }}</h5>
+                <span class="text-muted ms-2">Score: {{ article.score | round(4) }}</span>
+            </div>
+
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
