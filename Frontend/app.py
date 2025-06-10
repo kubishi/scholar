@@ -4,6 +4,7 @@ import os
 from pinecone import Pinecone
 from openai import OpenAI
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 load_dotenv()
 
@@ -18,15 +19,13 @@ app = Flask(__name__)
 # Homepage - Route
 client = OpenAI()
 
-response = client.embeddings.create(
-    input="New theory and technology in robotics and biomimetics \n Bio-inspired robots, e.g., climbing, creeping, and walking robots \n Smart sensors and actuators \n Robotic vision and image processing \n Soft robotics and liquid-metal robotics \n Multi-sensor data fusion and sensor networks \n Artificial intelligence in robotics \n Multi-robot systems, swarm robots, and collaborative robots \n Autonomous mobile robots and manipulators \n Medical robotics, biomedical and rehabilitation engineering \n Space robots, aerial robots, and underwater robots \n Robotics in intelligent manufacturing \n MEMS, NEMS, nano-technology, and micro/nano systems � \n Applications of robotics and biomimetics",
-    model="text-embedding-3-small"
-)
+
 
 @app.route("/")
 def index():
     query = request.args.get("query", "")
     num_results = int(request.args.get("num_results", 3))
+    month_span = request.args.get("month_span")
     articles = []
 
     if query:
@@ -45,15 +44,32 @@ def index():
                 include_metadata=True
             )
 
-            articles = results.get("matches", [])
+            all_articles = results.get("matches", [])
+
+            # Step 3: Filter by start date within X months
+            if month_span:
+                try:
+                    month_span = int(month_span)
+                    cutoff_date = datetime.now() + timedelta(days=30 * month_span)
+
+                    def is_within_span(article):
+                        try:
+                            start_date = datetime.fromisoformat(article["metadata"]["start"])
+                            return start_date <= cutoff_date
+                        except:
+                            return False
+
+                    articles = list(filter(is_within_span, all_articles))
+                except:
+                    articles = all_articles
+            else:
+                articles = all_articles
 
         except Exception as e:
             print(f"Error: {e}")
 
-    print(articles)
-
-    return render_template("index.html", articles=articles, query=query, num_results=num_results)
+    return render_template("index.html", articles=articles, query=query, num_results=num_results, month_span=month_span)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port = 8080)

@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
-
-{% block body%}
-
+{% block body %}
 <nav class="navbar">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">
@@ -10,34 +8,66 @@
         Kubishi Scholar
       </a>
     </div>
-  </nav>
+</nav>
 
 <div class="container">
     <h1 class="my-2 text-center">Kubishi Scholar</h1>
     <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
 
-    <form method="GET" action="/" class="mb-1">
+    <form method="GET" action="/" class="mb-2">
         <div class="input-group">
             <input class="form-control" type="text" name="query" value="{{query}}" placeholder="Search academic topics..." required>
             <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
 
             <div class="result-amount">
-                <input class="form-control" type="number" name="num_results" value="{{num_results or '' }}" placeholder="Count" style="max-width: 100px;" max= 10>
+                <input class="form-control" type="number" name="num_results" value="{{num_results or '' }}" placeholder="Count" style="max-width: 100px;" max=10>
+            </div>
+
+            <div class="ms-2">
+                <input class="form-control" type="number" name="month_span" value="{{month_span or '' }}" placeholder="Months" style="max-width: 100px;" min=1>
             </div>
         </div>
     </form>
 
-    <div class="row">
+    <div class="search_result">
         {% for article in articles %}
-
-            <div class="d-flex justify-content-start align-items-center mb-3">
-                <h5 class="mb-0">{{ article.id }}</h5>
-                <span class="text-muted ms-2">Score: {{ article.score | round(4) }}</span>
-            </div>
-
+            {% if article.metadata.url and (article.score > 0.5) %}
+                <div class="mb-4 border p-2 btn text-start"
+                     data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+                    <h5 class="mb-1">
+                        {{ article.id }}
+                        <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
+                          {{ article.metadata.url }}
+                        </a>
+                    </h5>
+                    <span class="text-muted me-3">Location: {{ article.metadata.location }}</span>
+                    <span class="text-muted me-3">Start: {{ article.metadata.start }}</span>
+                    <span class="text-muted">End: {{ article.metadata.end }}</span>
+    
+                    <!-- Topics are hidden by default -->
+                    <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
+                        Topics: {{ article.metadata.topics | replace('\n', ', ') }}
+                    </p>
+    
+                    <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
-
+    
 </div>
 
+<!-- Script to show topics on click -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.search_result .btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const topicEl = this.querySelector('.topic-line');
+                if (topicEl) {
+                    topicEl.style.display = topicEl.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

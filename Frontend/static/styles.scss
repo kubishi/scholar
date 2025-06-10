@@ -11,3 +11,7 @@ body {
     align-items: center;
 }
 
+.search_result {
+    display: flex;
+    flex-direction: column;  /* stacks children vertically */
+  }
