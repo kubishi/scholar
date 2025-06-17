@@ -24,14 +24,19 @@
             </div>
 
             <div class="ms-2">
-                <input class="form-control" type="number" name="month_span" value="{{month_span or '' }}" placeholder="Months" style="max-width: 100px;" min=1>
+                <input class="form-control" type="text" name="date_span_first" value="{{date_span_first or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max-width: 125px;" min=1>
+            </div>
+            <div class="ms-2">
+                <input class="form-control" type="text" name="date_span_second" value="{{date_span_secind or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max-width: 125px;" min=1>
             </div>
         </div>
     </form>
 
+
     <div class="search_result">
         {% for article in articles %}
-            {% if article.metadata.url and (article.score > 0.5) %}
+            <!-- and (article.score > 0.21) -->
+            {% if article.metadata.url %}
                 <div class="mb-4 border p-2 btn text-start"
                      data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
                     <h5 class="mb-1">
@@ -40,9 +45,10 @@
                           {{ article.metadata.url }}
                         </a>
                     </h5>
-                    <span class="text-muted me-3">Location: {{ article.metadata.location }}</span>
-                    <span class="text-muted me-3">Start: {{ article.metadata.start }}</span>
-                    <span class="text-muted">End: {{ article.metadata.end }}</span>
+                    <span class="text-muted me-3">Location: {{ article.metadata.location}}</span>
+                    <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
+                    <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
+                    <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
     
                     <!-- Topics are hidden by default -->
                     <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">

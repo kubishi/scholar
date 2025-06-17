@@ -1,4 +1,4 @@
-conference,name,url,deadline,notification,start,end,location,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median,topics
+conference,name,url,deadline,notification,start,end,location,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median,topics,city,country
 HCOMP,AAAI Conference on Human Computation and Crowdsourcing,https://aaai.org/conference/hcomp/,29-02-2024,29-03-2024,16-10-2024,19-10-2024,"Pittsburgh, Pennsylvania",B,B,,,,,,,,,"Artificial Intelligence
 Human Computation
 Crowdsourcing
@@ -8,7 +8,7 @@ User Interfaces
 Social Computing
 AI Ethics
 Natural Language Processing
-Computer Vision"
+Computer Vision",,
 3DV,International Conference on 3D Vision,https://3dvconf.github.io/2025/,12-08-2024,05-11-2024,25-03-2025,28-03-2025,Singapore,,,,C,C,C,C,C,,,"3D computer vision
 graphics
 optical sensors
@@ -18,7 +18,7 @@ reconstruction
 visualization
 analysis
 rendering
-interaction"
+interaction",,
 AST,6th ACM/IEEE International Conference on Automation of Software Testing,https://conf.researchr.org/home/ast-2025,09-11-2024,12-01-2025,26-04-2025,04-05-2025,"Ottawa, Ontario, Canada",,,,C,C,C,C,C,,,"AI for Automated Software Testing
 Testing of AI-based systems
 Effective testing through explainable AI
@@ -28,7 +28,7 @@ Codeless and low code test automation
 Test Automation in Software Process and Evolution, DevOps, Agile, CI/CD flows
 Test-driven development
 Model-based testing
-Formal methods, model checking and theories for testing and test automation"
+Formal methods, model checking and theories for testing and test automation",,
 SERA,"IEEE/ACIS International Conference on Software Engineering, Management and Applications",https://acisinternational.org/conferences/sera-2025/,28-03-2025,11-04-2025,29-05-2025,31-05-2025,"Las Vegas, USA",C,C,C,C,C,C,C,C,,,"Software Engineering
 Management Applications
 Research Results
@@ -38,7 +38,7 @@ Key Technology Areas
 New Ideas
 Research Collaboration
 Experience Sharing
-Academic Exchange"
+Academic Exchange",,
 PLDI,Programming Languages Mentoring Workshop at PLDI 2025,https://www.acm.org/upcoming-conferences,TBA,TBA,01-06-2025,31-08-2025,Republic of Korea,,,,C,C,C,C,C,,,"Programming Languages
 Mentoring
 Software Development
@@ -48,8 +48,8 @@ Compiler Construction
 Programming Paradigms
 Type Systems
 Software Engineering
-Language Implementation"
-SIGCOMM,ACM Special Interest Group on Data Communication Conference,https://conferences.sigcomm.org/sigcomm/2025/,24-01-2025,28-05-2025,08-09-2025,11-09-2025,"Coimbra, Portugal",A*,A*,A*,A*,A*,A*,A*,A,,,"Data Communication
+Language Implementation",,
+SIGCOMM,ACM Special Interest Group on Data Communication Conference,https://conferences.sigcomm.org/sigcomm/2023/,24-01-2025,28-05-2025,08-09-2025,11-09-2025,"Coimbra, Portugal",A*,A*,A*,A*,A*,A*,A*,A,,,"Data Communication
 Networking
 Internet Protocols
 Wireless Networks
@@ -58,7 +58,7 @@ Network Security
 Network Architecture
 Content Distribution
 Peer-to-Peer Networks
-Cloud Networking"
+Cloud Networking",,
 CSCW,ACM Conference on Computer-Supported Cooperative Work and Social Computing,https://www.myhuiban.com/conference/937?lang=en_us,01-07-2025,06-08-2025,18-10-2025,18-10-2025,"Bergen, Norway",A,A,A,A,A,A,A,A,24.0,31.0,"Social and crowd computing
 CSCW and social computing system development
 Methodologies and tools
@@ -67,7 +67,7 @@ Empirical investigations
 Domain-specific social, cooperative, and collaborative applications
 Ethics and policy implications
 CSCW and social computing systems based on emerging technologies
-Crossing boundaries"
+Crossing boundaries",,
 ACM CCS,ACM Conference on Computer and Communications Security,https://www.sigsac.org/ccs/CCS2023/,01-09-2023,01-10-2023,26-11-2023,30-11-2023,"Copenhagen, Denmark",A*,A*,A*,A*,A*,A*,A*,A,92.0,136.0,"Information Security
 Cybersecurity
 Network Security
@@ -77,7 +77,7 @@ Access Control
 Incident Response
 Cloud Security
 Emerging Threats
-Security Protocols"
+Security Protocols",,
 JCDL,Joint Conference on Digital Libraries,https://www.jcdl.org/,01-10-2024,01-11-2024,16-12-2024,20-12-2024,Hong Kong,,,,A*,A*,A*,A*,,23.0,33.0,"Digital Libraries
 Information Retrieval
 Digital Archiving
@@ -87,7 +87,7 @@ Metadata
 Preservation
 Open Access
 Library Science
-Social Issues"
+Social Issues",,
 EC,Twenty-Sixth ACM Conference on Economics and Computation,https://ec25.sigecom.org/,03-02-2025,17-05-2025,07-07-2025,10-07-2025,"Stanford, CA, USA",A*,A*,A*,A*,B,B,B,B,3.0,3.0,"Economics
 Computation
 Game Theory
@@ -97,4 +97,34 @@ Algorithmic Game Theory
 Social Choice
 Incentive Design
 Market Efficiency
-Auction Theory"
+Auction Theory",,
+3DV2025,International Conference on 3D Vision 2025,https://3dvconf.github.io/2025/,12-08-2024,05-11-2024,25-03-2025,28-03-2025,,,,,C,C,C,C,C,,,"3D Computer Vision
+3D Graphics
+Optical Sensors
+Signal Processing
+Geometric Modeling
+Reconstruction
+Visualization
+Rendering
+Interaction
+Applications",Singapore,Singapore
+UIST,ACM Symposium on User Interface Software and Technology,https://www.myhuiban.com/conference/276?lang=en_us,02-04-2025,28-09-2025,28-09-2025,28-09-2025,,A*,A*,A,A,A,A,A,A,51.0,72.0,"Human-Computer Interfaces
+Graphical User Interfaces
+Web User Interfaces
+Tangible Computing
+Ubiquitous Computing
+Virtual Reality
+Augmented Reality
+Multimedia
+Input Devices
+Output Devices",Busan,Korea
+EuroSTAR,EuroSTAR 2025 Software Testing Conference,https://testingconferences.org/,2025-05-03T00:00:00Z,2025-05-10T00:00:00Z,2025-06-03T00:00:00Z,2025-06-06T00:00:00Z,,,,,C,C,C,C,C,,,"Software Testing
+Quality Assurance
+Test Automation
+Performance Testing
+Security Testing
+Agile Testing
+Mobile Testing
+Usability Testing
+DevOps Testing
+Continuous Testing",Edinburgh,Scotland

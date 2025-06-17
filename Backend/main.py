@@ -24,9 +24,8 @@ MODELS = {
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 
-
 thisdir = pathlib.Path(__file__).parent.resolve()
-datapath = thisdir / 'data.csv'
+datapath = thisdir / 'test.csv'
 pc = Pinecone(api_key=PINECONE_API_KEY)
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -63,6 +62,7 @@ class ConferenceDB:
     def insert(self, conferences: List[Dict]):
         """Insert conferences into the Pinecone index."""
         vectors = []
+        print(f"🔍 Number of conferences received: {len(conferences)}")
         for conf in conferences:
             unique_id = conf["conference"]
             vector = {
@@ -75,6 +75,8 @@ class ConferenceDB:
                 }
             }
             vectors.append(vector)
+
+        
         
         res = self.index.upsert(vectors=vectors)
         print(f"Response: {res}")
@@ -123,24 +125,44 @@ def upload_data():
     data = data.where(data.notnull(), None)
     # change all columns to object type
 
-    # get rows as list of dictionaries
+    # Get rows as list of dictionaries
     conferences = data.to_dict(orient='records')
-    
-    # remove None values from each record
+
+    # Remove None values from each record
     conferences = [{k: v for k, v in conf.items() if v is not None} for conf in conferences]
+
+    # Filter out records missing topics or deadline or with placeholders
+    conferences = [
+        conf for conf in conferences
+        if "topics" in conf and conf["topics"]
+        and "deadline" in conf and conf["deadline"]
+        and conf["deadline"].upper() not in {"TBD", "TBA", "DD-MM-YYYY"}
+    ]
+
+    # Generate embeddings
     topics = [conf["topics"] for conf in conferences]
     embeddings = get_embeddings(topics)
-    for conf, emb in zip(conferences, embeddings): # List of tuples
+    for conf, emb in zip(conferences, embeddings):
         conf["embedding"] = emb
 
-    # add deadline month and day fields
-    for conf in conferences:
-        deadline = datetime.strptime(conf["deadline"], "%d-%b")
-        conf["deadline_month"] = deadline.month
-        conf["deadline_day"] = deadline.day
+    # Parse and attach deadline month/day — skip if format is bad
+    valid_conferences = []
 
+    for conf in conferences:
+        try:
+            # Try parsing the deadline
+            deadline_date = datetime.fromisoformat(conf["deadline"])
+            conf["deadline_month"] = deadline_date.month
+            conf["deadline_day"] = deadline_date.day
+            print(conf)
+            valid_conferences.append(conf)
+        except Exception:
+            continue  
+
+
+    # Final insert
     db = ConferenceDB()
-    db.insert(conferences)
+    db.insert(valid_conferences)
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Upload conference data to Pinecone.")
@@ -193,6 +215,7 @@ def main():
         
         df["rank_index"] = df["core_rank"].apply(lambda x: CORE_RANKS.index(x) if x in CORE_RANKS else len(CORE_RANKS))
         args.sort_by = "rank_index" if args.sort_by == "core_rank" else args.sort_by # sort by rank index if sorting by core rank
+
         ascending = args.sort_by in ["deadline", "deadline_month", "deadline_day"]
         df = df.sort_values(by=[args.sort_by], ascending=ascending)
 

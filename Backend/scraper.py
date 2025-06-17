@@ -10,14 +10,7 @@ from braveSearch import brave_search_conference_website
 import time
 load_dotenv()
 
-MODELS = {''
-    "text-embedding-3-small": {
-        "size": 1536, 
-    },
-    "text-embedding-3-large": {
-        "size": 3072,
-    }
-}
+
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
@@ -67,23 +60,31 @@ def extract_conference_details(page_content: str):
                     },
                     "deadline": {
                         "type": "string",
-                        "description": "The date when the application submission is due. Application due date. Format in dd-mm-yyyy"
+                        "format": "date-time",
+                        "description": "The date when the application submission is due. "
                     },
                     "notification": {
                         "type": "string",
-                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference."
+                        "format": "date-time",
+                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference in ISO 8601 format"
                     },
                     "start": {
                         "type": "string",
-                        "description": "Date of welcome reception and/or first day of conference."
+                        "format": "date-time",
+                        "description": "Date of welcome reception and/or first day of conference in ISO 8601 format."
                     },
                     "end": {
                         "type": "string",
-                        "description": "The date of the last day of the conference. All should be written in DD-MM-YYYY format."
+                        "format": "date-time",
+                        "description": "The date of the last day of the conference in ISO 8601 format."
                     },
-                    "location": {
+                    "city": {
                         "type": "string",
-                        "description": "The city, country where the conference is taking place. For example: Frankfurt, Germany (or) Los Angeles, USA (or) Algiers, Algeria."
+                        "description": "The city the conference is located in, e.g., Frankfurt"
+                    },
+                    "country": {
+                        "type": "string",
+                        "description": "The country the conference, e.g., Germany"
                     },
                     "name": {
                         "type": "string",
@@ -101,7 +102,8 @@ def extract_conference_details(page_content: str):
                     "notification",
                     "start",
                     "end",
-                    "location",
+                    "city",
+                    "country",
                     "name",
                     "topics"
                 ],
@@ -212,6 +214,7 @@ def main():
         print(name, acronym)
         CITE_URL = brave_search_conference_website(name, acronym)
         print(CITE_URL)
+        
         if not CITE_URL:
             print(f"URL not found for {name}")
             continue

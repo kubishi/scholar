@@ -19,16 +19,38 @@ app = Flask(__name__)
 # Homepage - Route
 client = OpenAI()
 
+@app.template_filter('city_country')
+def city_country_filter(value):
+    city, country = value
+    string = f"{city}, {country}"
+    return string
+
+
+@app.template_filter('format_date')
+def format_date(value, format="%b %d, %Y"):
+    """Format ISO 8601 date string to a readable format, e.g. Jun 25, 2025."""
+    if not value:
+        return ""
+    try:
+        # Strip Z if present, to parse as naive datetime
+        if value.endswith("Z"):
+            value = value[:-1]
+        dt = datetime.fromisoformat(value)
+        return dt.strftime(format)
+    except Exception:
+        return value 
 
 
 @app.route("/")
 def index():
     query = request.args.get("query", "")
     num_results = int(request.args.get("num_results", 3))
-    month_span = request.args.get("month_span")
+    date_span_first = request.args.get("date_span_first")
+    date_span_second = request.args.get("date_span_second")
     articles = []
 
     if query:
+       
         try:
             # Step 1: Get embedding
             embedding_response = openai_client.embeddings.create(
@@ -44,19 +66,24 @@ def index():
                 include_metadata=True
             )
 
+            print(results)
+            
+
             all_articles = results.get("matches", [])
 
             # Step 3: Filter by start date within X months
-            if month_span:
+            if date_span_first and date_span_second:
                 try:
-                    month_span = int(month_span)
-                    cutoff_date = datetime.now() + timedelta(days=30 * month_span)
+                    
 
                     def is_within_span(article):
                         try:
-                            start_date = datetime.fromisoformat(article["metadata"]["start"])
-                            return start_date <= cutoff_date
-                        except:
+                            start_date = datetime.strptime(date_span_first, "%m-%d-%Y")
+                            end_date = datetime.strptime(date_span_second, "%m-%d-%Y")
+                            article_start = datetime.fromisoformat(article["metadata"]["start"].rstrip("Z"))
+                            
+                            return start_date <= article_start <= end_date
+                        except Exception:
                             return False
 
                     articles = list(filter(is_within_span, all_articles))
@@ -68,7 +95,7 @@ def index():
         except Exception as e:
             print(f"Error: {e}")
 
-    return render_template("index.html", articles=articles, query=query, num_results=num_results, month_span=month_span)
+    return render_template("index.html", articles=articles, query=query, num_results=num_results, date_span_first=date_span_first, date_span_second=date_span_second)
 
 
 if __name__ == "__main__":

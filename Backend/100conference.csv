@@ -1,4 +1,5 @@
 Title,Acronym,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median
+ACM Symposium on User Interface Software and Technology,UIST,A*,A*,A,A,A,A,A,A,51.0,72.0
 AAAI Conference on Human Computation and Crowdsourcing,HCOMP,B,B,,,,,,,,
 3-D Digital Imaging and Modelling,3DIM,,,,C,C,C,C,C,,
 A Satellite workshop on Formal Approaches to Testing of Software,FATES,,,,C,C,C,C,C,,
@@ -62,7 +63,6 @@ ACM Symposium on Principles of Distributed Computing,PODC,A*,A*,A*,A*,A*,A*,A*,A
 ACM Symposium on Software Reusability,SSR,,,,A,A,A,A,,,
 ACM Symposium on Solid and Physical Modelling,SPM,C,B,B,B,B,B,B,B,,
 ACM Symposium on Theory of Computing,STOC,A*,A*,A*,A*,A*,A*,A*,A,57.0,84.0
-ACM Symposium on User Interface Software and Technology,UIST,A*,A*,A,A,A,A,A,A,51.0,72.0
 ACM Virtual Reality Software and Technology,VRST,A,A,A,A,A,A,A,A,26.0,38.0
 ACM Workshop on Formal Methods in Security Engineering: From Specifications to Code,FMSE,,,,C,C,C,C,C,,
 ACM Workshop on Hot Topics in Networks,HOTNETS,National: USA,National: USA,National: USA,A,A,A,A,A,22.0,32.0
