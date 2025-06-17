@@ -8,16 +8,19 @@ import json
 from searchURL import search_conference_website
 from braveSearch import brave_search_conference_website
 import time
+from typing import Optional, Dict, Any
 load_dotenv()
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Takes website and creates a parse tree from the HTML code
-def fetch_page_content(url, max_retries=3, delay=2):
+def fetch_page_content(url: str, max_retries: int = 3, delay: int = 2) -> Optional[str]:
     headers = {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
                 "Referer": "https://research.kubishi.com"
             }
+    
+    #retry if web scraping failed
     for attempt in range(max_retries):
         try:
             response = requests.get(url, headers=headers, timeout=10)
@@ -31,6 +34,7 @@ def fetch_page_content(url, max_retries=3, delay=2):
             )
             return page_content
         except (requests.RequestException, Exception) as e:
+            #log errors in a txt file
             print(f"Attempt {attempt + 1} failed for {url}: {e}")
             with open("error_log.txt", "a", encoding="utf-8") as f:
                 f.write(f"{url}\n")
@@ -136,7 +140,10 @@ def extract_conference_details(page_content: str):
         return {}
 
 # Writes the DataFrame to a CSV file
-def save_openai_to_csv(data, url, CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median):
+def save_openai_to_csv(data: Dict[str, Any], url: str,
+                       CORE2023: str, CORE2021: str, CORE2020: str, CORE2018: str,
+                       CORE2017: str, CORE2014: str, CORE2013: str, ERA2010: str,
+                       h5_index: str, h5_median: str) -> None:
     # Check if 'conference' key exists in the data dictionary
     if not data or "conference" not in data:
         print("Error: Missing 'conference' key in data.")
