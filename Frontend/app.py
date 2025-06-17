@@ -44,7 +44,10 @@ def format_date(value, format="%b %d, %Y"):
 @app.route("/")
 def index():
     query = request.args.get("query", "")
-    num_results = int(request.args.get("num_results", 3))
+    try:
+        num_results = int(request.args.get("num_results", 3))
+    except ValueError:
+        num_results = 3
     date_span_first = request.args.get("date_span_first")
     date_span_second = request.args.get("date_span_second")
     articles = []

@@ -10,9 +10,7 @@ from braveSearch import brave_search_conference_website
 import time
 load_dotenv()
 
-
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 # Takes website and creates a parse tree from the HTML code
 def fetch_page_content(url, max_retries=3, delay=2):
@@ -34,6 +32,8 @@ def fetch_page_content(url, max_retries=3, delay=2):
             return page_content
         except (requests.RequestException, Exception) as e:
             print(f"Attempt {attempt + 1} failed for {url}: {e}")
+            with open("error_log.txt", "a", encoding="utf-8") as f:
+                f.write(f"{url}\n")
             time.sleep(delay)
     print(f"Skipping {url} after {max_retries} failed attempts.")
     return None
@@ -189,12 +189,7 @@ def save_openai_to_csv(data, url, CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,C
     existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
-
-
-
-
-
-scored_conferences = pd.read_csv("100conference.csv")
+scored_conferences = pd.read_csv("Backend/100conference.csv")
 def main():
     for name, acronym, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median in zip(
         scored_conferences["Title"], 
