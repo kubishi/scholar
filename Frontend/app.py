@@ -77,8 +77,6 @@ def index():
             # Step 3: Filter by start date within X months
             if date_span_first and date_span_second:
                 try:
-                    
-
                     def is_within_span(article):
                         try:
                             start_date = datetime.strptime(date_span_first, "%m-%d-%Y")
