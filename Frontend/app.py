@@ -4,7 +4,7 @@ import os
 from pinecone import Pinecone
 from openai import OpenAI
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime
 
 load_dotenv()
 
@@ -47,7 +47,7 @@ def index():
     try:
         num_results = int(request.args.get("num_results", 3))
     except ValueError:
-        num_results = 3
+        num_results = 5
     date_span_first = request.args.get("date_span_first")
     date_span_second = request.args.get("date_span_second")
     articles = []

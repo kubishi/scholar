@@ -3,11 +3,15 @@ import os
 from dotenv import load_dotenv
 import re
 from datetime import datetime
+from typing import Optional
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def search_conference_website(conf_name, conf_acronym):
+def search_conference_website(conf_name: str, conf_acronym: str) -> Optional[str]:
+    """
+    Use gpt-4o-mini-search-preview to find the most likely URL for a given conference this year.
+    """
     year = datetime.now().year
     completion = client.chat.completions.create(
         model="gpt-4o-mini-search-preview",
