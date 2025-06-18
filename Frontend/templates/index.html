@@ -14,26 +14,45 @@
     <h1 class="my-2 text-center">Kubishi Scholar</h1>
     <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
 
-    <form method="GET" action="/" class="mb-2">
-        <div class="input-group">
-            <input class="form-control" type="text" name="query" value="{{query}}" placeholder="Search academic topics..." required>
-            <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
+ <form method="GET" action="/" class="my-3">
+    <div class="input-group mb-3">
+        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
+        <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="10">
+        <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
+        <div class="ms-2">
+            <input class="form-control" type="text" name="date_span_first" value="{{ date_span_first or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max_width:100px;">
+        </div>
+        <div class="ms-2">
+            <input class="form-control" type="text" name="date_span_second" value="{{ date_span_second or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max_width:100px;">
+        </div>
+    </div>
 
-            <div class="result-amount">
-                <input class="form-control" type="number" name="num_results" value="{{num_results or '' }}" placeholder="Count" style="max-width: 100px;" max=10>
-            </div>
+    
 
-            <div class="ms-2">
-                <input class="form-control" type="text" name="date_span_first" value="{{date_span_first or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max-width: 125px;" min=1>
-            </div>
-            <div class="ms-2">
-                <input class="form-control" type="text" name="date_span_second" value="{{date_span_secind or '' }}" placeholder="mm-dd-yyyy" pattern="\d{2}-\d{2}-\d{4}" style="max-width: 125px;" min=1>
+    <!-- Toggle Advanced Search Button -->
+    <div class="mb-2">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
+                aria-expanded="false" aria-controls="advancedSearch">
+            Toggle Advanced Search
+        </button>
+    </div>
+
+    <!-- Collapsible Advanced Search Section -->
+    <div class="collapse mt-2" id="advancedSearch">
+        <div class="card card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <input type="text" name="field1" class="form-control" placeholder="Advanced Field 1">
+                </div>
+                <div class="col-md-6 mb-2">
+                    <input type="text" name="field2" class="form-control" placeholder="Advanced Field 2">
+                </div>
             </div>
         </div>
-    </form>
-
-
+    </div>
+</form>
     <div class="search_result">
+        <h4> Conferences Results: </h4>
         {% for article in articles %}
             <!-- and (article.score > 0.21) -->
             {% if article.metadata.url %}
@@ -49,6 +68,7 @@
                     <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
                     <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
                     <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                    
     
                     <!-- Topics are hidden by default -->
                     <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
