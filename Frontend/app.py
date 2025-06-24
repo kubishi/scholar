@@ -11,7 +11,6 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 
-
 load_dotenv()
 
 
@@ -40,9 +39,6 @@ oauth.register(
 client = OpenAI()
 
 
-
-
-
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -63,19 +59,12 @@ def logout():
         + "/v2/logout?"
         + urlencode(
             {
-                "returnTo": url_for("home", _external=True),
+                "returnTo": url_for("index", _external=True),
                 "client_id": env.get("AUTH0_CLIENT_ID"),
             },
             quote_via=quote_plus,
         )
     )
-
-@app.route("/")
-def home():
-    return render_template("index.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
-
-
-
 
 @app.template_filter('city_country')
 def city_country_filter(value):
@@ -159,8 +148,15 @@ def index():
         except Exception as e:
             print(f"Error: {e}")
 
-    return render_template("index.html", articles=articles, query=query, num_results=num_results, date_span_first=date_span_first, date_span_second=date_span_second)
+    return render_template("index.html", 
+                           articles=articles,
+                           query=query,
+                           num_results=num_results,
+                           date_span_first=date_span_first,
+                           date_span_second=date_span_second,
+                           session=session.get('user'),
+                           pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=env.get("PORT", 3000))
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
