@@ -1,10 +1,16 @@
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, session, url_for, request
 import requests
 import os
 from pinecone import Pinecone
 from openai import OpenAI
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 from datetime import datetime
+import json
+from os import environ as env
+from urllib.parse import quote_plus, urlencode
+from authlib.integrations.flask_client import OAuth
+
+
 
 load_dotenv()
 
@@ -16,8 +22,60 @@ pinecone_index = pc.Index(host="https://aca2-qjtvg2h.svc.aped-4627-b74a.pinecone
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app = Flask(__name__)
 
+app.secret_key = env.get("APP_SECRET_KEY")
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
+
 # Homepage - Route
 client = OpenAI()
+
+
+
+
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(
+        "https://" + env.get("AUTH0_DOMAIN")
+        + "/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": url_for("home", _external=True),
+                "client_id": env.get("AUTH0_CLIENT_ID"),
+            },
+            quote_via=quote_plus,
+        )
+    )
+
+@app.route("/")
+def home():
+    return render_template("index.html", session=session.get('user'), pretty=json.dumps(session.get('user'), indent=4))
+
+
+
 
 @app.template_filter('city_country')
 def city_country_filter(value):
@@ -105,4 +163,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port = 8080)
+    app.run(host="0.0.0.0", port=env.get("PORT", 3000))
