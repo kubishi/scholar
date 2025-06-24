@@ -18,7 +18,6 @@
     {% if session %}
         <h1>Welcome {{session.userinfo.name}}!</h1>
         <p><a href="/logout">Logout</a></p>
-        <div><pre>{{pretty}}</pre></div>
     {% else %}
         <h1>Welcome Guest</h1>
         <p><a href="/login">Login</a></p>
@@ -35,10 +34,10 @@
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="10">
         <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
         <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 140px;">
+            <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 150px;">
         </div>
         <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 140px;">
+            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 150px;">
         </div>
     </div>
 
