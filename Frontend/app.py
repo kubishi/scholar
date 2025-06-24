@@ -41,6 +41,10 @@ def format_date(value, format="%b %d, %Y"):
         return value 
 
 
+def convert_date_format(date_str):
+    '''Convert yyyy-mm-dd to mm-dd-yyyy'''
+    return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
+
 @app.route("/")
 def index():
     query = request.args.get("query", "")
@@ -48,8 +52,9 @@ def index():
         num_results = int(request.args.get("num_results", 3))
     except ValueError:
         num_results = 5
-    date_span_first = request.args.get("date_span_first")
-    date_span_second = request.args.get("date_span_second")
+    
+    date_span_first = convert_date_format(request.args.get("date_span_first"))
+    date_span_second = convert_date_format(request.args.get("date_span_second"))
     articles = []
 
     if query:
