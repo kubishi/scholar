@@ -15,7 +15,7 @@
         <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
       {% else %}
         <span class="me-3">
-            <h1> Welcome Guest</h1>
+            <strong> Welcome Guest</strong>
         </span>
         <a href="/login" class="btn btn-primary btn-sm">Login</a>
       {% endif %}
@@ -69,7 +69,17 @@
                 <input type="text" name="field3" class="form-control" placeholder="Advanced Field 3">
             </div>
             <div class="col-md-6 mb-2">
-                <input type="text" name="field4" class="form-control" placeholder="Advanced Field 4">
+
+                <select id="ranking-source" name="ranking_source" class="form-control">
+                <option value="">Select Ranking Source</option>
+                <option value="core">CORE</option>
+                <option value="era">ERA</option>
+                <option value="scholar">Google Scholar</option>
+                </select>
+
+                <div class="col" id="ranking-score-container" style="display: none;">
+                    <!-- Dynamic content will go here -->
+                </div>
             </div>
         </div>
     </div>
@@ -101,6 +111,18 @@
                         </p>
         
                         <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+
+                        
+                        <details class="mt-2">
+                            <summary style="cursor: pointer;">Ranking Scores</summary>
+                            <ul class="list-unstyled mt-1 ms-3">
+                                {% for key, value in article.metadata.items() %}
+                                    {% if key.startswith('CORE') or key.startswith('ERA') %}
+                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </details>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -111,6 +133,39 @@
 
 <!-- Script to show topics on click -->
 <script>
+    const sourceSelect = document.getElementById("ranking-source");
+  const scoreContainer = document.getElementById("ranking-score-container");
+
+  sourceSelect.addEventListener("change", function () {
+    const selected = this.value;
+    scoreContainer.innerHTML = "";  // Clear previous content
+
+    if (selected === "") {
+      scoreContainer.style.display = "none";
+      return;
+    }
+
+    scoreContainer.style.display = "block";
+
+    if (selected === "scholar") {
+      // Google Scholar → use text input
+      scoreContainer.innerHTML = `
+        <input type="text" name="ranking_score" class="form-control" placeholder="Enter Scholar Score">
+      `;
+    } else {
+      // CORE or Scimago → use dropdown
+      scoreContainer.innerHTML = `
+        <select name="ranking_score" class="form-control">
+          <option value="">Select Ranking Score</option>
+          <option value="A*">A*</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+        </select>
+      `;
+    }
+  });
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.search_result .btn').forEach(button => {
             button.addEventListener('click', function () {
