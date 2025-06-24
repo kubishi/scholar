@@ -117,7 +117,7 @@
                             <summary style="cursor: pointer;">Ranking Scores</summary>
                             <ul class="list-unstyled mt-1 ms-3">
                                 {% for key, value in article.metadata.items() %}
-                                    {% if key.startswith('CORE') or key.startswith('ERA') %}
+                                    {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
                                         <li><strong>{{ key }}:</strong> {{ value }}</li>
                                     {% endif %}
                                 {% endfor %}
