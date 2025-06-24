@@ -6,8 +6,6 @@ import requests
 from datetime import datetime
 
 load_dotenv()
-
-
 client = os.getenv("BRAVE_API_KEY")
 
 def brave_search_conference_website(conf_name, conf_acronym, count = 1):
