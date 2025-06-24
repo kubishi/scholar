@@ -7,22 +7,23 @@
         <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
         Kubishi Scholar
       </a>
+    <div class="d-flex ms-auto align-items-center">
+      {% if session %}
+        <span class="me-3">
+            <strong>Welcome {{ session.userinfo.name }}!</strong>
+        </span>
+        <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
+      {% else %}
+        <span class="me-3">
+            <h1> Welcome Guest</h1>
+        </span>
+        <a href="/login" class="btn btn-primary btn-sm">Login</a>
+      {% endif %}
     </div>
+  </div>
 </nav>
 
-<head>
-    <meta charset="utf-8" />
-    <title>Auth0 Example</title>
-  </head>
-  <body>
-    {% if session %}
-        <h1>Welcome {{session.userinfo.name}}!</h1>
-        <p><a href="/logout">Logout</a></p>
-    {% else %}
-        <h1>Welcome Guest</h1>
-        <p><a href="/login">Login</a></p>
-    {% endif %}
-  </body>
+  
 
 <div class="container">
     <h1 class="my-2 text-center">Kubishi Scholar</h1>
@@ -34,10 +35,10 @@
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="10">
         <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
         <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 150px;">
+            <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
         </div>
         <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 150px;">
+            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
         </div>
     </div>
 
