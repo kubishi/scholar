@@ -60,35 +60,37 @@
     </div>
 </div>
 </form>
-    <div class="search_result">
-        <h4> Conferences Results: </h4>
-        {% for article in articles %}
-            <!-- and (article.score > 0.21) -->
-            {% if article.metadata.url %}
-                <div class="mb-4 border p-2 btn text-start"
-                     data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
-                    <h5 class="mb-1">
-                        {{ article.id }}
-                        <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
-                          {{ article.metadata.url }}
-                        </a>
-                    </h5>
-                    <span class="text-muted me-3">Location: {{ article.metadata.location}}</span>
-                    <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
-                    <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
-                    <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
-                    
-    
-                    <!-- Topics are hidden by default -->
-                    <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
-                        Topics: {{ article.metadata.topics | replace('\n', ', ') }}
-                    </p>
-    
-                    <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+    {% if query %}
+        <div class="search_result">
+            <h4> Conferences Results: </h4>
+            {% for article in articles %}
+                <!-- and (article.score > 0.21) -->
+                {% if article.metadata.url %}
+                    <div class="mb-4 border p-2 btn text-start"
+                        data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+                        <h5 class="mb-1">
+                            {{ article.id }}
+                            <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
+                            {{ article.metadata.url }}
+                            </a>
+                        </h5>
+                        <span class="text-muted me-3">Location: {{ article.metadata.location}}</span>
+                        <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
+                        <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
+                        <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                        
+        
+                        <!-- Topics are hidden by default -->
+                        <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
+                            Topics: {{ article.metadata.topics | replace('\n', ', ') }}
+                        </p>
+        
+                        <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
     
 </div>
 
