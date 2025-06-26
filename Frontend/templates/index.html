@@ -107,6 +107,7 @@
         
                         <!-- Topics are hidden by default -->
                         <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
+                            Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
                             Topics: {{ article.metadata.topics | replace('\n', ', ') }}
                         </p>
         
@@ -114,12 +115,17 @@
 
                         
                         <details class="mt-2">
-                            <summary style="cursor: pointer;">Ranking Scores</summary>
+                            <summary style="cursor: pointer;">Conference Ranking Scores</summary>
                             <ul class="list-unstyled mt-1 ms-3">
+                                {% set scores = [] %}
                                 {% for key, value in article.metadata.items() %}
                                     {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
-                                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                        {% set _ = scores.append((key, value)) %}
                                     {% endif %}
+                                {% endfor %}
+
+                                {% for key, value in scores | sort(attribute=0, reverse=true) %}
+                                    <li><strong>{{ key }}:</strong> {{ value }}</li>
                                 {% endfor %}
                             </ul>
                         </details>
