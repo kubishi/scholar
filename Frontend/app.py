@@ -93,19 +93,23 @@ def convert_date_format(date_str):
     return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
 
 @app.route("/")
+
 def index():
     query = request.args.get("query", "")
+    location = request.args.get("location", "").strip().lower()
+    ranking_source = request.args.get("ranking_source", "").strip().lower()
+    ranking_score = request.args.get("ranking_score", "").strip().upper()
+
     try:
         num_results = int(request.args.get("num_results", 3))
     except ValueError:
         num_results = 5
-    
+
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
     articles = []
 
     if query:
-       
         try:
             # Step 1: Get embedding
             embedding_response = openai_client.embeddings.create(
@@ -122,31 +126,76 @@ def index():
             )
 
             print(results)
-            
 
             all_articles = results.get("matches", [])
 
-            # Step 3: Filter by start date within X months
-            if date_span_first and date_span_second:
+            # Step 3: Filter if any filters are set
+            if date_span_first and date_span_second or location or ranking_source:
                 try:
-                    def is_within_span(article):
+                    start_date = (
+                        datetime.strptime(date_span_first, "%m-%d-%Y")
+                        if date_span_first else None
+                    )
+                    end_date = (
+                        datetime.strptime(date_span_second, "%m-%d-%Y")
+                        if date_span_second else None
+                    )
+
+                    def is_match(article):
                         try:
-                            start_date = datetime.strptime(date_span_first, "%m-%d-%Y")
-                            end_date = datetime.strptime(date_span_second, "%m-%d-%Y")
-                            article_start = datetime.fromisoformat(article["metadata"]["start"].rstrip("Z"))
-                            
-                            return start_date <= article_start <= end_date
-                        except Exception:
+                            metadata = article["metadata"]
+
+                            # 1) Date filter
+                            date_ok = True
+                            if start_date and end_date:
+                                article_start = datetime.fromisoformat(metadata["start"].rstrip("Z"))
+                                date_ok = start_date <= article_start <= end_date
+
+                            # 2) Location filter
+                            location_ok = True
+                            if location:
+                                article_loc = metadata.get("country", "").strip().lower()
+                                location_ok = location in article_loc
+
+                            # 3) Ranking source filter
+                            ranking_ok = True
+                            ranking_score_ok = True
+
+                            if ranking_source:
+                                # Look for a key matching the selected ranking source
+                                matched_key = next(
+                                    (key for key in metadata.keys() if key.lower().startswith(ranking_source)),
+                                    None
+                                )
+
+                                if matched_key:
+                                    # If found, ranking source is okay
+                                    ranking_ok = True
+                                    article_score = metadata.get(matched_key, "").strip().upper()
+
+                                    # If user specified a ranking_score, check if it matches article's score
+                                    if ranking_score:
+                                        ranking_score_ok = ranking_score == article_score
+                                else:
+                                    # ranking source requested but no matching key found → filter out
+                                    ranking_ok = False
+
+
+                            return date_ok and location_ok and ranking_ok and ranking_score_ok
+
+                        except Exception as e:
+                            print(f"Filter error on article: {e}")
                             return False
 
-                    articles = list(filter(is_within_span, all_articles))
-                except:
+                    articles = list(filter(is_match, all_articles))
+                except Exception as e:
+                    print(f"Filtering error: {e}")
                     articles = all_articles
             else:
                 articles = all_articles
 
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error processing query: {e}")
 
     return render_template("index.html", 
                            articles=articles,

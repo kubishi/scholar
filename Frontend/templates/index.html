@@ -58,7 +58,7 @@
         <div class="row">
             <!-- Row 1 -->
             <div class="col-md-6 mb-2">
-                <input type="text" name="field1" class="form-control" placeholder="Location">
+                <input type="text" name="location" class="form-control" placeholder="Location">
             </div>
             <div class="col-md-6 mb-2">
                 <input type="text" name="field2" class="form-control" placeholder="">
@@ -159,7 +159,7 @@
         <input type="text" name="ranking_score" class="form-control" placeholder="Enter Scholar Score">
       `;
     } else {
-      // CORE or Scimago → use dropdown
+      // CORE or ERA → use dropdown
       scoreContainer.innerHTML = `
         <select name="ranking_score" class="form-control">
           <option value="">Select Ranking Score</option>
