@@ -23,4 +23,28 @@ body {
           flex-direction: column;
   /* stacks children vertically */
 }
+
+::-webkit-input-placeholder {
+  color: #000;
+  /* black */
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: #000;
+  /* black */
+  opacity: 1;
+}
+
+::-ms-input-placeholder {
+  color: #000;
+  /* black */
+  opacity: 1;
+}
+
+::placeholder {
+  color: #000;
+  /* black */
+  opacity: 1;
+}
 /*# sourceMappingURL=styles.css.map */

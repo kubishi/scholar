@@ -154,8 +154,9 @@ def index():
                             # 2) Location filter
                             location_ok = True
                             if location:
-                                article_loc = metadata.get("country", "").strip().lower()
-                                location_ok = location in article_loc
+                                article_loc_country = metadata.get("country", "").strip().lower()
+                                article_loc_city = metadata.get("city", "").strip().lower()
+                                location_ok = location in article_loc_country or location in article_loc_city
 
                             # 3) Ranking source filter
                             ranking_ok = True

@@ -34,12 +34,7 @@
         <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="10">
         <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
-        <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
-        </div>
-        <div class="ms-2">
-            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
-        </div>
+
     </div>
 
     
@@ -56,31 +51,51 @@
     <div class="collapse mt-2" id="advancedSearch">
     <div class="card card-body">
         <div class="row">
-            <!-- Row 1 -->
-            <div class="col-md-6 mb-2">
-                <input type="text" name="location" class="form-control" placeholder="Location">
-            </div>
-            <div class="col-md-6 mb-2">
-                <input type="text" name="field2" class="form-control" placeholder="">
-            </div>
-
-            <!-- Row 2 -->
-            <div class="col-md-6 mb-2">
-                <input type="text" name="field3" class="form-control" placeholder="Advanced Field 3">
-            </div>
-            <div class="col-md-6 mb-2">
-
-                <select id="ranking-source" name="ranking_source" class="form-control">
-                <option value="">Select Ranking Source</option>
-                <option value="core">CORE</option>
-                <option value="era">ERA</option>
-                <option value="scholar">Google Scholar</option>
-                </select>
-
-                <div class="col" id="ranking-score-container" style="display: none;">
-                    <!-- Dynamic content will go here -->
+            <!-- Start Date -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <label class="ms-2">
+                    Start Date:
+                </label>
+                <div>
+                  <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
+                </div>
+              
+                <div>
+                  <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
                 </div>
             </div>
+
+             <!-- Deadline Date -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <label class="ms-2">
+                    Deadline Date:
+                </label>
+                <div>
+                  <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
+                </div>
+              
+                <div>
+                  <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
+                </div>
+            </div>
+
+            <!-- Location and Score Filtering, Rows 3 and 4-->
+
+            <div>
+                <input type="text" name="location" class="form-control" placeholder="Location">
+            </div>
+
+
+            <div class=" mb-2">
+                <select id="ranking-source" name="ranking_source" class="form-control">
+                    <option value="" disabled selected hidden>Select Ranking Source</option>
+                    <option value="core">CORE</option>
+                    <option value="era">ERA</option>
+                    <option value="scholar">Google Scholar</option>
+                </select>
+            </div>
+
+
         </div>
     </div>
 </div>
@@ -139,7 +154,7 @@
 
 <!-- Script to show topics on click -->
 <script>
-    const sourceSelect = document.getElementById("ranking-source");
+  const sourceSelect = document.getElementById("ranking-source");
   const scoreContainer = document.getElementById("ranking-score-container");
 
   sourceSelect.addEventListener("change", function () {

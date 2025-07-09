@@ -15,3 +15,9 @@ body {
     display: flex;
     flex-direction: column;  /* stacks children vertically */
   }
+
+  ::placeholder {
+    color: #000;   /* black */
+    opacity: 1;
+  }
+
