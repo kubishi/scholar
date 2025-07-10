@@ -3,7 +3,7 @@
 {% block body %}
 <nav class="navbar">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
       <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
       Kubishi Scholar
     </a>
@@ -15,27 +15,27 @@
   <form method="GET" action="/add_conf" class="my-3">
     <div class="mb-3">
       <label for="conference_id" class="form-label">Conference ID</label>
-      <input type="text" class="form-control" id="conference_id" name="conference_id" required>
+      <input type="text" class="form-control" id="conference_id" name="conference_id" required placeholder="Ex: WSDM">
     </div>
 
     <div class="mb-3">
       <label for="conference_name" class="form-label">Conference Name</label>
-      <input type="text" class="form-control" id="conference_name" name="conference_name" required>
+      <input type="text" class="form-control" id="conference_name" name="conference_name" required placeholder="Ex: Eighteenth International Conference on Web Search and Data Mining">
     </div>
 
     <div class="mb-3">
       <label for="country" class="form-label">Country</label>
-      <input type="text" class="form-control" id="country" name="country">
+      <input type="text" class="form-control" id="country" name="country" placeholder="Ex: Germany">
     </div>
 
     <div class="mb-3">
       <label for="city" class="form-label">City</label>
-      <input type="text" class="form-control" id="city" name="city">
+      <input type="text" class="form-control" id="city" name="city" placeholder="Ex: Hannover">
     </div>
 
     <div class="mb-3">
       <label for="deadline" class="form-label">Deadline</label>
-      <input type="text" class="form-control" id="deadline" name="deadline">
+      <input type="date" class="form-control" id="deadline" name="deadline">
     </div>
 
     <div class="mb-3">
@@ -45,12 +45,17 @@
 
     <div class="mb-3">
       <label for="end_date" class="form-label">End</label>
-      <input type="date" class="form-control" id="end_date" name="end_date" required>
+      <input type="date" class="form-control" id="end_date" name="end_date" required >
     </div>
 
     <div class="mb-3">
         <label for="topic_list" class="form-label">Conference Topics/Description</label>
         <input type="text" class="form-control" id="topic_list" name="topic_list" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="conference_link" class="form-label">Conference URL</label>
+        <input type="text" class="form-control" id="conference_link" name="conference_link" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
     </div>
   
 
