@@ -220,6 +220,7 @@ def conference_adder():
     start_date = request.args.get("start_date", "")
     end_date = request.args.get("end_date", "")
     topic_list = request.args.get("topic_list", "")
+    conference_link = request.args.get("conference_link", "")
 
     print(f"ID: {conference_id}")
     print(f"Name: {conference_name}")
@@ -229,28 +230,31 @@ def conference_adder():
     print(f"Start: {start_date}")
     print(f"End: {end_date}")
 
-    embedding_response = openai_client.embeddings.create(
-        input=topic_list,
-        model="text-embedding-3-small"
-    )
-    topic_vector = embedding_response.data[0].embedding
+    if conference_id:
 
-    vector = {
-        "id": conference_id,
-        "values": topic_vector,
-        "metadata": {
-            "conference_name": conference_name,
-            "country": country,
-            "city": city,
-            "deadline": deadline,
-            "start_date": start_date,
-            "end_date": end_date,
-            "topics": topic_list
+        embedding_response = openai_client.embeddings.create(
+            input=topic_list,
+            model="text-embedding-3-small"
+        )
+        topic_vector = embedding_response.data[0].embedding
+
+        vector = {
+            "id": conference_id,
+            "values": topic_vector,
+            "metadata": {
+                "conference_name": conference_name,
+                "country": country,
+                "city": city,
+                "deadline": deadline,
+                "start_date": start_date,
+                "end_date": end_date,
+                "topics": topic_list,
+                "url": conference_link
+            }
         }
-    }
 
-    res = pinecone_index.upsert(vectors=[vector])
-    print(f"Response: {res}")
+        res = pinecone_index.upsert(vectors=[vector])
+        print(f"Response: {res}")
 
 
 

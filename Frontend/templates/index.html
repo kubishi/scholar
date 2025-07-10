@@ -3,7 +3,7 @@
 {% block body %}
 <nav class="navbar">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="/">
         <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
         Kubishi Scholar
       </a>
@@ -33,7 +33,7 @@
     <div class="input-group mb-3">
         <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
-        <button id="search-btn" type="submit" class="btn btn-primary">Search</button>
+        <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
     </div>
 
     
@@ -113,7 +113,6 @@
                             {{ article.metadata.url }}
                             </a>
                         </h5>
-                        <span class="text-muted me-3">Location: {{ article.metadata.location}}</span>
                         <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
                         <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
                         <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
@@ -199,7 +198,7 @@
 </script>
 
 <nav>
-    <a href="{{ url_for('conference_adder') }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Add Conference</a>
+    <a href="/add_conf" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Add Conference</a>
 </nav>
 
 {% endblock %}
