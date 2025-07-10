@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block body %}
+<nav class="navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
+      Kubishi Scholar
+    </a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h1 class="mb-4">Enter Conferences</h1>
+  <form method="GET" action="/add_conf" class="my-3">
+    <div class="mb-3">
+      <label for="conference_id" class="form-label">Conference ID</label>
+      <input type="text" class="form-control" id="conference_id" name="conference_id" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="conference_name" class="form-label">Conference Name</label>
+      <input type="text" class="form-control" id="conference_name" name="conference_name" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="country" class="form-label">Country</label>
+      <input type="text" class="form-control" id="country" name="country">
+    </div>
+
+    <div class="mb-3">
+      <label for="city" class="form-label">City</label>
+      <input type="text" class="form-control" id="city" name="city">
+    </div>
+
+    <div class="mb-3">
+      <label for="deadline" class="form-label">Deadline</label>
+      <input type="text" class="form-control" id="deadline" name="deadline">
+    </div>
+
+    <div class="mb-3">
+      <label for="start_date" class="form-label">Start</label>
+      <input type="date" class="form-control" id="start_date" name="start_date" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="end_date" class="form-label">End</label>
+      <input type="date" class="form-control" id="end_date" name="end_date" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="topic_list" class="form-label">Conference Topics/Description</label>
+        <input type="text" class="form-control" id="topic_list" name="topic_list" required>
+    </div>
+  
+
+    <button type="submit" class="btn btn-primary">Enter</button>
+  </form>
+
+
+</div>
+{% endblock %}
