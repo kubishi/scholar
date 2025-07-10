@@ -39,6 +39,7 @@ oauth.register(
 client = OpenAI()
 
 
+
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -92,8 +93,9 @@ def convert_date_format(date_str):
     '''Convert yyyy-mm-dd to mm-dd-yyyy'''
     return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
 
-@app.route("/")
 
+# MAIN PAGE
+@app.route("/")
 def index():
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
@@ -207,6 +209,52 @@ def index():
                            session=session.get('user'),
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
+# ENTER CONFERENCES PAGE
+@app.route('/add_conf')
+def conference_adder():
+    conference_id = request.args.get("conference_id", "")
+    conference_name = request.args.get("conference_name", "")
+    country = request.args.get("country", "")
+    city = request.args.get("city", "")
+    deadline = request.args.get("deadline", "")
+    start_date = request.args.get("start_date", "")
+    end_date = request.args.get("end_date", "")
+    topic_list = request.args.get("topic_list", "")
+
+    print(f"ID: {conference_id}")
+    print(f"Name: {conference_name}")
+    print(f"Country: {country}")
+    print(f"City: {city}")
+    print(f"Deadline: {deadline}")
+    print(f"Start: {start_date}")
+    print(f"End: {end_date}")
+
+    embedding_response = openai_client.embeddings.create(
+        input=topic_list,
+        model="text-embedding-3-small"
+    )
+    topic_vector = embedding_response.data[0].embedding
+
+    vector = {
+        "id": conference_id,
+        "values": topic_vector,
+        "metadata": {
+            "conference_name": conference_name,
+            "country": country,
+            "city": city,
+            "deadline": deadline,
+            "start_date": start_date,
+            "end_date": end_date,
+            "topics": topic_list
+        }
+    }
+
+    res = pinecone_index.upsert(vectors=[vector])
+    print(f"Response: {res}")
+
+
+
+    return render_template('add_conference.html')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
