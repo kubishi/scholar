@@ -10,19 +10,33 @@ from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
+from flask_sqlalchemy import SQLAlchemy
+
 
 load_dotenv()
 
-
+# --Pinecone Setup--
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 pinecone_index = pc.Index(host="https://aca2-qjtvg2h.svc.aped-4627-b74a.pinecone.io")
+
+# --OpenAI API Setup---
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# --Flask App setup---
 app = Flask(__name__)
 
-app.secret_key = env.get("APP_SECRET_KEY")
 
+
+# ---SQL Database Setup---
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# --Auth0 setup---
+app.secret_key = env.get("APP_SECRET_KEY")
 oauth = OAuth(app)
 
 oauth.register(

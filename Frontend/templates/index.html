@@ -29,11 +29,25 @@
     <h1 class="my-2 text-center">Kubishi Scholar</h1>
     <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
 
- <form method="GET" action="/" class="my-3">
-    <div class="input-group mb-3">
-        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
-        <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
-        <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <form method="GET" action="/" class="d-flex flex-grow-1 me-2">
+          <input class="form-control me-2" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
+          <input class="form-control me-2" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
+          <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+      </form>
+  
+      <!-- Add Conference Button -->
+      {% if session %}
+      <!-- Only show clickable button if user is logged in -->
+      <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+          ➕ Add Conference
+      </a>
+      {% else %}
+          <!-- Disabled button for guests -->
+          <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
+              🔒 Add Conference
+          </button>
+      {% endif %}
     </div>
 
     
@@ -197,8 +211,6 @@
     });
 </script>
 
-<nav>
-    <a href="/add_conf" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Add Conference</a>
-</nav>
+
 
 {% endblock %}
