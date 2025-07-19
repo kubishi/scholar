@@ -63,7 +63,11 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
+    
+    print("TONEKKKKKKKKN", token["id_token"])
     session["user"] = token
+    sub = "google-oauth2|1234567890"
+    
     return redirect("/")
 
 @app.route("/logout")
@@ -220,7 +224,7 @@ def index():
                            num_results=num_results,
                            date_span_first=date_span_first,
                            date_span_second=date_span_second,
-                           session=session.get('user'),
+                           session_user_name=session.get('user'),
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 # ENTER CONFERENCES PAGE
@@ -263,7 +267,9 @@ def conference_adder():
                 "start_date": start_date,
                 "end_date": end_date,
                 "topics": topic_list,
-                "url": conference_link
+                "url": conference_link,
+                "contributer": session['user']['userinfo']['sub'],
+
             }
         }
 
