@@ -10,7 +10,7 @@
   </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container my-4" style="max-width: 700px;">
   <h1 class="mb-4">Enter Conferences</h1>
   <form method="GET" action="/add_conf" class="my-3">
     <div class="mb-3">
@@ -33,33 +33,34 @@
       <input type="text" class="form-control" id="city" name="city" placeholder="Ex: Hannover">
     </div>
 
-    <div class="mb-3">
-      <label for="deadline" class="form-label">Deadline</label>
-      <input type="date" class="form-control" id="deadline" name="deadline">
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label for="deadline" class="form-label">Submission Deadline</label>
+        <input type="date" class="form-control" id="deadline" name="deadline" aria-label="Submission Deadline">
+      </div>
+      <div class="col-md-4">
+        <label for="start_date" class="form-label">Start Date </label>
+        <input type="date" class="form-control" id="start_date" name="start_date" required aria-label="Start Date">
+      </div>
+      <div class="col-md-4">
+        <label for="end_date" class="form-label">End Date </label>
+        <input type="date" class="form-control" id="end_date" name="end_date" required aria-label="End Date">
+      </div>
     </div>
 
     <div class="mb-3">
-      <label for="start_date" class="form-label">Start</label>
-      <input type="date" class="form-control" id="start_date" name="start_date" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="end_date" class="form-label">End</label>
-      <input type="date" class="form-control" id="end_date" name="end_date" required >
-    </div>
-
-    <div class="mb-3">
-        <label for="topic_list" class="form-label">Conference Topics/Description</label>
-        <input type="text" class="form-control" id="topic_list" name="topic_list" required>
+      <label for="topic_list" class="form-label">Conference Topics/Description </label>
+      <textarea class="form-control" id="topic_list" name="topic_list" rows="3" required placeholder="Brief description or topics..."></textarea>
     </div>
 
     <div class="mb-3">
         <label for="conference_link" class="form-label">Conference URL</label>
-        <input type="text" class="form-control" id="conference_link" name="conference_link" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
+        <input type="text" class="form-control" id="conference_link" name="conference_link" rows="3" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
     </div>
   
 
-    <button type="submit" class="btn btn-primary">Enter</button>
+
+    <button type="submit" class="btn btn-secondary">Enter</button>
   </form>
 
 

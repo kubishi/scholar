@@ -10,7 +10,7 @@
     <div class="d-flex ms-auto align-items-center">
       {% if session %}
         <span class="me-3">
-            <strong>Welcome {{ session.userinfo.name }}!</strong>
+            <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
         </span>
         <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
       {% else %}
@@ -38,10 +38,10 @@
   
       <!-- Add Conference Button -->
       {% if session %}
-      <!-- Only show clickable button if user is logged in -->
-      <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
-          ➕ Add Conference
-      </a>
+          <!-- Only show clickable button if user is logged in -->
+          <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+              + Add Conference
+          </a>
       {% else %}
           <!-- Disabled button for guests -->
           <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
