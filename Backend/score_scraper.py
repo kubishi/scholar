@@ -187,7 +187,7 @@ def extract_all_h5scores(core_df):
         new_row = pd.DataFrame({"Title": [query], "Acronym": [acronym], "h5_index": [h5_score], "h5_median": [h5_score_median]})
         temp_df = pd.concat([temp_df, new_row], ignore_index=True)
         save_to_csv(temp_df, "temp_Conference_Scores.csv")
-        time.sleep(random.uniform(2, 5)) #randomized delays so hopefully I dont get IP banned
+        time.sleep(random.uniform(1, 4)) #randomized delays so hopefully I dont get IP banned
 
     core_df["h5_index"] = h5_index
     core_df["h5_median"] = h5_median
@@ -201,10 +201,9 @@ def save_to_csv(df, filename):
         print(f"Error saving file: {e}")
 
 def clean_df(df):
-    
-    ranking_columns = ['CORE2023', 'CORE2021', 'CORE2020', 'CORE2018', 'CORE2017', 'CORE2014', 'CORE2013']
-    
     #Remove any conferences that only have ERA, or h5 metrics. 
+    ranking_columns = ['CORE2023', 'CORE2021', 'CORE2020', 'CORE2018', 'CORE2017', 'CORE2014', 'CORE2013']
+
     filtered_df = df[df[ranking_columns].notna().any(axis=1)]
     return filtered_df
 
