@@ -57,10 +57,33 @@
         <label for="conference_link" class="form-label">Conference URL</label>
         <input type="text" class="form-control" id="conference_link" name="conference_link" rows="3" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
     </div>
+
+     <!-- Modal -->
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Submit Conference
+    </button>
+    
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Input</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Enter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   
 
 
-    <button type="submit" class="btn btn-secondary">Enter</button>
+    
   </form>
 
 
