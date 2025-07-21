@@ -23,96 +23,80 @@
   </div>
 </nav>
 
-
 <div class="container">
+  <h1 class="my-2 text-center">Kubishi Scholar</h1>
+  <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
 
-    <h1 class="my-2 text-center">Kubishi Scholar</h1>
-    <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <form method="GET" action="/" class="d-flex flex-grow-1 me-2">
-          <input class="form-control me-2" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
-          <input class="form-control me-2" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
-          <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
-      </form>
-  
-      <!-- Add Conference Button -->
-      {% if session %}
-          <!-- Only show clickable button if user is logged in -->
+  <!-- START FORM: Wrap everything in a single form -->
+  <form method="GET" action="/">
+    <!-- Top row: Basic search -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div class="d-flex flex-grow-1 gap-2">
+        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
+        <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
+      </div>
+      <div class="d-flex gap-2">
+        {% if session %}
           <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
-              + Add Conference
+            + Add Conference
           </a>
-      {% else %}
-          <!-- Disabled button for guests -->
+        {% else %}
           <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
-              🔒 Add Conference
+            🔒 Add Conference
           </button>
-      {% endif %}
+        {% endif %}
+        <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+      </div>
     </div>
 
-
-    <!-- Toggle Advanced Search Button -->
+    <!-- Toggle Button -->
     <div class="mb-2">
-        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
-                aria-expanded="false" aria-controls="advancedSearch">
-            Toggle Advanced Search
-        </button>
+      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
+              aria-expanded="false" aria-controls="advancedSearch">
+        Toggle Advanced Search
+      </button>
     </div>
 
     <!-- Collapsible Advanced Search Section -->
     <div class="collapse mt-2" id="advancedSearch">
-    <div class="card card-body">
-        <div class="row">
-            <!-- Start Date -->
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <label class="ms-2">
-                    Start Date:
-                </label>
-                <div>
-                  <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
-                </div>
-              
-                <div>
-                  <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
-                </div>
-            </div>
+      <div class="card card-body">
+        <div class="row g-3">
+          <!-- Start Date -->
+          <div class="col-md-6">
+            <label>Start Date:</label>
+            <input class="form-control mb-1" type="date" name="date_span_first" value="{{ date_span_first or '' }}">
+            <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}">
+          </div>
 
-             <!-- Deadline Date -->
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <label class="ms-2">
-                    Deadline Date:
-                </label>
-                <div>
-                  <input class="form-control" type="date" name="date_span_first" value="{{ date_span_first or '' }}" style="max-width: 159px;">
-                </div>
-              
-                <div>
-                  <input class="form-control" type="date" name="date_span_second" value="{{ date_span_second or '' }}" style="max-width: 159px;">
-                </div>
-            </div>
+          <!-- Deadline Date -->
+          <div class="col-md-6">
+            <label>Deadline Date:</label>
+            <input class="form-control mb-1" type="date" name="deadline_first" value="{{ deadline_first or '' }}">
+            <input class="form-control" type="date" name="deadline_second" value="{{ deadline_second or '' }}">
+          </div>
 
-            <!-- Location and Score Filtering, Rows 3 and 4-->
+          <!-- Location -->
+          <div class="col-md-6">
+            <label>Location:</label>
+            <input type="text" name="location" class="form-control" placeholder="Location">
+          </div>
 
-            <div>
-                <input type="text" name="location" class="form-control" placeholder="Location">
-            </div>
-
-
-            <div class=" mb-2">
-                <select id="ranking-source" name="ranking_source" class="form-control">
-                    <option value="" disabled selected hidden>Select Ranking Source</option>
-                    <option value="core">CORE</option>
-                    <option value="era">ERA</option>
-                    <option value="scholar">Google Scholar</option>
-                </select>
-            </div>
-
+          <!-- Ranking Source -->
+          <div class="col-md-6">
+            <label>Ranking Source:</label>
+            <select id="ranking-source" name="ranking_source" class="form-control">
+              <option value="" disabled selected hidden>Select Ranking Source</option>
+              <option value="core">CORE</option>
+              <option value="era">ERA</option>
+              <option value="scholar">Google Scholar</option>
+            </select>
             <div id="ranking-score-container" style="display: none;" class="mt-2"></div>
-
+          </div>
         </div>
+      </div>
     </div>
+  </form>
 </div>
-</form>
     {% if query %}
         <div class="search_result">
             <h4> Conferences Results: </h4>

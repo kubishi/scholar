@@ -115,6 +115,7 @@ def convert_date_format(date_str):
 # MAIN PAGE
 @app.route("/")
 def index():
+    print("request.args:", request.args)
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
@@ -145,12 +146,12 @@ def index():
                 include_metadata=True
             )
 
-            print(results)
+            #print(results)
 
             all_articles = results.get("matches", [])
 
             # Step 3: Filter if any filters are set
-            if date_span_first and date_span_second or location or ranking_source:
+            if date_span_first and date_span_second or location or ranking_score:
                 try:
                     start_date = (
                         datetime.strptime(date_span_first, "%m-%d-%Y")
@@ -181,26 +182,35 @@ def index():
                             # 3) Ranking source filter
                             ranking_ok = True
                             ranking_score_ok = True
+                            RANK_ORDER = {
+                                            "A*": 4,
+                                            "A": 3,
+                                            "B": 2,
+                                            "C": 1,
+                                            "unranked": 0
+                                        }
 
                             if ranking_source:
-                                # Look for a key matching the selected ranking source
+                                #get the correct conference source
                                 matched_key = next(
                                     (key for key in metadata.keys() if key.lower().startswith(ranking_source)),
                                     None
                                 )
 
                                 if matched_key:
-                                    # If found, ranking source is okay
+                                    #get conference score
                                     ranking_ok = True
                                     article_score = metadata.get(matched_key, "").strip().upper()
 
                                     # If user specified a ranking_score, check if it matches article's score
                                     if ranking_score:
-                                        ranking_score_ok = ranking_score == article_score
+                                        if article_score in RANK_ORDER:
+                                            user_rank = RANK_ORDER[ranking_score]
+                                            article_rank = RANK_ORDER[article_score]
+                                            ranking_score_ok = article_rank >= user_rank
                                 else:
                                     # ranking source requested but no matching key found → filter out
                                     ranking_ok = False
-
 
                             return date_ok and location_ok and ranking_ok and ranking_score_ok
 
