@@ -8,7 +8,7 @@
         Kubishi Scholar
       </a>
     <div class="d-flex ms-auto align-items-center">
-      {% if session %}
+      {% if session_user_name and session_user_name.userinfo %}
         <span class="me-3">
             <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
         </span>
@@ -108,6 +108,7 @@
                 </select>
             </div>
 
+            <div id="ranking-score-container" style="display: none;" class="mt-2"></div>
 
         </div>
     </div>
@@ -210,7 +211,6 @@
         });
     });
 </script>
-
 
 
 {% endblock %}
