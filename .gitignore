@@ -176,3 +176,5 @@ cython_debug/
 .pypirc
 
 *.txt
+
+sql_connection_test.py
