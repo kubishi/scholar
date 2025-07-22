@@ -178,3 +178,4 @@ cython_debug/
 *.txt
 
 sql_connection_test.py
+migrations
