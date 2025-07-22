@@ -10,6 +10,7 @@ from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -30,10 +31,18 @@ app = Flask(__name__)
 
 
 # ---SQL Database Setup---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/final_test'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+class User(db.Model):
+    google_auth_id = db.Column(db.String(60), primary_key=True)
+    user_name = db.Column(db.String(50))
+    user_email = db.Column(db.String(50), primary_key=True)
+
+
 
 # --Auth0 setup---
 app.secret_key = env.get("APP_SECRET_KEY")
@@ -63,10 +72,26 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    
-    print("TONEKKKKKKKKN", token["id_token"])
+    print("TONEKKKKKKKKN", token)
     session["user"] = token
-    sub = "google-oauth2|1234567890"
+    user_info = token["userinfo"]
+
+    google_auth_id = user_info['sub']
+    user_name = user_info['name']
+    user_email = user_info['email']
+
+    user = User.query.filter_by(google_auth_id=google_auth_id).first()
+    if not user:
+        print("YEET")
+        user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
+        db.session.add(user)
+    else:
+        # Optionally update existing user info
+        user.first_name = user_name
+        user.email = user_email
+
+    db.session.commit() 
+    
     
     return redirect("/")
 
@@ -290,6 +315,13 @@ def conference_adder():
 
     return render_template('add_conference.html',
                            conference_id=conference_id)
+
+@app.route("/connection_search")
+def connfection_finder():
+    print("Route Test")
+    return render_template('friend_search.html')
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
