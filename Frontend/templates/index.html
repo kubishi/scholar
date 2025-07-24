@@ -28,11 +28,14 @@
   <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
 
   <!-- START FORM: Wrap everything in a single form -->
+
+
   <form method="GET" action="/">
     <!-- Top row: Basic search -->
+    <input class="form-control" type="text" name="test_query" placeholder="Search by conference ID...">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <div class="d-flex flex-grow-1 gap-2">
-        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics..." required>
+        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
       </div>
       <div class="d-flex gap-2">
@@ -103,7 +106,7 @@
     </div>
   </form>
 </div>
-    {% if query %}
+    {% if query or test_query %}
         <div class="search_result container">
             <h4> Conferences Results: </h4>
             {% for article in articles %}

@@ -146,6 +146,8 @@ def index():
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
 
+    test_query = request.args.get("test_query", "")
+
     try:
         num_results = int(request.args.get("num_results", 3))
     except ValueError:
@@ -155,7 +157,20 @@ def index():
     date_span_second = convert_date_format(request.args.get("date_span_second"))
     articles = []
 
-    if query:
+    if test_query:
+        results = pinecone_index.query(
+            id=test_query, 
+            top_k=1,
+            include_metadata=True,
+            include_values=False
+        )
+
+        articles = results.get("matches", [])
+
+        print(articles)
+
+
+    elif query:
         try:
             # Step 1: Get embedding
             embedding_response = openai_client.embeddings.create(
