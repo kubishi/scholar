@@ -14,12 +14,15 @@
     <h1 class="mb-4">Make Connections</h1>
     <form method="GET" action="/connection_search" class="my-3">
       <div class="mb-3">
-        <label for="conference_id" class="form-label">Conference ID</label>
-        <input type="text" class="form-control" id="conference_id" name="conference_id" required placeholder="Ex: WSDM">
+        <label for="conference_id" class="form-label">Enter Email</label>
+        <input type="text" class="form-control" id="connection_email_search" name="connection_email_search" value="{{ connection_email_search }}" required placeholder="example@gmail.com">
       </div>
-
-      
     </form>
+
+    <div> {{ searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id }} </div>
+    
+</div>
+
 
 
 {% endblock body %}
