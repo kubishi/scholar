@@ -166,53 +166,60 @@ def index():
                         try:
                             metadata = article["metadata"]
 
-                            # 1) Date filter
-                            date_ok = True
+                            #Date filter
                             if start_date and end_date:
-                                article_start = datetime.fromisoformat(metadata["start"].rstrip("Z"))
-                                date_ok = start_date <= article_start <= end_date
+                                start_str = metadata.get("start")
+                                if not start_str:
+                                    return False  # No start date to compare
+                                article_start = datetime.fromisoformat(start_str.rstrip("Z"))
+                                if not (start_date <= article_start <= end_date):
+                                    return False
 
-                            # 2) Location filter
-                            location_ok = True
+                            #Location filter
                             if location:
                                 article_loc_country = metadata.get("country", "").strip().lower()
                                 article_loc_city = metadata.get("city", "").strip().lower()
-                                location_ok = location in article_loc_country or location in article_loc_city
+                                if location not in article_loc_country and location not in article_loc_city:
+                                    return False
 
-                            # 3) Ranking source filter
-                            ranking_ok = True
-                            ranking_score_ok = True
+                            #Ranking score filter
                             RANK_ORDER = {
-                                            "A*": 4,
-                                            "A": 3,
-                                            "B": 2,
-                                            "C": 1,
-                                            "unranked": 0
-                                        }
+                                "A*": 4,
+                                "A": 3,
+                                "B": 2,
+                                "C": 1,
+                                "UNRANKED": 0
+                            }
 
-                            if ranking_source:
-                                #get the correct conference source
-                                matched_key = next(
-                                    (key for key in metadata.keys() if key.lower().startswith(ranking_source)),
-                                    None
-                                )
+                            if ranking_source == "scholar":
+                                matched_key = next((key for key in metadata if key.lower().startswith("h5_index")), None)
+                                if not matched_key:
+                                    return False
+                                article_score = metadata.get(matched_key, "")
+                                try:
+                                    article_score_val = float(article_score)
+                                    if float(ranking_score) >= article_score_val:
+                                        return False
+                                except (ValueError, TypeError):
+                                    return False
 
-                                if matched_key:
-                                    #get conference score
-                                    ranking_ok = True
-                                    article_score = metadata.get(matched_key, "").strip().upper()
+                            elif ranking_source:
+                                matched_key = next((key for key in metadata if key.lower().startswith(ranking_source)), None)
+                                if not matched_key:
+                                    return False
 
-                                    # If user specified a ranking_score, check if it matches article's score
-                                    if ranking_score:
-                                        if article_score in RANK_ORDER:
-                                            user_rank = RANK_ORDER[ranking_score]
-                                            article_rank = RANK_ORDER[article_score]
-                                            ranking_score_ok = article_rank >= user_rank
-                                else:
-                                    # ranking source requested but no matching key found → filter out
-                                    ranking_ok = False
+                                article_score = metadata.get(matched_key, "").strip().upper()
+                                if ranking_score:
+                                    try:
+                                        user_rank = RANK_ORDER[ranking_score.strip().upper()]
+                                        article_rank = RANK_ORDER[article_score]
+                                        if article_rank < user_rank:
+                                            return False
+                                    except KeyError:
+                                        return False
 
-                            return date_ok and location_ok and ranking_ok and ranking_score_ok
+                            # All checks passed
+                            return True
 
                         except Exception as e:
                             print(f"Filter error on article: {e}")
