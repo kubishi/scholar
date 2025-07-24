@@ -14,6 +14,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 
+
 load_dotenv()
 
 # --Pinecone Setup--
@@ -72,7 +73,7 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    print("TONEKKKKKKKKN", token)
+    # print("TONEKKKKKKKKN", token)
     session["user"] = token
     user_info = token["userinfo"]
 
@@ -82,7 +83,6 @@ def callback():
 
     user = User.query.filter_by(google_auth_id=google_auth_id).first()
     if not user:
-        print("YEET")
         user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
         db.session.add(user)
     else:
@@ -275,13 +275,13 @@ def conference_adder():
     topic_list = request.args.get("topic_list", "")
     conference_link = request.args.get("conference_link", "")
 
-    print(f"ID: {conference_id}")
-    print(f"Name: {conference_name}")
-    print(f"Country: {country}")
-    print(f"City: {city}")
-    print(f"Deadline: {deadline}")
-    print(f"Start: {start_date}")
-    print(f"End: {end_date}")
+    # print(f"ID: {conference_id}")
+    # print(f"Name: {conference_name}")
+    # print(f"Country: {country}")
+    # print(f"City: {city}")
+    # print(f"Deadline: {deadline}")
+    # print(f"Start: {start_date}")
+    # print(f"End: {end_date}")
 
     if conference_id:
 
@@ -318,8 +318,17 @@ def conference_adder():
 
 @app.route("/connection_search")
 def connfection_finder():
-    print("Route Test")
-    return render_template('friend_search.html')
+    connection_email_search = request.args.get("connection_email_search", "")
+    # session keyword "unlocks access to db"
+    searched_user_info = db.session.query(User).filter_by(user_email = connection_email_search).first()
+    
+  
+    if searched_user_info:
+        print(searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id)
+    else:
+        print("No user found with that email.")
+
+    return render_template('friend_search.html', searched_user_info = searched_user_info)
 
 
 
