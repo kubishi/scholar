@@ -120,6 +120,13 @@
                             {{ article.metadata.url }}
                             </a>
                         </h5>
+
+                        <a href="#" 
+                          class="btn btn-outline-primary btn-sm favorite-btn" 
+                          data-conference-id="{{ article.id }}">
+                          Favorite
+                        </a>
+                      
                         <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
                         <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
                         <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
@@ -156,6 +163,34 @@
     {% endif %}
     
 </div>
+
+
+<script>
+  document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', async function(event) {
+      event.preventDefault();
+      const conferenceId = this.dataset.conferenceId;
+
+      const response = await fetch('/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conference_id: conferenceId })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('✅ Favorited! Saved with ID: ' + result.id);
+        this.classList.remove('btn-outline-primary');
+        this.classList.add('btn-success');
+        this.textContent = 'Saved!';
+      } else {
+        alert('❌ Failed to favorite: ' + (result.error || 'Try again.'));
+      }
+    });
+  });
+</script>
+
+
 
 <!-- Script to show topics on click -->
 <script>

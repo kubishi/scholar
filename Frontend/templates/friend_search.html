@@ -19,7 +19,10 @@
       </div>
     </form>
 
-    <div> {{ searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id }} </div>
+
+    {% if searched_user_info.user_name %}
+        <div> {{ searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id }} </div>
+    {% endif %}
     
 </div>
 
