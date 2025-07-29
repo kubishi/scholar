@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, url_for, request
+from flask import Flask, redirect, render_template, session, url_for, request, jsonify
 import requests
 import os
 from pinecone import Pinecone
@@ -29,19 +29,22 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # --Flask App setup---
 app = Flask(__name__)
 
-
-
 # ---SQL Database Setup---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/final_test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/kubishi_scholar'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 class User(db.Model):
     google_auth_id = db.Column(db.String(60), primary_key=True)
     user_name = db.Column(db.String(50))
-    user_email = db.Column(db.String(50), primary_key=True)
+    user_email = db.Column(db.String(50))
+
+class Favorite_Conf(db.Model):
+    user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
+    fav_conf_id = db.Column(db.String(50), primary_key=True)
 
 
 
@@ -63,7 +66,6 @@ oauth.register(
 client = OpenAI()
 
 
-
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -81,14 +83,16 @@ def callback():
     user_name = user_info['name']
     user_email = user_info['email']
 
+    session["user_id"] = google_auth_id
+
     user = User.query.filter_by(google_auth_id=google_auth_id).first()
     if not user:
-        user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
-        db.session.add(user)
+        new_user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
+        db.session.add(new_user)
     else:
         # Optionally update existing user info
-        user.first_name = user_name
-        user.email = user_email
+        user.user_name = user_name
+        user.user_email = user_email
 
     db.session.commit() 
     
@@ -345,6 +349,26 @@ def connfection_finder():
 
     return render_template('friend_search.html', searched_user_info = searched_user_info)
 
+
+@app.route('/favorite', methods=['POST'])
+def save_favorite():
+    if 'user_id' not in session:
+        return "Unauthorized", 401 
+     
+    data = request.get_json()
+    conference_id = data.get('conference_id')
+    user_id = session['user_id']
+
+    if not conference_id:
+        return "No conference_id provided", 400
+
+    print(f"Saved conference ID: {conference_id}")
+
+    new_user_conf_pair = Favorite_Conf(user_id=user_id, fav_conf_id=conference_id)
+    db.session.add(new_user_conf_pair)
+    db.session.commit()
+
+    return jsonify({'id': conference_id}), 200
 
 
 if __name__ == "__main__":
