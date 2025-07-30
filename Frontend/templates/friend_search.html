@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block body %}
+<nav class="navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
+      Kubishi Scholar
+    </a>
+  </div>
+</nav>
+
+<div class="container my-4" style="max-width: 700px;">
+    <h1 class="mb-4">Make Connections</h1>
+    <form method="GET" action="/connection_search" class="my-3">
+      <div class="mb-3">
+        <label for="conference_id" class="form-label">Enter Email</label>
+        <input type="text" class="form-control" id="connection_email_search" name="connection_email_search" value="{{ connection_email_search }}" required placeholder="example@gmail.com">
+      </div>
+    </form>
+
+
+    {% if searched_user_info.user_name %}
+        <div> {{ searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id }} </div>
+    {% endif %}
+    
+</div>
+
+
+
+{% endblock body %}
