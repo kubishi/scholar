@@ -142,7 +142,7 @@ def index():
             # Step 2: Query Pinecone
             results = pinecone_index.query(
                 vector=vector,
-                top_k=num_results,
+                top_k=50,
                 include_metadata=True
             )
 
@@ -231,9 +231,13 @@ def index():
                     articles = all_articles
             else:
                 articles = all_articles
-
+            print(f"All: {len(all_articles)}, Filtered: {len(articles)}, Final: {len(articles[:num_results])}")
+            
         except Exception as e:
             print(f"Error processing query: {e}")
+        
+    # Truncate based on num_results
+    articles = articles[:num_results]
 
     return render_template("index.html", 
                            articles=articles,
