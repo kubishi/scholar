@@ -3,7 +3,7 @@ body {
 }
 
 .navbar {
-    background-color: rgb(88, 82, 82)
+    background-color: #e2dfdcf2
 }
 
 .kubishi_logo {
@@ -16,8 +16,29 @@ body {
     flex-direction: column;  /* stacks children vertically */
   }
 
-  ::placeholder {
+::placeholder {
     color: #000;   /* black */
     opacity: 1;
   }
 
+  .menu_logo {
+    transition: transform 0.4s ease-out;
+  }
+  
+  .menu_logo:hover {
+    transform: scale(1.1);
+  }
+
+  .title_subtext{
+    font-size: 10pt;
+  }
+
+  .main_logo {
+    border: 1px solid #e2dfdcf2; /* invisible border, keeps space */
+    transition: border-color 0.3s ease;
+  }
+  
+  .main_logo:hover {
+    border-color: black; /* border appears without resizing */
+    border-radius: 1px;  /* subtle rounding */
+  }
