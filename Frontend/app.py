@@ -120,6 +120,8 @@ def index():
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
+    
+    ID_query = request.args.get("ID_query", "").upper()
 
     try:
         num_results = int(request.args.get("num_results", 3))
@@ -129,8 +131,18 @@ def index():
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
     articles = []
+    
+    if ID_query:
+        results = pinecone_index.query(
+            id=ID_query, 
+            top_k=1,
+            include_metadata=True,
+            include_values=False
+        )
 
-    if query:
+        articles = results.get("matches", [])
+
+    elif query:
         try:
             # Step 1: Get embedding
             embedding_response = openai_client.embeddings.create(
@@ -236,12 +248,14 @@ def index():
         except Exception as e:
             print(f"Error processing query: {e}")
         
-    # Truncate based on num_results
-    articles = articles[:num_results]
+        # Truncate based on num_results
+        articles = articles[:num_results]
+    print(articles, len(articles))
 
     return render_template("index.html", 
                            articles=articles,
                            query=query,
+                           ID_query=ID_query,  
                            num_results=num_results,
                            date_span_first=date_span_first,
                            date_span_second=date_span_second,
