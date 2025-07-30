@@ -38,7 +38,7 @@
 
   <form method="GET" action="/">
     <!-- Top row: Basic search -->
-    <input class="form-control" type="text" name="test_query" placeholder="Search by conference ID...">
+    <input class="form-control" type="text" name="ID_query" value="{{ ID_query }}" placeholder="Search by conference ID...">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <div class="d-flex flex-grow-1 gap-2">
         <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
@@ -106,8 +106,8 @@
       </div>
     </div>
   </form>
-</div>
-    {% if query or test_query %}
+<div>
+    {% if query or ID_query %}
         <div class="search_result container">
             <h4> Conferences Results: </h4>
             {% for article in articles %}
