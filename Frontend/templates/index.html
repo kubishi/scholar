@@ -3,9 +3,12 @@
 {% block body %}
 <nav class="navbar">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">
-        <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
-        Kubishi Scholar
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2" alt="">
+        <div class="d-flex flex-column">
+          <span class="fs-5 fw-bold">Kubishi Scholar</span>
+          <span class="title_subtext text-muted">Scemanic Conference Discovery</span>
+        </div>
       </a>
     <div class="d-flex ms-auto align-items-center">
       {% if session_user_name and session_user_name.userinfo %}
@@ -24,8 +27,11 @@
 </nav>
 
 <div class="container">
-  <h1 class="my-2 text-center">Kubishi Scholar</h1>
-  <h4 class="my-2 text-center text-muted">Redefining the search in research</h4>
+  <div class="d-flex flex-column align-items-center pt-4 pb-2">
+    <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo" style="border-width: 5px;">
+    <h1 class=" my-1 text-center fw-bold">Kubishi Scholar</h1>
+    <h4 class="my-1 text-center text-muted">Redefining the search in research</h4>
+  </div>
 
   <!-- START FORM: Wrap everything in a single form -->
 
@@ -38,18 +44,19 @@
         <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
         <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
       </div>
-      <div class="d-flex gap-2">
-        {% if session %}
-          <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
-            + Add Conference
-          </a>
-        {% else %}
-          <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
-            🔒 Add Conference
-          </button>
-        {% endif %}
-        <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
-      </div>
+      <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+    </div>
+
+    <div class="d-flex gap-2 mb-2">
+      {% if session %}
+        <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+          + Add Conference
+        </a>
+      {% else %}
+        <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
+          🔒 Add Conference
+        </button>
+      {% endif %}
     </div>
 
     <!-- Toggle Button -->
@@ -234,6 +241,8 @@
                 if (topicEl) {
                     topicEl.style.display = topicEl.style.display === 'none' ? 'block' : 'none';
                 }
+             
+                
             });
         });
     });
