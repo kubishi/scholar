@@ -175,6 +175,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-*.txt
+
+
 
 sql_connection_test.py
