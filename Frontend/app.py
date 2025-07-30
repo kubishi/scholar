@@ -30,10 +30,10 @@ app = Flask(__name__)
 
 
 # ---SQL Database Setup---
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 
 # --Auth0 setup---
 app.secret_key = env.get("APP_SECRET_KEY")
