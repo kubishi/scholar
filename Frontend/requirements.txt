@@ -1,9 +1,0 @@
-Flask==3.1.1
-Flask-Migrate==4.1.0
-Flask-SQLAlchemy==3.1.1
-PyMySQL==1.1.1
-gunicorn==23.0.0
-python-dotenv==1.0.1
-Authlib==1.6.0
-openai==1.65.4
-pinecone-client==6.0.0
