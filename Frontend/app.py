@@ -11,7 +11,7 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 from flask_sqlalchemy import SQLAlchemy
-from filters import is_match
+from .filters import is_match
 
 
 load_dotenv()
