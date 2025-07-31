@@ -108,10 +108,16 @@ def convert_date_format(date_str):
     '''Convert yyyy-mm-dd to mm-dd-yyyy'''
     return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
 
+def fetch_record_count():
+    stats = pinecone_index.describe_index_stats()
+    record_count = stats["total_vector_count"]
+    return record_count
+
 
 # MAIN PAGE
 @app.route("/")
 def index():
+    record_count = fetch_record_count()
     print("request.args:", request.args)
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
@@ -197,6 +203,7 @@ def index():
                            date_span_first=date_span_first,
                            date_span_second=date_span_second,
                            session_user_name=session.get('user'),
+                           record_count = record_count,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 # ENTER CONFERENCES PAGE
