@@ -77,4 +77,13 @@ body {
   border-radius: 1px;
   /* subtle rounding */
 }
+
+.conference_count {
+  font-size: 15px;
+  color: #989797fd;
+}
+
+.highlight-count {
+  color: black;
+}
 /*# sourceMappingURL=styles.css.map */
