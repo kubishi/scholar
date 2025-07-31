@@ -110,56 +110,62 @@
     {% if query or ID_query %}
         <div class="search_result container">
             <h4> Conferences Results: </h4>
-            {% for article in articles %}
-                <!-- and (article.score > 0.21) -->
-                {% if article.metadata.url %}
-                    <div class="mb-4 border p-2 btn text-start"
-                        data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
-                        <h5 class="mb-1">
-                            {{ article.id }}
-                            <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
-                            {{ article.metadata.url }}
-                            </a>
-                        </h5>
+            {% if articles %}
+              {% for article in articles %}
+                  <!-- and (article.score > 0.21) -->
+                  {% if article.metadata.url %}
+                      <div class="mb-4 border p-2 btn text-start"
+                          data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+                          <h5 class="mb-1">
+                              {{ article.id }}
+                              <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
+                              {{ article.metadata.url }}
+                              </a>
+                          </h5>
 
-                        <a href="#" 
-                          class="btn btn-outline-primary btn-sm favorite-btn" 
-                          data-conference-id="{{ article.id }}">
-                          Favorite
-                        </a>
-                      
-                        <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
-                        <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
-                        <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                          <a href="#" 
+                            class="btn btn-outline-primary btn-sm favorite-btn" 
+                            data-conference-id="{{ article.id }}">
+                            Favorite
+                          </a>
                         
-        
-                        <!-- Topics are hidden by default -->
-                        <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
-                            Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
-                            Topics: {{ article.metadata.topics | replace('\n', ', ') }}
-                        </p>
-        
-                        <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+                          <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
+                          <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
+                          <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                          
+          
+                          <!-- Topics are hidden by default -->
+                          <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
+                              Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
+                              Topics: {{ article.metadata.topics | replace('\n', ', ') }}
+                          </p>
+          
+                          <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
 
-                        
-                        <details class="mt-2">
-                            <summary style="cursor: pointer;">Conference Ranking Scores</summary>
-                            <ul class="list-unstyled mt-1 ms-3">
-                                {% set scores = [] %}
-                                {% for key, value in article.metadata.items() %}
-                                    {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
-                                        {% set _ = scores.append((key, value)) %}
-                                    {% endif %}
-                                {% endfor %}
+                          
+                          <details class="mt-2">
+                              <summary style="cursor: pointer;">Conference Ranking Scores</summary>
+                              <ul class="list-unstyled mt-1 ms-3">
+                                  {% set scores = [] %}
+                                  {% for key, value in article.metadata.items() %}
+                                      {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
+                                          {% set _ = scores.append((key, value)) %}
+                                      {% endif %}
+                                  {% endfor %}
 
-                                {% for key, value in scores | sort(attribute=0, reverse=true) %}
-                                    <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                {% endfor %}
-                            </ul>
-                        </details>
-                    </div>
-                {% endif %}
-            {% endfor %}
+                                  {% for key, value in scores | sort(attribute=0, reverse=true) %}
+                                      <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                  {% endfor %}
+                              </ul>
+                          </details>
+                      </div>
+                  {% endif %}
+              {% endfor %}
+            {% else %}
+              {% if ID_query %}
+                <h3 class="text-muted text-center">Sorry, "{{ ID_query }}" could not be found. Not even AI could make this one up.</h3>
+              {% endif %}
+            {% endif %}
         </div>
     {% endif %}
     
