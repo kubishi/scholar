@@ -19,7 +19,8 @@ load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 pc = Pinecone(api_key=PINECONE_API_KEY)
-pinecone_index = pc.Index(host="https://aca2-qjtvg2h.svc.aped-4627-b74a.pinecone.io")
+PINECONE_HOST = os.getenv("PINECONE_HOST")
+pinecone_index = pc.Index(host=PINECONE_HOST)
 
 # --OpenAI API Setup---
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
