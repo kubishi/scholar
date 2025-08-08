@@ -7,7 +7,7 @@
         <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2" alt="">
         <div class="d-flex flex-column">
           <span class="fs-5 fw-bold">Kubishi Scholar</span>
-          <span class="title_subtext text-muted">Scemanic Conference Discovery</span>
+          <span class="title_subtext text-muted">Semantic Conference Discovery</span>
         </div>
       </a>
     <div class="d-flex ms-auto align-items-center">
@@ -113,7 +113,6 @@
             <h4> Conferences Results: </h4>
             {% if articles %}
               {% for article in articles %}
-                  <!-- and (article.score > 0.21) -->
                   {% if article.metadata.url %}
                       <div class="mb-4 border p-2 btn text-start"
                           data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
