@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask import redirect, url_for, request
 
 RANK_ORDER = {
     "A*": 4,
@@ -7,6 +8,16 @@ RANK_ORDER = {
     "C": 1,
     "UNRANKED": 0
 }
+
+
+def redirect_clean_params(endpoint_name):
+    """Redirect to the same endpoint with only non-empty query params."""
+    params = request.args.to_dict()
+    clean_params = {k: v for k, v in params.items() if v}
+
+    if params != clean_params:
+        return redirect(url_for(endpoint_name, **clean_params))
+    return None
 
 def is_match(article, start_date=None, end_date=None, location="", ranking_source="", ranking_score=""):
     """Filter article metadata based on date, location, and ranking."""

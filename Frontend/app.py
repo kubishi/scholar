@@ -10,7 +10,7 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 from flask_sqlalchemy import SQLAlchemy
-from .filters import is_match
+from .filters import is_match, redirect_clean_params
 
 
 load_dotenv()
@@ -116,15 +116,10 @@ def fetch_record_count():
 # MAIN PAGE
 @app.route("/")
 def index():
-    # Convert query params to dict
-    params = request.args.to_dict()
-
-    # Remove keys with empty string values
-    clean_params = {k: v for k, v in params.items() if v}
-
-    # If anything was removed, redirect to the cleaned URL
-    if params != clean_params:
-        return redirect(url_for("index", **clean_params))
+    
+    redirect_response = redirect_clean_params("index")
+    if redirect_response:
+        return redirect_response
     
     record_count = fetch_record_count()
     
@@ -276,8 +271,6 @@ def conference_adder():
 
         res = pinecone_index.upsert(vectors=[vector])
         print(f"Response: {res}")
-
-
 
     return render_template('add_conference.html',
                            conference_id=conference_id)
