@@ -1,5 +1,4 @@
 from flask import Flask, redirect, render_template, session, url_for, request
-import requests
 import os
 from pinecone import Pinecone
 from openai import OpenAI
@@ -118,21 +117,31 @@ def fetch_record_count():
 @app.route("/")
 def index():
     record_count = fetch_record_count()
-    print("request.args:", request.args)
+    
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
     
     ID_query = request.args.get("ID_query", "").upper()
+    date_span_first = convert_date_format(request.args.get("date_span_first"))
+    date_span_second = convert_date_format(request.args.get("date_span_second"))
 
     try:
         num_results = int(request.args.get("num_results", 3))
     except ValueError:
         num_results = 5
 
-    date_span_first = convert_date_format(request.args.get("date_span_first"))
-    date_span_second = convert_date_format(request.args.get("date_span_second"))
+    advanced_open = any([
+        date_span_first,
+        date_span_second,
+        date_span_first,
+        date_span_second,
+        location,
+        ranking_source,
+        ranking_score
+    ])
+    
     articles = []
     
     if ID_query:
@@ -204,6 +213,9 @@ def index():
                            date_span_second=date_span_second,
                            session_user_name=session.get('user'),
                            record_count = record_count,
+                           advanced_open=advanced_open,
+                           location=location,
+                           ranking_source=ranking_source,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 # ENTER CONFERENCES PAGE

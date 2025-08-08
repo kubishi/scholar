@@ -63,13 +63,13 @@
     <!-- Toggle Button -->
     <div class="mb-2">
       <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
-              aria-expanded="false" aria-controls="advancedSearch">
+              aria-expanded="{{ 'true' if advanced_open else 'false' }}" aria-controls="advancedSearch">
         Toggle Advanced Search
       </button>
     </div>
 
     <!-- Collapsible Advanced Search Section -->
-    <div class="collapse mt-2" id="advancedSearch">
+    <div class="collapse mt-2 {% if advanced_open %}show{% endif %}" id="advancedSearch">
       <div class="card card-body">
         <div class="row g-3">
           <!-- Start Date -->
@@ -89,17 +89,17 @@
           <!-- Location -->
           <div class="col-md-6">
             <label>Location:</label>
-            <input type="text" name="location" class="form-control" placeholder="Location">
+            <input type="text" name="location" class="form-control" placeholder="Location" value="{{ location or '' }}">
           </div>
 
           <!-- Ranking Source -->
           <div class="col-md-6">
             <label>Ranking Source:</label>
             <select id="ranking-source" name="ranking_source" class="form-control">
-              <option value="" disabled selected hidden>Select Ranking Source</option>
-              <option value="core">CORE</option>
-              <option value="era">ERA</option>
-              <option value="scholar">Google Scholar</option>
+              <option value="" disabled {% if not ranking_source %}selected{% endif %} hidden>Select Ranking Source</option>
+              <option value="core" {% if ranking_source == 'core' %}selected{% endif %}>CORE</option>
+              <option value="era" {% if ranking_source == 'era' %}selected{% endif %}>ERA</option>
+              <option value="scholar" {% if ranking_source == 'scholar' %}selected{% endif %}>Google Scholar</option>
             </select>
             <div id="ranking-score-container" style="display: none;" class="mt-2"></div>
           </div>
