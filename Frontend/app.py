@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, session, url_for, request
 import os
-from pinecone import Pinecone
+from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from dotenv import find_dotenv, load_dotenv
 from datetime import datetime
@@ -10,7 +10,7 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 from flask_sqlalchemy import SQLAlchemy
-from .filters import is_match, redirect_clean_params
+from .filters import is_match, redirect_clean_params # type: ignore
 
 
 load_dotenv()
@@ -276,4 +276,4 @@ def conference_adder():
                            conference_id=conference_id)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=env.get("PORT", 3000), debug=True)
+    app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=True)
