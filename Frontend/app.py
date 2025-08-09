@@ -10,6 +10,9 @@ from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
+from sshtunnel import SSHTunnelForwarder
+import atexit
+
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,6 +33,24 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app = Flask(__name__)
 
 # ---SQL Database Setup---
+# server = SSHTunnelForwarder(
+#     ('sebastianlange.lmu.build', 22),
+#     ssh_username="sebasti1",
+#     ssh_pkey="/Users/sebastianlange/.ssh/id_rsa",
+#     local_bind_address=('127.0.0.1', 3307),
+#     remote_bind_address=('127.0.0.1', 3306)
+# )
+
+# server.start()
+# print(f"Tunnel established on port {server.local_bind_port}")
+
+# # Optional clean-up on exit
+# atexit.register(lambda: server.stop())
+
+# # SQLAlchemy setup
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sebasti1_remote_user:8g-PEzW]e!oK@127.0.0.1:3307/sebasti1_kubishi_scholar'
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/kubishi_scholar'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
