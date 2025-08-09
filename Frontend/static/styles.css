@@ -62,10 +62,13 @@ body {
   transition: border-color 0.3s ease;
 }
 
+<<<<<<< HEAD
 .main_logo:hover {
   border-radius: 1px;
 }
 
+=======
+>>>>>>> b1d427a3304489d044417526ef10f52ad7428e84
 .conference_count {
   font-size: 15px;
   color: rgba(122, 118, 118, 0.9921568627);
@@ -89,7 +92,12 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+<<<<<<< HEAD
   filter: blur(20px);
+=======
+  -webkit-filter: blur(30px);
+          filter: blur(30px);
+>>>>>>> b1d427a3304489d044417526ef10f52ad7428e84
 }
 
 .toggle-advanced-button {

@@ -58,9 +58,12 @@ body {
     transition: border-color 0.3s ease;
   }
   
+<<<<<<< HEAD
   .main_logo:hover {
     border-radius: 1px;
   }
+=======
+>>>>>>> b1d427a3304489d044417526ef10f52ad7428e84
 
   .conference_count {
     font-size: 15px;
@@ -83,7 +86,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(20px);
+    filter: blur(30px);
   }
 
   .toggle-advanced-button{
