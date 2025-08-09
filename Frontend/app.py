@@ -88,6 +88,10 @@ def city_country_filter(value):
     string = f"{city}, {country}"
     return string
 
+@app.template_filter('date_ical')
+def date_ical(value):
+    # Google Calendar format: YYYYMMDD or YYYYMMDDTHHMMSSZ
+    return value.strftime('%Y%m%dT%H%M%SZ') if isinstance(value, datetime) else value
 
 @app.template_filter('format_date')
 def format_date(value, format="%b %d, %Y"):
@@ -271,6 +275,6 @@ def conference_adder():
 
     return render_template('add_conference.html',
                            conference_id=conference_id)
-
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=True)
