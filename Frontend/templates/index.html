@@ -141,6 +141,13 @@
                                 class="btn btn-outline-success btn-sm me-2">
                                 Add to Google Calendar
                               </a>
+
+                              <a 
+                                href="https://outlook.live.com/calendar/0/deeplink/compose?subject={{ article.metadata.title | urlencode }}&startdt={{ article.metadata.start | urlencode }}&enddt={{ article.metadata.end | urlencode }}&body={{ article.metadata.url | urlencode }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}" 
+                                target="_blank" 
+                                class="btn btn-outline-primary btn-sm">
+                                Add to Outlook
+                              </a>
                           </div>
                           
                           <!-- Topics are hidden by default -->
