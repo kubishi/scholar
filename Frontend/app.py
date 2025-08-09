@@ -88,6 +88,17 @@ def city_country_filter(value):
     string = f"{city}, {country}"
     return string
 
+@app.template_filter('to_gcal_datetime')
+def to_gcal_datetime_filter(value):
+    if not value:
+        return ""
+    try:
+        # Parse the ISO string with Z (UTC)
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        # Format as YYYYMMDDTHHMMSSZ
+        return dt.strftime("%Y%m%dT%H%M%SZ")
+    except Exception:
+        return value  # fallback: return original if parsing fails
 
 @app.template_filter('format_date')
 def format_date(value, format="%b %d, %Y"):
@@ -271,6 +282,6 @@ def conference_adder():
 
     return render_template('add_conference.html',
                            conference_id=conference_id)
-
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=True)
