@@ -87,3 +87,16 @@ body {
   color: black;
 }
 /*# sourceMappingURL=styles.css.map */
+
+.favorite-btn {
+  color: #886905;
+  border-color: #d39e00;
+}
+
+.favorite-btn:hover,
+.favorite-btn:focus,
+.favorite-btn.active {
+  color: #212529; /* dark text for contrast */
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
