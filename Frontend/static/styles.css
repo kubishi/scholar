@@ -78,13 +78,6 @@ body {
   transition: border-color 0.3s ease;
 }
 
-.main_logo:hover {
-  border-color: #9b9898;
-  /* border appears without resizing */
-  border-radius: 1px;
-  /* subtle rounding */
-}
-
 .conference_count {
   font-size: 15px;
   color: #7a7676fd;
@@ -110,8 +103,8 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  -webkit-filter: blur(20px);
-          filter: blur(20px);
+  -webkit-filter: blur(30px);
+          filter: blur(30px);
 }
 
 .toggle-advanced-button {
