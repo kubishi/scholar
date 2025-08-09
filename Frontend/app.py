@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, url_for, request
+from flask import Flask, flash, redirect, render_template, session, url_for, request
 import os
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
@@ -231,6 +231,60 @@ def index():
                            ranking_source=ranking_source,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
+@app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
+def edit_conference(conf_id):
+    # GET existing data from Pinecone
+    existing = pinecone_index.fetch(ids=[conf_id])
+
+    if not existing.vectors:
+        return f"Conference ID {conf_id} not found", 404
+
+    conf_meta = existing.vectors[conf_id].metadata
+    print(conf_meta)
+    if request.method == 'POST':
+        conference_id = request.form.get("conference_id", "")
+        conference_name = request.form.get("conference_name", "")
+        country = request.form.get("country", "")
+        city = request.form.get("city", "")
+        deadline = request.form.get("deadline", "")
+        start_date = request.form.get("start_date", "")
+        end_date = request.form.get("end_date", "")
+        topic_list = request.form.get("topic_list", "")
+        conference_link = request.form.get("conference_link", "")
+
+        # Create new embedding
+        embedding_response = openai_client.embeddings.create(
+            input=topic_list,
+            model="text-embedding-3-small"
+        )
+        topic_vector = embedding_response.data[0].embedding
+
+        # Update Pinecone
+        updated_vector = {
+            "id": conference_id,
+            "values": topic_vector,
+            "metadata": {
+                "conference_name": conference_name,
+                "country": country,
+                "city": city,
+                "deadline": deadline,
+                "start_date": start_date,
+                "end_date": end_date,
+                "topics": topic_list,
+                "url": conference_link,
+                "contributer": session['user']['userinfo']['sub'],
+            }
+        }
+        pinecone_index.upsert(vectors=[updated_vector])
+        flash("Conference updated successfully!", "success")
+        return redirect(url_for('index'))  # Change 'index' to your main search route
+
+    return render_template(
+        "edit_conference.html",
+        conf_id=conf_id,
+        conf_meta=conf_meta
+    )
+    
 # ENTER CONFERENCES PAGE
 @app.route('/add_conf')
 def conference_adder():
