@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 
 {% block body %}
+<picture class="bg-image">
+  <img src="static/img/background2.jpg" alt="Nothing Honey" class="w-full h-screen object-cover blur-50 brightness-50 scale-105">
+</picture>
+
+
+
 <nav class="navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2" alt="">
+        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-1" alt="">
         <div class="d-flex flex-column">
-          <span class="fs-5 fw-bold">Kubishi Scholar</span>
+          <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
           <span class="title_subtext text-muted">Semantic Conference Discovery</span>
         </div>
       </a>
@@ -15,12 +21,12 @@
         <span class="me-3">
             <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
         </span>
-        <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
+        <a href="/logout" class="logout-button btn btn-sm">Logout</a>
       {% else %}
         <span class="me-3">
             <strong> Welcome! </strong>
         </span>
-        <a href="/login" class="btn btn-primary btn-sm">Login</a>
+        <a href="/login" class="login-button btn btn-sm">Login</a>
       {% endif %}
     </div>
   </div>
@@ -39,18 +45,26 @@
 
   <form method="GET" action="/">
     <!-- Top row: Basic search -->
-    <input class="form-control" type="text" name="ID_query" value="{{ ID_query }}" placeholder="Search by conference ID...">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <input class="form-control mb-1 border-dark" type="text" name="ID_query" value="{{ ID_query }}" placeholder="Search by conference ID...">
+    <div class="d-flex justify-content-between align-items-center mb-3  flex-wrap gap-2">
       <div class="d-flex flex-grow-1 gap-2">
-        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
-        <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
+        <input class="form-control border-dark" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
+        <input class="form-control border-dark" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
       </div>
-      <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+      <button id="search-btn" type="submit" class="btn btn-dark">Search</button>
     </div>
 
-    <div class="d-flex gap-2 mb-2">
+
+    <div class=" d-flex gap-2 mb-2">
+      <button class="toggle-advanced-button btn btn-dark" type="button" data-bs-toggle="collapse"
+      data-bs-target="#advancedSearch"
+      aria-expanded="{{ 'true' if advanced_open else 'false' }}"
+      aria-controls="advancedSearch">
+      Toggle Advanced Search
+      </button>
+
       {% if session %}
-        <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+        <a href="/add_conf" class="conference-add-button btn btn-dark" target="_blank" rel="noopener noreferrer">
           + Add Conference
         </a>
       {% else %}
@@ -58,16 +72,11 @@
           🔒 Add Conference
         </button>
       {% endif %}
-    </div>
+    
+      <!-- Toggle Button -->
 
-    <!-- Toggle Button -->
-    <div class="mb-2">
-      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
-              aria-expanded="{{ 'true' if advanced_open else 'false' }}" aria-controls="advancedSearch">
-        Toggle Advanced Search
-      </button>
     </div>
-
+    
     <!-- Collapsible Advanced Search Section -->
     <div class="collapse mt-2 {% if advanced_open %}show{% endif %}" id="advancedSearch">
       <div class="card card-body">
@@ -114,7 +123,7 @@
             {% if articles %}
               {% for article in articles %}
                   {% if article.metadata.url %}
-                      <div class="mb-4 border p-2 btn text-start"
+                      <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white"
                           data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
                           <h5 class="mb-1">
                               {{ article.id }}
@@ -124,7 +133,7 @@
                           </h5>
 
                           <a href="#" 
-                            class="btn btn-outline-primary btn-sm favorite-btn" 
+                            class="favorite-button btn btn-sm favorite-btn" 
                             data-conference-id="{{ article.id }}">
                             Favorite
                           </a>
@@ -138,7 +147,7 @@
                               <a 
                                 href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | to_gcal_datetime }}/{{ article.metadata.end | to_gcal_datetime }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
                                 target="_blank" 
-                                class="btn btn-outline-success btn-sm me-2">
+                                class="google-callendar-button btn btn-sm me-2">
                                 Add to Google Calendar
                               </a>
 
@@ -151,7 +160,7 @@
                                 &rru=addevent
                                 &startdt={{ article.metadata.start | urlencode }}
                                 &subject={{ article.id | urlencode }}"
-                                target="_blank" class="btn btn-outline-primary btn-sm">
+                                target="_blank" class="outlook-button btn btn-sm">
                                 Add to Outlook
                               </a>
                             </div>

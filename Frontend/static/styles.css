@@ -2,8 +2,14 @@ body {
   background-color: white;
 }
 
-.navbar {
-  background-color: #e2dfdcf2;
+.login-button {
+  background-color: #2671f4;
+  color: white;
+}
+
+.logout-button {
+  background-color: #2671f4;
+  color: white;
 }
 
 .kubishi_logo {
@@ -53,6 +59,7 @@ body {
   transition: -webkit-transform 0.4s ease-out;
   transition: transform 0.4s ease-out;
   transition: transform 0.4s ease-out, -webkit-transform 0.4s ease-out;
+  border: 1px solid black;
 }
 
 .menu_logo:hover {
@@ -65,14 +72,14 @@ body {
 }
 
 .main_logo {
-  border: 1px solid #e2dfdcf2;
+  border: 1px solid black;
   /* invisible border, keeps space */
   -webkit-transition: border-color 0.3s ease;
   transition: border-color 0.3s ease;
 }
 
 .main_logo:hover {
-  border-color: black;
+  border-color: #9b9898;
   /* border appears without resizing */
   border-radius: 1px;
   /* subtle rounding */
@@ -80,23 +87,53 @@ body {
 
 .conference_count {
   font-size: 15px;
-  color: #989797fd;
+  color: #7a7676fd;
 }
 
 .highlight-count {
   color: black;
 }
+
+.bg-image {
+  position: fixed;
+  /* stays in place while scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  /* pushes it behind all other content */
+}
+
+.bg-image img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -webkit-filter: blur(20px);
+          filter: blur(20px);
+}
+
+.toggle-advanced-button {
+  color: white;
+}
+
+.conference-add-button {
+  color: white;
+}
+
+.favorite-button {
+  background-color: #e19f06;
+  color: white;
+}
+
+.outlook-button {
+  background-color: #2563EB;
+  color: white;
+}
+
+.google-callendar-button {
+  background: #0F9D58;
+  color: white;
+}
 /*# sourceMappingURL=styles.css.map */
-
-.favorite-btn {
-  color: #886905;
-  border-color: #d39e00;
-}
-
-.favorite-btn:hover,
-.favorite-btn:focus,
-.favorite-btn.active {
-  color: #212529; /* dark text for contrast */
-  background-color: #ffc107;
-  border-color: #ffc107;
-}
