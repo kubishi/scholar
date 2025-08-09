@@ -136,7 +136,7 @@
                           <!-- Calendar buttons -->
                           <div class="mt-2">
                               <a 
-                                href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | date_ical }}/{{ article.metadata.end | date_ical }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
+                                href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | to_gcal_datetime }}/{{ article.metadata.end | to_gcal_datetime }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
                                 target="_blank" 
                                 class="btn btn-outline-success btn-sm me-2">
                                 Add to Google Calendar
