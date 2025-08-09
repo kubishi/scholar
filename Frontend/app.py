@@ -10,7 +10,7 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 
 from flask_sqlalchemy import SQLAlchemy
-from .filters import is_match, redirect_clean_params # type: ignore
+from filters import is_match, redirect_clean_params # type: ignore
 
 
 load_dotenv()
