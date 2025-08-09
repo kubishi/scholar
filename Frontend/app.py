@@ -176,8 +176,6 @@ def index():
                 include_metadata=True
             )
 
-            #print(results)
-
             all_articles = results.get("matches", [])
 
             # Step 3: Filter if any filters are set
@@ -201,14 +199,12 @@ def index():
                     articles = all_articles
             else:
                 articles = all_articles
-            print(f"All: {len(all_articles)}, Filtered: {len(articles)}, Final: {len(articles[:num_results])}")
             
         except Exception as e:
             print(f"Error processing query: {e}")
         
         # Truncate based on num_results
         articles = articles[:num_results]
-    print(articles, len(articles))
 
     return render_template("index.html", 
                            articles=articles,
