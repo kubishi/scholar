@@ -4,12 +4,24 @@ body {
 
 .login-button {
   background-color: #2671f4;
-  color:white;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #1d56c1;
+  color: white;
 }
 
 .logout-button {
   background-color: #2671f4;
-  color:white;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #1d56c1;
+  color: white;
 }
 
 .kubishi_logo {
@@ -47,8 +59,7 @@ body {
   }
   
   .main_logo:hover {
-    border-color: #9b9898; /* border appears without resizing */
-    border-radius: 1px;  /* subtle rounding */
+    border-radius: 1px;
   }
 
   .conference_count {
@@ -83,17 +94,32 @@ body {
     color: white;
   }
 
-  .favorite-button {
-    background-color: #e19f06;
-    color: white;
-  }
+.favorite-button {
+  background-color: #e19f06;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+.favorite-button:hover {
+  background-color: #b27a04; 
+  color: white;
+}
 
-  .outlook-button{
-    background-color: #2563EB;
-    color: white;
-  }
+.outlook-button {
+  background-color: #2563EB;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+.outlook-button:hover {
+  background-color: #1c48b8; 
+  color: white;
+}
 
-  .google-callendar-button{
-    background: #0F9D58;
-    color:white;
-  }
+.google-callendar-button {
+  background: #0F9D58;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+.google-callendar-button:hover {
+  background: #0c7a44; 
+  color: white;
+}
