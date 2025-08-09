@@ -88,10 +88,17 @@ def city_country_filter(value):
     string = f"{city}, {country}"
     return string
 
-@app.template_filter('date_ical')
-def date_ical(value):
-    # Google Calendar format: YYYYMMDD or YYYYMMDDTHHMMSSZ
-    return value.strftime('%Y%m%dT%H%M%SZ') if isinstance(value, datetime) else value
+@app.template_filter('to_gcal_datetime')
+def to_gcal_datetime_filter(value):
+    if not value:
+        return ""
+    try:
+        # Parse the ISO string with Z (UTC)
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        # Format as YYYYMMDDTHHMMSSZ
+        return dt.strftime("%Y%m%dT%H%M%SZ")
+    except Exception:
+        return value  # fallback: return original if parsing fails
 
 @app.template_filter('format_date')
 def format_date(value, format="%b %d, %Y"):
