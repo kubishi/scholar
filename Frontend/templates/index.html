@@ -132,8 +132,17 @@
                           <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
                           <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
                           <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+
+                          <!-- Calendar buttons -->
+                          <div class="mt-2">
+                              <a 
+                                href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | date_ical }}/{{ article.metadata.end | date_ical }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
+                                target="_blank" 
+                                class="btn btn-outline-success btn-sm me-2">
+                                Add to Google Calendar
+                              </a>
+                          </div>
                           
-          
                           <!-- Topics are hidden by default -->
                           <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
                               Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
@@ -141,8 +150,7 @@
                           </p>
           
                           <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
-
-                          
+   
                           <details class="mt-2">
                               <summary style="cursor: pointer;">Conference Ranking Scores</summary>
                               <ul class="list-unstyled mt-1 ms-3">
