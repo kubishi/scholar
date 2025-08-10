@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 {% block body %}
 <nav class="navbar">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/">
-      <img src="static/img/logo_bg.png" width="30" height="30" class="d-inline-block align-top" alt="">
-      Kubishi Scholar
-    </a>
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="{{ url_for('static', filename='img/logo_bg.png') }}" width="40" height="40" class="menu_logo me-2 rounded-1" alt="">
+        <div class="d-flex flex-column">
+          <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
+          <span class="title_subtext text-muted">Semantic Conference Discovery</span>
+        </div>
+      </a>
   </div>
 </nav>
 

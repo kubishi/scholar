@@ -242,7 +242,6 @@ def edit_conference(conf_id):
     conf_meta = existing.vectors[conf_id].metadata
     print(conf_meta)
     if request.method == 'POST':
-        conference_id = request.form.get("conference_id", "")
         conference_name = request.form.get("conference_name", "")
         country = request.form.get("country", "")
         city = request.form.get("city", "")
@@ -261,7 +260,7 @@ def edit_conference(conf_id):
 
         # Update Pinecone
         updated_vector = {
-            "id": conference_id,
+            "id": conf_id,
             "values": topic_vector,
             "metadata": {
                 "conference_name": conference_name,
