@@ -12,7 +12,6 @@ from authlib.integrations.flask_client import OAuth
 from flask_sqlalchemy import SQLAlchemy
 from .filters import is_match, redirect_clean_params # type: ignore
 
-
 load_dotenv()
 
 # --Pinecone Setup--
@@ -240,7 +239,6 @@ def edit_conference(conf_id):
         return f"Conference ID {conf_id} not found", 404
 
     conf_meta = existing.vectors[conf_id].metadata
-    print(conf_meta)
     if request.method == 'POST':
         conference_name = request.form.get("conference_name", "")
         country = request.form.get("country", "")
@@ -297,14 +295,6 @@ def conference_adder():
     topic_list = request.args.get("topic_list", "")
     conference_link = request.args.get("conference_link", "")
 
-    print(f"ID: {conference_id}")
-    print(f"Name: {conference_name}")
-    print(f"Country: {country}")
-    print(f"City: {city}")
-    print(f"Deadline: {deadline}")
-    print(f"Start: {start_date}")
-    print(f"End: {end_date}")
-
     if conference_id:
 
         embedding_response = openai_client.embeddings.create(
@@ -331,7 +321,6 @@ def conference_adder():
         }
 
         res = pinecone_index.upsert(vectors=[vector])
-        print(f"Response: {res}")
 
     return render_template('add_conference.html',
                            conference_id=conference_id)
