@@ -8,7 +8,7 @@
 <nav class="navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-1" alt="">
+        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-2" alt="">
         <div class="d-flex flex-column">
           <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
           <span class="title_subtext text-muted">Semantic Conference Discovery</span>
@@ -31,7 +31,8 @@
 </nav>
 
 {% if not favorited_conferences %}
-    <h3 class="container text-center text-bold text-danger">You have no Conferences Saved</h3>
+    <h3 class="text-center text-bold text-dark bg-white ">No Conferences Added Yet!</h3>
+    <!-- <img class="mx-auto d-block" src="static/img/ghost_town.gif" alt="its a ghost town here"> -->
 {% else %}
     <div class="d-flex flex-column align-items-center">
         {% for conf in favorited_conferences %}
