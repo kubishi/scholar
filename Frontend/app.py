@@ -1,4 +1,6 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request
+
+from dotenv import load_dotenv
+from flask import Flask, flash, redirect, render_template, session, url_for, request ,jsonify
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from datetime import datetime
@@ -6,22 +8,38 @@ import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
+import atexit
+import os
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from .config import Config # type: ignore
-from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
+from config import Config # type: ignore
+from filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 
+load_dotenv()
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
 
 # ---SQL Database Setup---
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{app.config["DB_USER"]}:{app.config["DB_PASSWORD"]}@{app.config["DB_HOST"]}:{app.config["DB_PORT"]}/{app.config["DB_NAME"]}"
+)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-# Auth0 setup
+class User(db.Model):
+    google_auth_id = db.Column(db.String(60), primary_key=True)
+    user_name = db.Column(db.String(50))
+    user_email = db.Column(db.String(50))
+
+class Favorite_Conf(db.Model):
+    user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
+    fav_conf_id = db.Column(db.String(50), primary_key=True)
+
+
 oauth = OAuth(app)
 oauth.register(
     "auth0",
@@ -66,7 +84,25 @@ def callback():
 
     # print("TONEKKKKKKKKN", token["id_token"])
     session["user"] = token
-    sub = "google-oauth2|1234567890"
+    user_info = token["userinfo"]
+
+    google_auth_id = user_info['sub']
+    user_name = user_info['name']
+    user_email = user_info['email']
+
+    session["user_id"] = google_auth_id
+
+    user = User.query.filter_by(google_auth_id=google_auth_id).first()
+    if not user:
+        new_user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
+        db.session.add(new_user)
+    else:
+        # Optionally update existing user info
+        user.user_name = user_name
+        user.user_email = user_email
+
+    db.session.commit() 
+    
     
     return redirect("/")
 
@@ -277,13 +313,47 @@ def conference_adder():
                     "contributer": session['user']['userinfo']['sub'],
                 }
             }
-
             pinecone_index.upsert(vectors=[vector])
             flash("Conference added successfully!", "success")
             return redirect(url_for("index"))  # redirect after POST
 
     return render_template("add_conference.html", conference_id=conference_id)
 
+@app.route("/connection_search")
+def connfection_finder():
+    connection_email_search = request.args.get("connection_email_search", "")
+    # session keyword "unlocks access to db"
+    searched_user_info = db.session.query(User).filter_by(user_email = connection_email_search).first()
     
+  
+    if searched_user_info:
+        print(searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id)
+    else:
+        print("No user found with that email.")
+
+    return render_template('friend_search.html', searched_user_info = searched_user_info)
+
+
+@app.route('/favorite', methods=['POST'])
+def save_favorite():
+    if 'user_id' not in session:
+        return "Unauthorized", 401 
+     
+    data = request.get_json()
+    conference_id = data.get('conference_id')
+    user_id = session['user_id']
+
+    if not conference_id:
+        return "No conference_id provided", 400
+
+    print(f"Saved conference ID: {conference_id}")
+
+    new_user_conf_pair = Favorite_Conf(user_id=user_id, fav_conf_id=conference_id)
+    db.session.add(new_user_conf_pair)
+    db.session.commit()
+
+    return jsonify({'id': conference_id}), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
