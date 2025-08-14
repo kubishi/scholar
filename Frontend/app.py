@@ -240,7 +240,7 @@ def edit_conference(conf_id):
             except ValueError:
                 return None
         return None
-
+    #Displaying the intital data
     form = ConferenceForm(
         conference_id=conf_id,
         conference_name=conf_meta.get("conference_name", ""),
