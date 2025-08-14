@@ -144,3 +144,8 @@ body {
   background: rgb(1, 89, 89);
   color: white;
 }
+
+.form-check-input:checked {
+  background-color: black;
+  border-color: black;
+}

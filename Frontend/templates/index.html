@@ -8,7 +8,7 @@
 <nav class="navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-1" alt="">
+        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-2" alt="">
         <div class="d-flex flex-column">
           <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
           <span class="title_subtext text-muted">Semantic Conference Discovery</span>
@@ -39,18 +39,27 @@
   </div>
 
   <!-- START FORM: Wrap everything in a single form -->
-
-
   <form method="GET" action="/">
     <!-- Top row: Basic search -->
-    <input class="form-control mb-1 border-dark" type="text" name="ID_query" value="{{ ID_query }}" placeholder="Search by conference ID...">
-    <div class="d-flex justify-content-between align-items-center mb-3  flex-wrap gap-2">
-      <div class="d-flex flex-grow-1 gap-2">
-        <input class="form-control border-dark" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
-        <input class="form-control border-dark" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
-      </div>
-      <button id="search-btn" type="submit" class="btn btn-dark">Search</button>
+    
+
+    <div class="d-flex align-items-center  gap-2">
+      <input class="form-control border-dark mb-1" type="text" id="searchInput" name="query" placeholder="Search academic topics...">
+      <input class="form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100">
+      <button type="submit" class="btn btn-dark">Search</button>
+      
     </div>
+    <div class="d-flex gap-2 align-items-center mb-2">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="search_type" id="Semantic-Toggle" value="semantic" checked>
+        <label class="form-check-label" for="Semantic-Toggle">Semantic Search</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="search_type" id="ID_Toggle" value="id">
+        <label class="form-check-label" for="ID_Toggle">ID Search</label>
+      </div>
+    </div>
+
 
 
     <div class=" d-flex gap-2 mb-2">
@@ -135,6 +144,7 @@
                       <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white"
                           data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
                           <h5 class="mb-1">
+                              <strong>{{ loop.index }}.</strong>
                               {{ article.id }}
                               <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
                               {{ article.metadata.url }}
@@ -290,6 +300,19 @@
             });
         });
     });
+</script>
+
+<!-- Toggle between search modes -->
+<script>
+  const searchInput = document.getElementById('searchInput');
+  document.querySelectorAll('input[name="search_type"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      searchInput.name = radio.value === 'semantic' ? 'query' : 'ID_query';
+      searchInput.placeholder = radio.value === 'semantic' 
+                                ? 'Search academic topics...' 
+                                : 'Search by conference ID...';
+    });
+  });
 </script>
 
 
