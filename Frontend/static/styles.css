@@ -121,8 +121,8 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  -webkit-filter: blur(30px);
-          filter: blur(30px);
+  -webkit-filter: blur(50px);
+          filter: blur(50px);
 }
 
 .toggle-advanced-button {
