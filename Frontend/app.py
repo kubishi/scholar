@@ -1,7 +1,6 @@
 from flask import Flask, flash, redirect, render_template, session, url_for, request
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
-from dotenv import find_dotenv, load_dotenv
 from datetime import datetime
 import json
 from os import environ as env
@@ -247,7 +246,7 @@ def edit_conference(conf_id):
 # ENTER CONFERENCES PAGE
 @app.route('/add_conf', methods=['GET', 'POST'])
 def conference_adder():
-    conference_id = ""  # define so GET requests don’t crash
+    conference_id = ""
 
     if request.method == 'POST':
         conference_id = request.form.get("conference_id", "").strip()
