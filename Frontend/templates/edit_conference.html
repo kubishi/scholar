@@ -15,58 +15,47 @@
 <div class="container mt-4">
     <h2>Edit Conference</h2>
     <form method="POST" action="{{ url_for('edit_conference', conf_id=conf_id) }}">
+        {{ form.hidden_tag() }}
+
         <div class="mb-3">
-            <label>Conference ID/Acronym</label>
-            <input type="text" name="conference_ID" class="form-control"
-                   value="{{ conf_id or '' }}">
-        </div>
-        
-        <div class="mb-3">
-            <label>Conference Name</label>
-            <input type="text" name="conference_name" class="form-control"
-                   value="{{ conf_meta.conference or '' }}">
+            {{ form.conference_name.label }}
+            {{ form.conference_name(class="form-control") }}
         </div>
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label>Country</label>
-                <input type="text" name="country" class="form-control"
-                       value="{{ conf_meta.country or '' }}">
+                {{ form.country.label }}
+                {{ form.country(class="form-control") }}
             </div>
             <div class="col-md-6 mb-3">
-                <label>City</label>
-                <input type="text" name="city" class="form-control"
-                       value="{{ conf_meta.city or '' }}">
+                {{ form.city.label }}
+                {{ form.city(class="form-control") }}
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-4 mb-3">
-                <label>Deadline</label>
-                <input type="date" name="deadline" class="form-control"
-                       value="{{ conf_meta.deadline[:10] if conf_meta.deadline else '' }}">
+                {{ form.deadline.label }}
+                {{ form.deadline(class="form-control") }}
             </div>
             <div class="col-md-4 mb-3">
-                <label>Start Date</label>
-                <input type="date" name="start_date" class="form-control"
-                       value="{{ conf_meta.start[:10] if conf_meta.start else '' }}">
+                {{ form.start_date.label }}
+                {{ form.start_date(class="form-control") }}
             </div>
             <div class="col-md-4 mb-3">
-                <label>End Date</label>
-                <input type="date" name="end_date" class="form-control"
-                       value="{{ conf_meta.end[:10] if conf_meta.end else '' }}">
+                {{ form.end_date.label }}
+                {{ form.end_date(class="form-control") }}
             </div>
         </div>
 
         <div class="mb-3">
-            <label>Topics</label>
-            <textarea name="topic_list" class="form-control">{{ conf_meta.topics or '' }}</textarea>
+            {{ form.topic_list.label }}
+            {{ form.topic_list(class="form-control", rows="3") }}
         </div>
 
         <div class="mb-3">
-            <label>Conference URL</label>
-            <input type="url" name="conference_link" class="form-control"
-                   value="{{ conf_meta.url or '' }}">
+            {{ form.conference_link.label }}
+            {{ form.conference_link(class="form-control") }}
         </div>
 
         <button type="submit" class="btn btn-success">Save Changes</button>
