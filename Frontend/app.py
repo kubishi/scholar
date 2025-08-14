@@ -245,43 +245,46 @@ def edit_conference(conf_id):
     )
     
 # ENTER CONFERENCES PAGE
-@app.route('/add_conf')
+@app.route('/add_conf', methods=['GET', 'POST'])
 def conference_adder():
-    conference_id = request.args.get("conference_id", "")
-    conference_name = request.args.get("conference_name", "")
-    country = request.args.get("country", "")
-    city = request.args.get("city", "")
-    deadline = request.args.get("deadline", "")
-    start_date = request.args.get("start_date", "")
-    end_date = request.args.get("end_date", "")
-    topic_list = request.args.get("topic_list", "")
-    conference_link = request.args.get("conference_link", "")
+    conference_id = ""  # define so GET requests don’t crash
 
-    if conference_id:
+    if request.method == 'POST':
+        conference_id = request.form.get("conference_id", "").strip()
+        conference_name = request.form.get("conference_name", "").strip()
+        country = request.form.get("country", "").strip()
+        city = request.form.get("city", "").strip()
+        deadline = request.form.get("deadline", "").strip()
+        start_date = request.form.get("start_date", "").strip()
+        end_date = request.form.get("end_date", "").strip()
+        topic_list = request.form.get("topic_list", "").strip()
+        conference_link = request.form.get("conference_link", "").strip()
 
-        topic_vector = get_embedding(topic_list)
+        if conference_id:
+            topic_vector = get_embedding(topic_list)
 
-        vector = {
-            "id": conference_id,
-            "values": topic_vector,
-            "metadata": {
-                "conference_name": conference_name,
-                "country": country,
-                "city": city,
-                "deadline": deadline,
-                "start_date": start_date,
-                "end_date": end_date,
-                "topics": topic_list,
-                "url": conference_link,
-                "contributer": session['user']['userinfo']['sub'],
-
+            vector = {
+                "id": conference_id,
+                "values": topic_vector,
+                "metadata": {
+                    "conference_name": conference_name,
+                    "country": country,
+                    "city": city,
+                    "deadline": deadline,
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "topics": topic_list,
+                    "url": conference_link,
+                    "contributer": session['user']['userinfo']['sub'],
+                }
             }
-        }
 
-        res = pinecone_index.upsert(vectors=[vector])
+            pinecone_index.upsert(vectors=[vector])
+            flash("Conference added successfully!", "success")
+            return redirect(url_for("index"))  # redirect after POST
 
-    return render_template('add_conference.html',
-                           conference_id=conference_id)
+    return render_template("add_conference.html", conference_id=conference_id)
+
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)))
+    app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
