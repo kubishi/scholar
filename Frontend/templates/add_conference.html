@@ -15,7 +15,8 @@
 
 <div class="container my-4" style="max-width: 700px;">
   <h1 class="mb-4">Enter Conferences</h1>
-  <form method="GET" action="/add_conf" class="my-3">
+
+  <form method="POST" action="/add_conf" class="my-3">
     <div class="mb-3">
       <label for="conference_id" class="form-label">Conference ID</label>
       <input type="text" class="form-control" id="conference_id" name="conference_id" required placeholder="Ex: WSDM">
@@ -42,53 +43,46 @@
         <input type="date" class="form-control" id="deadline" name="deadline" aria-label="Submission Deadline">
       </div>
       <div class="col-md-4">
-        <label for="start_date" class="form-label">Start Date </label>
+        <label for="start_date" class="form-label">Start Date</label>
         <input type="date" class="form-control" id="start_date" name="start_date" required aria-label="Start Date">
       </div>
       <div class="col-md-4">
-        <label for="end_date" class="form-label">End Date </label>
+        <label for="end_date" class="form-label">End Date</label>
         <input type="date" class="form-control" id="end_date" name="end_date" required aria-label="End Date">
       </div>
     </div>
 
     <div class="mb-3">
-      <label for="topic_list" class="form-label">Conference Topics/Description </label>
+      <label for="topic_list" class="form-label">Conference Topics/Description</label>
       <textarea class="form-control" id="topic_list" name="topic_list" rows="3" required placeholder="Brief description or topics..."></textarea>
     </div>
 
     <div class="mb-3">
         <label for="conference_link" class="form-label">Conference URL</label>
-        <input type="text" class="form-control" id="conference_link" name="conference_link" rows="3" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
+        <input type="url" class="form-control" id="conference_link" name="conference_link" required placeholder="Ex: https://www.wsdm-conference.org/2025/">
     </div>
 
-     <!-- Modal -->
-
+    <!-- Modal trigger button -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
       Submit Conference
     </button>
-    
 
+    <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Input</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+          </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- This submit is inside the form -->
             <button type="submit" class="btn btn-primary">Enter</button>
           </div>
         </div>
       </div>
     </div>
-
-  
-
-
-    
   </form>
-
-
 </div>
 {% endblock %}
