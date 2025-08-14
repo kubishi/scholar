@@ -6,6 +6,7 @@ load_dotenv()
 class Config:
     # Flask
     SECRET_KEY = os.getenv("APP_SECRET_KEY", "dev_secret")
+    FLASK_DEBUG = os.getenv("FLASK_DEBUG", "False").lower() == "true"
 
     # Auth0
     AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
@@ -20,3 +21,5 @@ class Config:
     # OpenAI
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+    
+    
