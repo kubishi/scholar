@@ -319,7 +319,7 @@ def conference_adder():
     return render_template("add_conference.html", form=form)
 
 @app.route("/connection_search")
-def connfection_finder():
+def connection_finder():
     connection_email_search = request.args.get("connection_email_search", "")
     # session keyword "unlocks access to db"
     searched_user_info = db.session.query(User).filter_by(user_email = connection_email_search).first()
@@ -331,6 +331,17 @@ def connfection_finder():
         print("No user found with that email.")
 
     return render_template('friend_search.html', searched_user_info = searched_user_info)
+
+@app.route("/saved_conference")
+def saved_conference():
+    logged_in_user_id = session.get("user_id")
+    favorited_conferences = db.session.query(Favorite_Conf).filter_by(user_id = logged_in_user_id).all()
+
+    for fav in favorited_conferences:
+        print(fav.fav_conf_id)
+    
+    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences)
+
 
 
 @app.route('/favorite', methods=['POST'])
