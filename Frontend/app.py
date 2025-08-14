@@ -263,9 +263,9 @@ def edit_conference(conf_id):
                 "conference_name": form.conference_name.data.strip(),
                 "country": form.country.data.strip(),
                 "city": form.city.data.strip(),
-                "deadline": form.deadline.data.strftime("%Y-%m-%d") if form.deadline.data else "",
-                "start_date": form.start_date.data.strftime("%Y-%m-%d") if form.start_date.data else "",
-                "end_date": form.end_date.data.strftime("%Y-%m-%d") if form.end_date.data else "",
+                "deadline": form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else "",
+                "start_date": form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else "",
+                "end_date": form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else "",
                 "topics": form.topic_list.data.strip(),
                 "url": form.conference_link.data.strip(),
                 "contributer": session['user']['userinfo']['sub'],
@@ -288,9 +288,9 @@ def conference_adder():
         conference_name = form.conference_name.data.strip()
         country = form.country.data.strip()
         city = form.city.data.strip()
-        deadline = form.deadline.data.strftime("%Y-%m-%d") if form.deadline.data else ""
-        start_date = form.start_date.data.strftime("%Y-%m-%d") if form.start_date.data else ""
-        end_date = form.end_date.data.strftime("%Y-%m-%d") if form.end_date.data else ""
+        deadline = form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else ""
+        start_date = form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else ""
+        end_date = form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else ""
         topic_list = form.topic_list.data.strip()
         conference_link = form.conference_link.data.strip()
 
