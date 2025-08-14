@@ -13,10 +13,8 @@ import os
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from flask_sqlalchemy import SQLAlchemy
-
-from .config import Config # type: ignore
-from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
+from config import Config # type: ignore
+from filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 
 load_dotenv()
 # --Flask App setup---
@@ -24,15 +22,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 # ---SQL Database Setup---
-db_user = os.environ["DB_USER"]
-db_password = os.environ["DB_PASSWORD"]
-db_host = os.environ["DB_HOST"]
-db_port = os.environ.get("DB_PORT", 3306)
-db_name = os.environ["DB_NAME"]
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
+    f"mysql+pymysql://{app.config["DB_USER"]}:{app.config["DB_PASSWORD"]}@{app.config["DB_HOST"]}:{app.config["DB_PORT"]}/{app.config["DB_NAME"]}"
 )
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
