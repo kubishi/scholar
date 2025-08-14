@@ -32,31 +32,21 @@ openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # --Flask App setup---
 app = Flask(__name__)
 
-# ---SQL Database Setup---
-server = None
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":  # only on the reloader child process
-    from sshtunnel import SSHTunnelForwarder
-    import atexit
 
-    server = SSHTunnelForwarder(
-        ('sebastianlange.lmu.build', 22), # ssh rount through port 22
-        ssh_username="sebasti1",
-        ssh_pkey="/Users/sebastianlange/.ssh/id_rsa",
-        local_bind_address=('127.0.0.1', 3308),
-        remote_bind_address=('127.0.0.1', 3306)
-    )
-    server.start()
-    print(f"Tunnel established on port {server.local_bind_port}")
-    atexit.register(lambda: server.stop())
+db_user = os.environ["DB_USER"]
+db_password = os.environ["DB_PASSWORD"]
+db_host = os.environ["DB_HOST"]
+db_port = os.environ.get("DB_PORT", 3306)
+db_name = os.environ["DB_NAME"]
 
-# SQLAlchemy setup
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://sebasti1_remote_user:Sebastian28813@127.0.0.1:3308/sebasti1_kubishi_scholar'
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
+)
 
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/kubishi_scholar'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Disable "event listeners"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
 
 
