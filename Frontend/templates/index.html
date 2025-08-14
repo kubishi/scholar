@@ -65,11 +65,18 @@
         <a href="/add_conf" class="conference-add-button btn btn-dark" target="_blank" rel="noopener noreferrer">
           + Add Conference
         </a>
+    
+        <a href="/connection_search" class="friend-button btn" target="_blank" rel="noopener noreferrer" >
+        Find Friends
+        </a>
+      
       {% else %}
         <button class="btn btn-outline-secondary" disabled title="Login to add a conference">
           🔒 Add Conference
         </button>
+
       {% endif %}
+
     
       <!-- Toggle Button -->
 
@@ -204,6 +211,34 @@
     
 </div>
 
+
+<script>
+  document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', async function(event) {
+      event.preventDefault();
+      const conferenceId = this.dataset.conferenceId;
+
+      const response = await fetch('/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conference_id: conferenceId })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('✅ Favorited! Saved with ID: ' + result.id);
+        this.classList.remove('btn-outline-primary');
+        this.classList.add('btn-success');
+        this.textContent = 'Saved!';
+      } else {
+        alert('❌ Failed to favorite: ' + (result.error || 'Try again.'));
+      }
+    });
+  });
+</script>
+
+
+
 <!-- Script to show topics on click -->
 <script>
   const sourceSelect = document.getElementById("ranking-source");
@@ -246,6 +281,8 @@
                 if (topicEl) {
                     topicEl.style.display = topicEl.style.display === 'none' ? 'block' : 'none';
                 }
+             
+                
             });
         });
     });
