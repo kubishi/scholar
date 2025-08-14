@@ -178,4 +178,14 @@ body {
   background: #8e298e;
   color: white;
 }
+
+.saved-conf-button {
+  background: teal;
+  color: white;
+}
+
+.saved-conf-button:hover {
+  background: #015959;
+  color: white;
+}
 /*# sourceMappingURL=styles.css.map */
