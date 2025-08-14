@@ -65,6 +65,10 @@
         <a href="/add_conf" class="conference-add-button btn btn-dark" target="_blank" rel="noopener noreferrer">
           + Add Conference
         </a>
+
+        <a href="/saved_conference" class="saved-conf-button btn" target="_blank" rel="noopener noreferrer" >
+          View Saved
+        </a>
     
         <a href="/connection_search" class="friend-button btn" target="_blank" rel="noopener noreferrer" >
         Find Friends
@@ -121,7 +125,7 @@
       </div>
     </div>
   </form>
-<div>
+<div class="container">
     {% if query or ID_query %}
         <div class="search_result container">
             <h4> Conferences Results: </h4>
