@@ -120,7 +120,7 @@ ipython_config.py
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 
-.DS_Store
+*.DS_Store
 
 # Celery stuff
 celerybeat-schedule
@@ -175,7 +175,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-*.txt
+
+
 
 sql_connection_test.py
 migrations

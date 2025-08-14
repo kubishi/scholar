@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 
 {% block body %}
+<picture class="bg-image">
+  <img src="static/img/background3.jpg" alt="Nothing Honey" class="w-full h-screen object-cover blur-50 brightness-50 scale-105">
+</picture>
+
 <nav class="navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2" alt="">
+        <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-1" alt="">
         <div class="d-flex flex-column">
-          <span class="fs-5 fw-bold">Kubishi Scholar</span>
-          <span class="title_subtext text-muted">Scemanic Conference Discovery</span>
+          <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
+          <span class="title_subtext text-muted">Semantic Conference Discovery</span>
         </div>
       </a>
     <div class="d-flex ms-auto align-items-center">
@@ -15,12 +19,12 @@
         <span class="me-3">
             <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
         </span>
-        <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
+        <a href="/logout" class="logout-button btn btn-sm">Logout</a>
       {% else %}
         <span class="me-3">
             <strong> Welcome! </strong>
         </span>
-        <a href="/login" class="btn btn-primary btn-sm">Login</a>
+        <a href="/login" class="login-button btn btn-sm">Login</a>
       {% endif %}
     </div>
   </div>
@@ -28,9 +32,10 @@
 
 <div class="container">
   <div class="d-flex flex-column align-items-center pt-4 pb-2">
-    <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo" style="border-width: 5px;">
+    <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo rounded-4" style="border-width: 5px;">
     <h1 class=" my-1 text-center fw-bold">Kubishi Scholar</h1>
-    <h4 class="my-1 text-center text-muted">Redefining the search in research</h4>
+    <h4 class="text-center text-muted">Redefining the search in research</h4>
+    <h5 class="conference_count text_center text_muted">Currently tracking <span class="highlight-count">{{ record_count }}</span> conferences</h5>
   </div>
 
   <!-- START FORM: Wrap everything in a single form -->
@@ -38,18 +43,26 @@
 
   <form method="GET" action="/">
     <!-- Top row: Basic search -->
-    <input class="form-control" type="text" name="test_query" placeholder="Search by conference ID...">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <input class="form-control mb-1 border-dark" type="text" name="ID_query" value="{{ ID_query }}" placeholder="Search by conference ID...">
+    <div class="d-flex justify-content-between align-items-center mb-3  flex-wrap gap-2">
       <div class="d-flex flex-grow-1 gap-2">
-        <input class="form-control" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
-        <input class="form-control" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
+        <input class="form-control border-dark" type="text" name="query" value="{{ query }}" placeholder="Search academic topics...">
+        <input class="form-control border-dark" type="number" name="num_results" value="{{ num_results or '' }}" placeholder="Count" style="max-width: 100px;" max="100">
       </div>
-      <button id="search-btn" type="submit" class="btn btn-outline-secondary">Search</button>
+      <button id="search-btn" type="submit" class="btn btn-dark">Search</button>
     </div>
 
-    <div class="d-flex gap-2 mb-2">
+
+    <div class=" d-flex gap-2 mb-2">
+      <button class="toggle-advanced-button btn btn-dark" type="button" data-bs-toggle="collapse"
+      data-bs-target="#advancedSearch"
+      aria-expanded="{{ 'true' if advanced_open else 'false' }}"
+      aria-controls="advancedSearch">
+      Toggle Advanced Search
+      </button>
+
       {% if session %}
-        <a href="/add_conf" class="btn btn-outline-success" target="_blank" rel="noopener noreferrer">
+        <a href="/add_conf" class="conference-add-button btn btn-dark" target="_blank" rel="noopener noreferrer">
           + Add Conference
         </a>
       {% else %}
@@ -57,24 +70,13 @@
           🔒 Add Conference
         </button>
       {% endif %}
-    </div>
+    
+      <!-- Toggle Button -->
 
-    <!-- Toggle Button -->
-    <div class="mb-2">
-      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
-              aria-expanded="false" aria-controls="advancedSearch">
-        Toggle Advanced Search
-      </button>
     </div>
-
-    <div class="mb-2">
-      <a href="/connection_search" class="btn btn-outline-danger" target="_blank" rel="noopener noreferrer" >
-        Find Friends
-      </a>
-    </div>
-
+    
     <!-- Collapsible Advanced Search Section -->
-    <div class="collapse mt-2" id="advancedSearch">
+    <div class="collapse mt-2 {% if advanced_open %}show{% endif %}" id="advancedSearch">
       <div class="card card-body">
         <div class="row g-3">
           <!-- Start Date -->
@@ -94,17 +96,17 @@
           <!-- Location -->
           <div class="col-md-6">
             <label>Location:</label>
-            <input type="text" name="location" class="form-control" placeholder="Location">
+            <input type="text" name="location" class="form-control" placeholder="Location" value="{{ location or '' }}">
           </div>
 
           <!-- Ranking Source -->
           <div class="col-md-6">
             <label>Ranking Source:</label>
             <select id="ranking-source" name="ranking_source" class="form-control">
-              <option value="" disabled selected hidden>Select Ranking Source</option>
-              <option value="core">CORE</option>
-              <option value="era">ERA</option>
-              <option value="scholar">Google Scholar</option>
+              <option value="" disabled {% if not ranking_source %}selected{% endif %} hidden>Select Ranking Source</option>
+              <option value="core" {% if ranking_source == 'core' %}selected{% endif %}>CORE</option>
+              <option value="era" {% if ranking_source == 'era' %}selected{% endif %}>ERA</option>
+              <option value="scholar" {% if ranking_source == 'scholar' %}selected{% endif %}>Google Scholar</option>
             </select>
             <div id="ranking-score-container" style="display: none;" class="mt-2"></div>
           </div>
@@ -112,60 +114,91 @@
       </div>
     </div>
   </form>
-</div>
-    {% if query or test_query %}
+<div>
+    {% if query or ID_query %}
         <div class="search_result container">
             <h4> Conferences Results: </h4>
-            {% for article in articles %}
-                <!-- and (article.score > 0.21) -->
-                {% if article.metadata.url %}
-                    <div class="mb-4 border p-2 btn text-start"
-                        data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
-                        <h5 class="mb-1">
-                            {{ article.id }}
-                            <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
-                            {{ article.metadata.url }}
-                            </a>
-                        </h5>
+            {% if articles %}
+              {% for article in articles %}
+                  {% if article.metadata.url %}
+                      <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white"
+                          data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+                          <h5 class="mb-1">
+                              {{ article.id }}
+                              <a href="{{ article.metadata.url }}" target="_blank" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
+                              {{ article.metadata.url }}
+                              </a>
+                          </h5>
 
-                        <a href="#" 
-                          class="btn btn-outline-primary btn-sm favorite-btn" 
-                          data-conference-id="{{ article.id }}">
-                          Favorite
-                        </a>
-                      
-                        <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
-                        <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
-                        <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                          <a href="#" 
+                            class="favorite-button btn btn-sm favorite-btn" 
+                            data-conference-id="{{ article.id }}">
+                            Favorite
+                          </a>
+
+                          <a href="{{ url_for('edit_conference', conf_id=article.id) }}" 
+                            class="btn btn-warning btn-sm ms-2">
+                            Edit
+                          </a>
                         
-        
-                        <!-- Topics are hidden by default -->
-                        <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
-                            Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
-                            Topics: {{ article.metadata.topics | replace('\n', ', ') }}
-                        </p>
-        
-                        <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+                          <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
+                          <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
+                          <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
 
-                        
-                        <details class="mt-2">
-                            <summary style="cursor: pointer;">Conference Ranking Scores</summary>
-                            <ul class="list-unstyled mt-1 ms-3">
-                                {% set scores = [] %}
-                                {% for key, value in article.metadata.items() %}
-                                    {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
-                                        {% set _ = scores.append((key, value)) %}
-                                    {% endif %}
-                                {% endfor %}
+                          <!-- Calendar buttons -->
+                          <div class="mt-2">
+                              <a 
+                                href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | to_gcal_datetime }}/{{ article.metadata.end | to_gcal_datetime }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
+                                target="_blank" 
+                                class="google-callendar-button btn btn-sm me-2">
+                                Add to Google Calendar
+                              </a>
 
-                                {% for key, value in scores | sort(attribute=0, reverse=true) %}
-                                    <li><strong>{{ key }}:</strong> {{ value }}</li>
-                                {% endfor %}
-                            </ul>
-                        </details>
-                    </div>
-                {% endif %}
-            {% endfor %}
+                              <a href="https://outlook.office.com/calendar/0/deeplink/compose?
+                                allday=false
+                                &body={{ article.metadata.topics | urlencode }}
+                                &enddt={{ article.metadata.end | urlencode }}
+                                &location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}
+                                &path=%2Fcalendar%2Faction%2Fcompose
+                                &rru=addevent
+                                &startdt={{ article.metadata.start | urlencode }}
+                                &subject={{ article.id | urlencode }}"
+                                target="_blank" class="outlook-button btn btn-sm">
+                                Add to Outlook
+                              </a>
+                            </div>
+                          
+                          <!-- Topics are hidden by default -->
+                          <p class="mb-1 text-muted topic-line" style="font-size: 0.9rem; display: none;">
+                              Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
+                              Topics: {{ article.metadata.topics | replace('\n', ', ') }}
+                          </p>
+          
+                          <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
+   
+                          <details class="mt-2">
+                              <summary style="cursor: pointer;">Conference Ranking Scores</summary>
+                              <ul class="list-unstyled mt-1 ms-3">
+                                  {% set scores = [] %}
+                                  {% for key, value in article.metadata.items() %}
+                                      {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
+                                          {% set _ = scores.append((key, value)) %}
+                                      {% endif %}
+                                  {% endfor %}
+
+                                  {% for key, value in scores | sort(attribute=0, reverse=true) %}
+                                      <li><strong>{{ key }}:</strong> {{ value }}</li>
+                                  {% endfor %}
+                              </ul>
+                          </details>
+                      </div>
+                  {% endif %}
+              {% endfor %}
+            {% else %}
+              {% if ID_query %}
+                <h3 class="text-muted text-center">Sorry, "{{ ID_query }}" could not be found. Not even AI could make this one up.</h3>
+              {% endif %}
+            {% endif %}
         </div>
     {% endif %}
     
