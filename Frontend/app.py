@@ -1,5 +1,3 @@
-
-from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, session, url_for, request ,jsonify
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
@@ -8,15 +6,13 @@ import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
-import atexit
-import os
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
+from .forms import ConferenceForm # type: ignore
 
-load_dotenv()
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -39,7 +35,7 @@ class Favorite_Conf(db.Model):
     user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
     fav_conf_id = db.Column(db.String(50), primary_key=True)
 
-
+# Auth0 Setup
 oauth = OAuth(app)
 oauth.register(
     "auth0",
@@ -232,68 +228,71 @@ def index():
 #edit page
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
-    # GET existing data from Pinecone
     existing = pinecone_index.fetch(ids=[conf_id])
-
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
     conf_meta = existing.vectors[conf_id].metadata
-    if request.method == 'POST':
-        conference_ID = request.form.get("conference_ID", "")
-        conference_name = request.form.get("conference_name", "")
-        country = request.form.get("country", "")
-        city = request.form.get("city", "")
-        deadline = request.form.get("deadline", "")
-        start_date = request.form.get("start_date", "")
-        end_date = request.form.get("end_date", "")
-        topic_list = request.form.get("topic_list", "")
-        conference_link = request.form.get("conference_link", "")
+    def parse_date(date_str):
+        if date_str:
+            try:
+                return datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+        return None
+    #Displaying the intital data
+    form = ConferenceForm(
+        conference_id=conf_id,
+        conference_name=conf_meta.get("conference_name", ""),
+        country=conf_meta.get("country", ""),
+        city=conf_meta.get("city", ""),
+        deadline=parse_date(conf_meta.get("deadline", "")),
+        start_date=parse_date(conf_meta.get("start_date", "")),
+        end_date=parse_date(conf_meta.get("end_date", "")),
+        topic_list=conf_meta.get("topics", ""),
+        conference_link=conf_meta.get("url", "")
+    )
 
-        # Create new embedding
-        topic_vector = get_embedding(topic_list)
+    if form.validate_on_submit():
+        topic_vector = get_embedding(form.topic_list.data)
 
-        # Update Pinecone
         updated_vector = {
             "id": conf_id,
             "values": topic_vector,
             "metadata": {
-                "conference_name": conference_name,
-                "country": country,
-                "city": city,
-                "deadline": deadline,
-                "start_date": start_date,
-                "end_date": end_date,
-                "topics": topic_list,
-                "url": conference_link,
+                "conference_name": form.conference_name.data.strip(),
+                "country": form.country.data.strip(),
+                "city": form.city.data.strip(),
+                "deadline": form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else "",
+                "start_date": form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else "",
+                "end_date": form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else "",
+                "topics": form.topic_list.data.strip(),
+                "url": form.conference_link.data.strip(),
                 "contributer": session['user']['userinfo']['sub'],
             }
         }
         pinecone_index.upsert(vectors=[updated_vector])
         flash("Conference updated successfully!", "success")
-        return redirect(url_for('index'))  # Change 'index' to your main search route
-
-    return render_template(
-        "edit_conference.html",
-        conf_id=conf_id,
-        conf_meta=conf_meta
-    )
+        return redirect(url_for("index"))
     
+    return render_template("edit_conference.html", form=form, conf_id=conf_id)
+  
 # ENTER CONFERENCES PAGE
 @app.route('/add_conf', methods=['GET', 'POST'])
 def conference_adder():
-    conference_id = ""
-
-    if request.method == 'POST':
-        conference_id = request.form.get("conference_id", "").strip()
-        conference_name = request.form.get("conference_name", "").strip()
-        country = request.form.get("country", "").strip()
-        city = request.form.get("city", "").strip()
-        deadline = request.form.get("deadline", "").strip()
-        start_date = request.form.get("start_date", "").strip()
-        end_date = request.form.get("end_date", "").strip()
-        topic_list = request.form.get("topic_list", "").strip()
-        conference_link = request.form.get("conference_link", "").strip()
+    form = ConferenceForm()
+    if form.validate_on_submit():
+        topic_vector = get_embedding(form.topic_list.data)
+        
+        conference_id = form.conference_id.data.strip().upper()
+        conference_name = form.conference_name.data.strip()
+        country = form.country.data.strip()
+        city = form.city.data.strip()
+        deadline = form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else ""
+        start_date = form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else ""
+        end_date = form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else ""
+        topic_list = form.topic_list.data.strip()
+        conference_link = form.conference_link.data.strip()
 
         if conference_id:
             topic_vector = get_embedding(topic_list)
@@ -317,7 +316,7 @@ def conference_adder():
             flash("Conference added successfully!", "success")
             return redirect(url_for("index"))  # redirect after POST
 
-    return render_template("add_conference.html", conference_id=conference_id)
+    return render_template("add_conference.html", form=form)
 
 @app.route("/connection_search")
 def connection_finder():
@@ -364,7 +363,6 @@ def save_favorite():
     db.session.commit()
 
     return jsonify({'id': conference_id}), 200
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
