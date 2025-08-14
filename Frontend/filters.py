@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import redirect, url_for, request
-
+from datetime import datetime
 RANK_ORDER = {
     "A*": 4,
     "A": 3,
@@ -9,6 +9,33 @@ RANK_ORDER = {
     "UNRANKED": 0
 }
 
+def city_country_filter(value):
+    city, country = value
+    return f"{city}, {country}"
+
+def to_gcal_datetime_filter(value):
+    if not value:
+        return ""
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return dt.strftime("%Y%m%dT%H%M%SZ")
+    except Exception:
+        return value
+
+def format_date(value, format="%b %d, %Y"):
+    if not value:
+        return ""
+    try:
+        if value.endswith("Z"):
+            value = value[:-1]
+        dt = datetime.fromisoformat(value)
+        return dt.strftime(format)
+    except Exception:
+        return value
+
+def convert_date_format(date_str):
+    """Convert yyyy-mm-dd to mm-dd-yyyy"""
+    return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
 
 def redirect_clean_params(endpoint_name):
     """Redirect to the same endpoint with only non-empty query params."""

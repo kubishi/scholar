@@ -1,33 +1,19 @@
 from flask import Flask, flash, redirect, render_template, session, url_for, request
-import os
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
-from dotenv import find_dotenv, load_dotenv
 from datetime import datetime
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
-
 from flask_sqlalchemy import SQLAlchemy
-from .filters import is_match, redirect_clean_params # type: ignore
 
-load_dotenv()
-
-# --Pinecone Setup--
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
-pc = Pinecone(api_key=PINECONE_API_KEY)
-PINECONE_HOST = os.getenv("PINECONE_HOST")
-pinecone_index = pc.Index(host=PINECONE_HOST)
-
-# --OpenAI API Setup---
-openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from .config import Config # type: ignore
+from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 
 # --Flask App setup---
 app = Flask(__name__)
-
-
+app.config.from_object(Config)
 
 # ---SQL Database Setup---
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://myapp_user:Sebastian1@localhost/myapp_db'
@@ -35,20 +21,38 @@ app = Flask(__name__)
 
 # db = SQLAlchemy(app)
 
-# --Auth0 setup---
-app.secret_key = env.get("APP_SECRET_KEY")
+# Auth0 setup
 oauth = OAuth(app)
-
 oauth.register(
     "auth0",
-    client_id=env.get("AUTH0_CLIENT_ID"),
-    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_id=app.config["AUTH0_CLIENT_ID"],
+    client_secret=app.config["AUTH0_CLIENT_SECRET"],
     client_kwargs={
         "scope": "openid profile email",
     },
-    server_metadata_url=f'https://{env.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+    server_metadata_url=f'https://{app.config["AUTH0_DOMAIN"]}/.well-known/openid-configuration'
 )
 
+# Pinecone Setup
+pc = Pinecone(api_key=app.config["PINECONE_API_KEY"])
+pinecone_index = pc.Index(host=app.config["PINECONE_HOST"])
+
+# OpenAI Setup
+openai_client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
+
+app.add_template_filter(city_country_filter, 'city_country')
+app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
+app.add_template_filter(format_date, 'format_date')
+
+def get_embedding(text):
+    """Generate an embedding vector for the given text."""
+    if not text:
+        raise ValueError("Input text for embedding cannot be empty.")
+    response = openai_client.embeddings.create(
+        input=text,
+        model=app.config["EMBEDDING_MODEL"]
+    )
+    return response.data[0].embedding
 
 @app.route("/login")
 def login():
@@ -59,8 +63,8 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-    
-    print("TONEKKKKKKKKN", token["id_token"])
+
+    # print("TONEKKKKKKKKN", token["id_token"])
     session["user"] = token
     sub = "google-oauth2|1234567890"
     
@@ -70,59 +74,22 @@ def callback():
 def logout():
     session.clear()
     return redirect(
-        "https://" + env.get("AUTH0_DOMAIN")
+        "https://" + app.config["AUTH0_DOMAIN"]
         + "/v2/logout?"
         + urlencode(
             {
                 "returnTo": url_for("index", _external=True),
-                "client_id": env.get("AUTH0_CLIENT_ID"),
+                "client_id": app.config["AUTH0_CLIENT_ID"],
             },
             quote_via=quote_plus,
         )
     )
 
-@app.template_filter('city_country')
-def city_country_filter(value):
-    city, country = value
-    string = f"{city}, {country}"
-    return string
-
-@app.template_filter('to_gcal_datetime')
-def to_gcal_datetime_filter(value):
-    if not value:
-        return ""
-    try:
-        # Parse the ISO string with Z (UTC)
-        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        # Format as YYYYMMDDTHHMMSSZ
-        return dt.strftime("%Y%m%dT%H%M%SZ")
-    except Exception:
-        return value  # fallback: return original if parsing fails
-
-@app.template_filter('format_date')
-def format_date(value, format="%b %d, %Y"):
-    """Format ISO 8601 date string to a readable format, e.g. Jun 25, 2025."""
-    if not value:
-        return ""
-    try:
-        # Strip Z if present, to parse as naive datetime
-        if value.endswith("Z"):
-            value = value[:-1]
-        dt = datetime.fromisoformat(value)
-        return dt.strftime(format)
-    except Exception:
-        return value 
-
-
-def convert_date_format(date_str):
-    '''Convert yyyy-mm-dd to mm-dd-yyyy'''
-    return datetime.strptime(date_str, "%Y-%m-%d").strftime("%m-%d-%Y") if date_str else ""
 
 def fetch_record_count():
     stats = pinecone_index.describe_index_stats()
     record_count = stats["total_vector_count"]
     return record_count
-
 
 # MAIN PAGE
 @app.route("/")
@@ -173,11 +140,7 @@ def index():
     elif query:
         try:
             # Step 1: Get embedding
-            embedding_response = openai_client.embeddings.create(
-                input=query,
-                model="text-embedding-3-small"
-            )
-            vector = embedding_response.data[0].embedding
+            vector = get_embedding(query)
 
             # Step 2: Query Pinecone
             results = pinecone_index.query(
@@ -230,6 +193,7 @@ def index():
                            ranking_source=ranking_source,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
+#edit page
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
     # GET existing data from Pinecone
@@ -240,6 +204,7 @@ def edit_conference(conf_id):
 
     conf_meta = existing.vectors[conf_id].metadata
     if request.method == 'POST':
+        conference_ID = request.form.get("conference_ID", "")
         conference_name = request.form.get("conference_name", "")
         country = request.form.get("country", "")
         city = request.form.get("city", "")
@@ -250,11 +215,7 @@ def edit_conference(conf_id):
         conference_link = request.form.get("conference_link", "")
 
         # Create new embedding
-        embedding_response = openai_client.embeddings.create(
-            input=topic_list,
-            model="text-embedding-3-small"
-        )
-        topic_vector = embedding_response.data[0].embedding
+        topic_vector = get_embedding(topic_list)
 
         # Update Pinecone
         updated_vector = {
@@ -283,47 +244,46 @@ def edit_conference(conf_id):
     )
     
 # ENTER CONFERENCES PAGE
-@app.route('/add_conf')
+@app.route('/add_conf', methods=['GET', 'POST'])
 def conference_adder():
-    conference_id = request.args.get("conference_id", "")
-    conference_name = request.args.get("conference_name", "")
-    country = request.args.get("country", "")
-    city = request.args.get("city", "")
-    deadline = request.args.get("deadline", "")
-    start_date = request.args.get("start_date", "")
-    end_date = request.args.get("end_date", "")
-    topic_list = request.args.get("topic_list", "")
-    conference_link = request.args.get("conference_link", "")
+    conference_id = ""
 
-    if conference_id:
+    if request.method == 'POST':
+        conference_id = request.form.get("conference_id", "").strip()
+        conference_name = request.form.get("conference_name", "").strip()
+        country = request.form.get("country", "").strip()
+        city = request.form.get("city", "").strip()
+        deadline = request.form.get("deadline", "").strip()
+        start_date = request.form.get("start_date", "").strip()
+        end_date = request.form.get("end_date", "").strip()
+        topic_list = request.form.get("topic_list", "").strip()
+        conference_link = request.form.get("conference_link", "").strip()
 
-        embedding_response = openai_client.embeddings.create(
-            input=topic_list,
-            model="text-embedding-3-small"
-        )
-        topic_vector = embedding_response.data[0].embedding
+        if conference_id:
+            topic_vector = get_embedding(topic_list)
 
-        vector = {
-            "id": conference_id,
-            "values": topic_vector,
-            "metadata": {
-                "conference_name": conference_name,
-                "country": country,
-                "city": city,
-                "deadline": deadline,
-                "start_date": start_date,
-                "end_date": end_date,
-                "topics": topic_list,
-                "url": conference_link,
-                "contributer": session['user']['userinfo']['sub'],
-
+            vector = {
+                "id": conference_id,
+                "values": topic_vector,
+                "metadata": {
+                    "conference_name": conference_name,
+                    "country": country,
+                    "city": city,
+                    "deadline": deadline,
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "topics": topic_list,
+                    "url": conference_link,
+                    "contributer": session['user']['userinfo']['sub'],
+                }
             }
-        }
 
-        res = pinecone_index.upsert(vectors=[vector])
+            pinecone_index.upsert(vectors=[vector])
+            flash("Conference added successfully!", "success")
+            return redirect(url_for("index"))  # redirect after POST
 
-    return render_template('add_conference.html',
-                           conference_id=conference_id)
+    return render_template("add_conference.html", conference_id=conference_id)
+
     
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=True)
+    app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
