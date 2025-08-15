@@ -4,14 +4,12 @@ body {
 
 .navbar {
   background-color: rgba(255, 255, 255, 0.8);
-  -webkit-box-shadow: 0 0 3px 1px lightgrey;
-          box-shadow: 0 0 3px 1px lightgrey;
+  box-shadow: 0 0 3px 1px lightgrey;
 }
 
 .login-button {
   background-color: #2671f4;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -23,7 +21,6 @@ body {
 .logout-button {
   background-color: #2671f4;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -34,57 +31,31 @@ body {
 
 .kubishi_logo {
   margin-right: 5px;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 
 .search_result {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  /* stacks children vertically */
+  flex-direction: column; /* stacks children vertically */
 }
 
-::-webkit-input-placeholder {
-  color: #000;
-  /* black */
-  opacity: 1;
-}
-
-:-ms-input-placeholder {
-  color: #000;
-  /* black */
-  opacity: 1;
-}
-
-::-ms-input-placeholder {
-  color: #000;
-  /* black */
+::-moz-placeholder {
+  color: #000; /* black */
   opacity: 1;
 }
 
 ::placeholder {
-  color: #000;
-  /* black */
+  color: #000; /* black */
   opacity: 1;
 }
 
 .menu_logo {
-  -webkit-transition: -webkit-transform 0.4s ease-out;
-  transition: -webkit-transform 0.4s ease-out;
   transition: transform 0.4s ease-out;
-  transition: transform 0.4s ease-out, -webkit-transform 0.4s ease-out;
   border: 1px solid black;
 }
 
 .menu_logo:hover {
-  -webkit-transform: scale(1.1);
-          transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .title_subtext {
@@ -92,9 +63,7 @@ body {
 }
 
 .main_logo {
-  border: 1px solid black;
-  /* invisible border, keeps space */
-  -webkit-transition: border-color 0.3s ease;
+  border: 1px solid black; /* invisible border, keeps space */
   transition: border-color 0.3s ease;
 }
 
@@ -104,7 +73,7 @@ body {
 
 .conference_count {
   font-size: 15px;
-  color: #7a7676fd;
+  color: rgba(122, 118, 118, 0.9921568627);
 }
 
 .highlight-count {
@@ -112,14 +81,12 @@ body {
 }
 
 .bg-image {
-  position: fixed;
-  /* stays in place while scrolling */
+  position: fixed; /* stays in place while scrolling */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  /* pushes it behind all other content */
+  z-index: -1; /* pushes it behind all other content */
 }
 
 .bg-image img {
@@ -127,8 +94,7 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  -webkit-filter: blur(50px);
-          filter: blur(50px);
+  filter: blur(50px);
 }
 
 .toggle-advanced-button {
@@ -154,7 +120,6 @@ body {
 .favorite-button {
   background-color: #e19f06;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -166,7 +131,6 @@ body {
 .outlook-button {
   background-color: #2563EB;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -178,7 +142,6 @@ body {
 .google-callendar-button {
   background: #0F9D58;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -216,8 +179,7 @@ body {
   background-color: rgba(255, 255, 255, 0.65);
   max-width: 800px;
   margin: auto;
-  -webkit-box-shadow: 0 0 6px 0.5px lightgrey;
-          box-shadow: 0 0 6px 0.5px lightgrey;
+  box-shadow: 0 0 6px 0.5px lightgrey;
 }
 
 .text-box {
@@ -238,5 +200,4 @@ body {
   right: 5px;
   height: 40px;
   z-index: 2;
-}
-/*# sourceMappingURL=styles.css.map */
+}/*# sourceMappingURL=styles.css.map */
