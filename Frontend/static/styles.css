@@ -2,6 +2,12 @@ body {
   background-color: white;
 }
 
+.navbar {
+  background-color: rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: 0 0 3px 1px lightgrey;
+          box-shadow: 0 0 3px 1px lightgrey;
+}
+
 .login-button {
   background-color: #2671f4;
   color: white;
@@ -129,7 +135,19 @@ body {
   color: white;
 }
 
+.toggle-advanced-button:hover {
+  background: #78C4EB;
+  border: #78C4EB;
+  color: white;
+}
+
 .conference-add-button {
+  color: white;
+}
+
+.conference-add-button:hover {
+  background: #A47DCA;
+  border: #A47DCA;
   color: white;
 }
 
@@ -170,22 +188,22 @@ body {
 }
 
 .friend-button {
-  background: #bf3cbf;
   color: white;
 }
 
 .friend-button:hover {
-  background: #8e298e;
+  background: #FBA1C5;
+  border: #FBA1C5;
   color: white;
 }
 
 .saved-conf-button {
-  background: teal;
   color: white;
 }
 
 .saved-conf-button:hover {
-  background: #015959;
+  background: #C3D888;
+  border: #C3D888;
   color: white;
 }
 
@@ -195,15 +213,11 @@ body {
 }
 
 .search-box {
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.65);
   max-width: 800px;
   margin: auto;
-}
-
-.search-box {
-  background-color: rgba(255, 255, 255, 0.7);
-  max-width: 800px;
-  margin: auto;
+  -webkit-box-shadow: 0 0 6px 0.5px lightgrey;
+          box-shadow: 0 0 6px 0.5px lightgrey;
 }
 
 .text-box {
