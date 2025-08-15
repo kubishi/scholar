@@ -193,4 +193,36 @@ body {
   background-color: black;
   border-color: black;
 }
+
+.search-box {
+  background-color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: auto;
+}
+
+.search-box {
+  background-color: rgba(255, 255, 255, 0.7);
+  max-width: 800px;
+  margin: auto;
+}
+
+.text-box {
+  position: relative;
+  width: 100%;
+}
+
+.text-box textarea {
+  resize: none;
+  height: 10vh;
+  min-height: 40px;
+  max-height: 120px;
+}
+
+.submit-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  height: 40px;
+  z-index: 2;
+}
 /*# sourceMappingURL=styles.css.map */
