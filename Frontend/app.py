@@ -13,9 +13,12 @@ from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
 
+from flask_wtf import CSRFProtect
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
+
+csrf = CSRFProtect(app)
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -341,8 +344,6 @@ def saved_conference():
         print(fav.fav_conf_id)
     
     return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences)
-
-
 
 @app.route('/favorite', methods=['POST'])
 def save_favorite():
