@@ -333,7 +333,7 @@ def connection_finder():
     else:
         print("No user found with that email.")
 
-    return render_template('friend_search.html', searched_user_info = searched_user_info)
+    return render_template('friend_search.html', searched_user_info = searched_user_info, session_user_name=session.get('user'))
 
 @app.route("/saved_conference")
 def saved_conference():
@@ -343,7 +343,7 @@ def saved_conference():
     for fav in favorited_conferences:
         print(fav.fav_conf_id)
     
-    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences)
+    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences, session_user_name=session.get('user'))
 
 @app.route('/favorite', methods=['POST'])
 def save_favorite():
