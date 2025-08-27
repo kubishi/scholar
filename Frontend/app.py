@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request ,jsonify
+from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from datetime import datetime
