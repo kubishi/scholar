@@ -13,7 +13,6 @@ body {
 }
 
 .login-button {
-  background-color: #2671f4;
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -24,7 +23,7 @@ body {
 }
 
 .logout-button {
-  background-color: #2671f4;
+
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -50,7 +49,7 @@ body {
     opacity: 1;
   }
 
-  .menu_logo {
+.menu_logo {
     transition: transform 0.4s ease-out;
     border: 1px solid black;
     
@@ -95,7 +94,17 @@ body {
     height: 100%;
     object-fit: cover;
     filter: blur(50px);
+    
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
+
+.main_search_box {
+  width: 100%;
+}
 
   .toggle-advanced-button{
     color: white;
@@ -175,7 +184,7 @@ body {
 
 .search-box {
   background-color: rgba(255, 255, 255, 0.65); 
-  max-width: 800px; 
+  max-width: 1000px; 
   margin: auto;  
   box-shadow: 0 0 6px 0.5px lightgrey;  
 }
