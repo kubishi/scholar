@@ -120,7 +120,6 @@ def logout():
         )
     )
 
-
 def fetch_record_count():
     stats = pinecone_index.describe_index_stats()
     record_count = stats["total_vector_count"]
