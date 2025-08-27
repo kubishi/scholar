@@ -13,9 +13,12 @@ from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
 
+from flask_wtf import CSRFProtect
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
+
+csrf = CSRFProtect(app)
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -116,7 +119,6 @@ def logout():
             quote_via=quote_plus,
         )
     )
-
 
 def fetch_record_count():
     stats = pinecone_index.describe_index_stats()
@@ -247,8 +249,8 @@ def edit_conference(conf_id):
         country=conf_meta.get("country", ""),
         city=conf_meta.get("city", ""),
         deadline=parse_date(conf_meta.get("deadline", "")),
-        start_date=parse_date(conf_meta.get("start_date", "")),
-        end_date=parse_date(conf_meta.get("end_date", "")),
+        start=parse_date(conf_meta.get("start", "")),
+        end=parse_date(conf_meta.get("end", "")),
         topic_list=conf_meta.get("topics", ""),
         conference_link=conf_meta.get("url", "")
     )
@@ -265,8 +267,8 @@ def edit_conference(conf_id):
                 "country": form.country.data.strip(),
                 "city": form.city.data.strip(),
                 "deadline": form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else "",
-                "start_date": form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else "",
-                "end_date": form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else "",
+                "start": form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else "",
+                "end": form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else "",
                 "topics": form.topic_list.data.strip(),
                 "url": form.conference_link.data.strip(),
                 "contributer": session['user']['userinfo']['sub'],
@@ -290,8 +292,8 @@ def conference_adder():
         country = form.country.data.strip()
         city = form.city.data.strip()
         deadline = form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else ""
-        start_date = form.start_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start_date.data else ""
-        end_date = form.end_date.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end_date.data else ""
+        start = form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else ""
+        end = form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else ""
         topic_list = form.topic_list.data.strip()
         conference_link = form.conference_link.data.strip()
 
@@ -306,8 +308,8 @@ def conference_adder():
                     "country": country,
                     "city": city,
                     "deadline": deadline,
-                    "start_date": start_date,
-                    "end_date": end_date,
+                    "start": start,
+                    "end": end,
                     "topics": topic_list,
                     "url": conference_link,
                     "contributer": session['user']['userinfo']['sub'],
@@ -331,7 +333,7 @@ def connection_finder():
     else:
         print("No user found with that email.")
 
-    return render_template('friend_search.html', searched_user_info = searched_user_info)
+    return render_template('friend_search.html', searched_user_info = searched_user_info, session_user_name=session.get('user'))
 
 @app.route("/saved_conference")
 def saved_conference():
@@ -341,9 +343,7 @@ def saved_conference():
     for fav in favorited_conferences:
         print(fav.fav_conf_id)
     
-    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences)
-
-
+    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences, session_user_name=session.get('user'))
 
 @app.route('/favorite', methods=['POST'])
 def save_favorite():
