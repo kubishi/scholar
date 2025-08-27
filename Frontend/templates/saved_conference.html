@@ -14,19 +14,6 @@
           <span class="title_subtext text-muted">Semantic Conference Discovery</span>
         </div>
       </a>
-    <div class="d-flex ms-auto align-items-center">
-      {% if session_user_name and session_user_name.userinfo %}
-        <span class="me-3">
-            <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
-        </span>
-        <a href="/logout" class="logout-button btn btn-sm">Logout</a>
-      {% else %}
-        <span class="me-3">
-            <strong> Welcome! </strong>
-        </span>
-        <a href="/login" class="login-button btn btn-sm">Login</a>
-      {% endif %}
-    </div>
   </div>
 </nav>
 

@@ -14,19 +14,6 @@
         <span class="title_subtext text-muted">Semantic Conference Discovery</span>
       </div>
     </a>
-  <div class="d-flex ms-auto align-items-center">
-    {% if session_user_name and session_user_name.userinfo %}
-      <span class="me-3">
-          <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
-      </span>
-      <a href="/logout" class="logout-button btn btn-sm">Logout</a>
-    {% else %}
-      <span class="me-3">
-          <strong> Welcome! </strong>
-      </span>
-      <a href="/login" class="login-button btn btn-sm">Login</a>
-    {% endif %}
-  </div>
 </div>
 </nav>
 
@@ -39,10 +26,15 @@
       </div>
     </form>
 
-
-    {% if searched_user_info.user_name %}
-        <div> {{ searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id }} </div>
-    {% endif %}
+    <div class="container mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3">
+      {% if searched_user_info %}
+          {% for u in searched_user_info %}
+              <div>{{ u.user_name }} — {{ u.user_email }}</div>
+          {% endfor %}
+      {% else %}
+          <div>No user found.</div>
+      {% endif %}
+    </div>
     
     
 </div>

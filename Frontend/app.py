@@ -9,6 +9,8 @@ from authlib.integrations.flask_client import OAuth
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+import logging
+
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
@@ -321,17 +323,29 @@ def conference_adder():
 
 @app.route("/connection_search")
 def connection_finder():
-    connection_email_search = request.args.get("connection_email_search", "")
-    # session keyword "unlocks access to db"
-    searched_user_info = db.session.query(User).filter_by(user_email = connection_email_search).first()
-    
-  
-    if searched_user_info:
-        print(searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id)
-    else:
-        print("No user found with that email.")
+    connection_email_search_result = request.args.get("connection_email_search", "")
+    searched_user_info = []
 
-    return render_template('friend_search.html', searched_user_info = searched_user_info)
+    # search for similar emails (starting with what user typed)
+    if connection_email_search_result:
+        searched_user_info = (
+            db.session.query(User)
+            .filter(User.user_email.like(f"{connection_email_search_result}%"))
+            .limit(10)
+            .all()
+        )
+    
+
+    if searched_user_info:
+        for u in searched_user_info:
+            app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
+
+    else:
+        app.logger.info("No user found with that email.")
+
+    return render_template('friend_search.html', searched_user_info=searched_user_info)
+    # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
+
 
 @app.route("/saved_conference")
 def saved_conference():
