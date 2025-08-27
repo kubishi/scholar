@@ -34,3 +34,5 @@ typing_extensions==4.12.2
 tzdata==2025.1
 urllib3==2.5.0
 pymysql==1.1.1
+Flask-WTF==1.2.2
+wtforms==3.2.1

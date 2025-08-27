@@ -256,6 +256,7 @@ def edit_conference(conf_id):
         conference_link=conf_meta.get("url", "")
     )
 
+
     if form.validate_on_submit():
         topic_vector = get_embedding(form.topic_list.data)
 
