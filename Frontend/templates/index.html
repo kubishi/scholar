@@ -10,9 +10,7 @@
     
     <!-- Brand / Logo -->
     <a class="d-flex align-items-center text-decoration-none" href="/">
-      <img src="{{ url_for('static', filename='img/logo_bg.png') }}" 
-           width="40" height="40" 
-           class="me-2 rounded-2" alt="Logo">
+      <img src="static/img/logo_bg.png" width="40" height="40" class="menu_logo me-2 rounded-2" alt="">
       <div class="d-flex flex-column">
         <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
         <span class="title_subtext text-muted">Semantic Conference Discovery</span>
@@ -23,12 +21,12 @@
     <div class="d-flex align-items-center">
       {% if session_user_name and session_user_name.userinfo %}
         <span class="me-3">
-          <strong>Welcome {{ session_user_name.userinfo.name }}!</strong>
+          <strong>Welcome, {{ session_user_name.userinfo.name }}!</strong>
         </span>
-        <a href="/logout" class="logout-button btn btn-sm">Logout</a>
+        <a href="/logout" class="logout-button btn btn-sm btn-dark ">Logout</a>
       {% else %}
         <span class="me-3"><strong>Welcome!</strong></span>
-        <a href="/login" class="login-button btn btn-sm">Login</a>
+        <a href="/login" class="login-button btn btn-sm  btn-dark">Login</a>
       {% endif %}
     </div>
 
@@ -38,20 +36,22 @@
 <div class="container">
   <div class="d-flex flex-column align-items-center pt-4 pb-2">
     <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo rounded-4" style="border-width: 5px;">
-    <h1 class=" my-1 text-center fw-bold">Kubishi Scholar</h1>
-    <h4 class="text-center text-muted">Redefining the search in research</h4>
+    <div class="brand-text">
+      <h1 class=" my-1 text-center fw-bold">Kubishi Scholar</h1>
+      <h4 class="text-center text-muted">Redefining the search in research</h4>
+    </div>
+
     <h5 class="conference_count text_center text_muted">Currently tracking <span class="highlight-count">{{ record_count }}</span> conferences</h5>
   </div>
 
   <!-- START FORM: Wrap everything in a single form -->
-<div class="search-box p-3 rounded-4">
+<div class="search-box p-3 mb-2 rounded-4">
   <form method="GET" action="/">
     <div class="d-flex align-items-center gap-2">
       <div class="text-box mb-2">
-        <textarea class="form-control border-dark" id="searchInput" name="query" placeholder="Search academic topics..."></textarea>
+        <textarea class="main_search_box form-control border-dark" id="searchInput" name="query" placeholder="Search academic topics..."></textarea>
         <button type="submit" class="submit-button btn btn-dark">Search</button>
       </div>
-
 
     </div>
 
@@ -64,7 +64,7 @@
         <input class="form-check-input" type="radio" name="search_type" id="ID_Toggle" value="id">
         <label class="form-check-label" for="ID_Toggle">ID Search</label>
       </div>
-      <input class="form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100">
+      <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100">
     </div>
 
 
@@ -228,14 +228,25 @@
 <!-- Toggle between search modes -->
 <script>
   const searchInput = document.getElementById('searchInput');
+  const form = searchInput.closest('form');
   document.querySelectorAll('input[name="search_type"]').forEach(radio => {
     radio.addEventListener('change', () => {
       searchInput.name = radio.value === 'semantic' ? 'query' : 'ID_query';
       searchInput.placeholder = radio.value === 'semantic' 
                                 ? 'Search academic topics...' 
                                 : 'Search by conference ID...';
+                                : 'Search by conference ID...';
+    
+                                : 'Search by conference ID...';                   
     
     });
+  });
+  searchInput.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) { // Allow Shift+Enter for new line
+        event.preventDefault(); // Prevent new line in textarea
+        form.submit(); 
+        console.log('Enter key pressed, performing custom action!');
+    }
   });
 </script>
 

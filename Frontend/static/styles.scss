@@ -1,3 +1,7 @@
+h1 {
+  font-size: clamp(16px, 5vh, 48px);
+}
+
 body {
     background-color: white;
 }
@@ -13,7 +17,6 @@ body {
 }
 
 .login-button {
-  background-color: #2671f4;
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -24,7 +27,7 @@ body {
 }
 
 .logout-button {
-  background-color: #2671f4;
+
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -39,6 +42,13 @@ body {
     align-items: center;
 }
 
+.brand-text {
+  width: 100%;
+}
+
+.count-box_setter {
+  width: 100%;
+}
 
 .search_result {
     display: flex;
@@ -50,13 +60,13 @@ body {
     opacity: 1;
   }
 
-  .menu_logo {
+.menu_logo {
     transition: transform 0.4s ease-out;
     border: 1px solid black;
     
   }
   
-  .menu_logo:hover {
+.menu_logo:hover {
     transform: scale(1.1);
   }
 
@@ -95,9 +105,24 @@ body {
     height: 100%;
     object-fit: cover;
     filter: blur(50px);
+    
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
   }
 
-  .toggle-advanced-button{
+.main_search_box {
+  width: 100%;
+}
+
+.navigation-buttons{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+  .toggle-advanced-button {
     color: white;
   }
 
@@ -175,7 +200,7 @@ body {
 
 .search-box {
   background-color: rgba(255, 255, 255, 0.65); 
-  max-width: 800px; 
+  max-width: 1000px; 
   margin: auto;  
   box-shadow: 0 0 6px 0.5px lightgrey;  
 }
@@ -190,7 +215,7 @@ body {
   resize: none; 
   height: 10vh; 
   min-height: 40px; 
-  max-height: 120px; 
+  max-height: 100px;
 }
 
 .submit-button {
@@ -199,4 +224,51 @@ body {
   right: 5px;       
   height: 40px;    
   z-index: 2;
+}
+
+
+@media screen and (max-width: 768px) {
+  .title_subtext {
+      display: none; /* Hides the text on screens 768px wide or less */
+  }
+  .menu_logo {
+    display: none;
+  }
+
+  .conference_count {
+    display: none;
+  }
+
+  .submit-button {
+    font-size: 10pt;
+    height: 35px; 
+  }
+
+  .friend-button {
+    font-size: 7pt;
+  }
+  .toggle-advanced-button {
+    font-size: 7pt;
+  }
+
+  .saved-conf-button {
+    font-size: 7pt;
+  }
+
+  .conference-add-button {
+    font-size: 7pt
+  }
+
+  .count-box-setter {
+    font-size:14px ;
+    height: 30px;
+    width: 90px;
+  }
+
+  .navigation-buttons {
+    display: grid;
+    grid-template-columns: 2fr 2fr; /* 2 buttons per row */
+    gap: 12px;
+  }
+
 }
