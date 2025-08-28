@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
+from flask import Flask, flash, redirect, render_template, session, url_for, request ,jsonify
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from datetime import datetime
@@ -8,6 +8,8 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+
+import logging
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
@@ -72,8 +74,7 @@ def get_embedding(text):
         )
         return response.data[0].embedding
     except Exception as e:
-        print(f"Error generating embedding: {e}")
-        raise
+        raise RuntimeError(f"Error generating embedding: {e}")
 
 @app.route("/login")
 def login():
@@ -327,17 +328,29 @@ def conference_adder():
 
 @app.route("/connection_search")
 def connection_finder():
-    connection_email_search = request.args.get("connection_email_search", "")
-    # session keyword "unlocks access to db"
-    searched_user_info = db.session.query(User).filter_by(user_email = connection_email_search).first()
-    
-  
-    if searched_user_info:
-        print(searched_user_info.user_name, searched_user_info.user_email, searched_user_info.google_auth_id)
-    else:
-        print("No user found with that email.")
+    connection_email_search_result = request.args.get("connection_email_search", "")
+    searched_user_info = []
 
-    return render_template('friend_search.html', searched_user_info = searched_user_info, session_user_name=session.get('user'))
+    # search for similar emails (starting with what user typed)
+    if connection_email_search_result:
+        searched_user_info = (
+            db.session.query(User)
+            .filter(User.user_email.like(f"{connection_email_search_result}%"))
+            .limit(10)
+            .all()
+        )
+    
+
+    if searched_user_info:
+        for u in searched_user_info:
+            app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
+
+    else:
+        app.logger.info("No user found with that email.")
+
+    return render_template('friend_search.html', searched_user_info=searched_user_info)
+    # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
+
 
 @app.route("/saved_conference")
 def saved_conference():
