@@ -330,6 +330,7 @@ def conference_adder():
 def connection_finder():
     connection_email_search_result = request.args.get("connection_email_search", "")
     searched_user_info = []
+    logged_in_user_id = session.get("user_id")
 
     # search for similar emails (starting with what user typed)
     if connection_email_search_result:
@@ -348,7 +349,7 @@ def connection_finder():
     else:
         app.logger.info("No user found with that email.")
 
-    return render_template('friend_search.html', searched_user_info=searched_user_info)
+    return render_template('friend_search.html', searched_user_info=searched_user_info, logged_in_user_id = logged_in_user_id, session_user_name=session.get('user'))
     # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
 
 
