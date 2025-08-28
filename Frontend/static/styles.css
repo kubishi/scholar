@@ -1,3 +1,7 @@
+h1 {
+  font-size: clamp(16px, 5vh, 48px);
+}
+
 body {
   background-color: white;
 }
@@ -45,6 +49,14 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.brand-text {
+  width: 100%;
+}
+
+.count-box_setter {
+  width: 100%;
 }
 
 .search_result {
@@ -148,6 +160,15 @@ body {
   width: 100%;
 }
 
+.navigation-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
 .toggle-advanced-button {
   color: white;
 }
@@ -246,7 +267,7 @@ body {
   resize: none;
   height: 10vh;
   min-height: 40px;
-  max-height: 120px;
+  max-height: 100px;
 }
 
 .submit-button {
@@ -255,5 +276,47 @@ body {
   right: 5px;
   height: 40px;
   z-index: 2;
+}
+
+@media screen and (max-width: 768px) {
+  .title_subtext {
+    display: none;
+    /* Hides the text on screens 768px wide or less */
+  }
+  .menu_logo {
+    display: none;
+  }
+  .conference_count {
+    display: none;
+  }
+  .submit-button {
+    font-size: 10pt;
+    height: 35px;
+  }
+  .friend-button {
+    font-size: 7pt;
+  }
+  .toggle-advanced-button {
+    font-size: 7pt;
+  }
+  .saved-conf-button {
+    font-size: 7pt;
+  }
+  .conference-add-button {
+    font-size: 7pt;
+  }
+  .count-box-setter {
+    font-size: 14px;
+    height: 30px;
+    width: 90px;
+  }
+  .navigation-buttons {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 2fr 2fr;
+        grid-template-columns: 2fr 2fr;
+    /* 2 buttons per row */
+    gap: 12px;
+  }
 }
 /*# sourceMappingURL=styles.css.map */
