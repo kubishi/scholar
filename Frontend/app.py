@@ -9,8 +9,6 @@ from authlib.integrations.flask_client import OAuth
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-import logging
-
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
@@ -67,11 +65,14 @@ def get_embedding(text):
     """Generate an embedding vector for the given text."""
     if not text:
         raise ValueError("Input text for embedding cannot be empty.")
-    response = openai_client.embeddings.create(
-        input=text,
-        model=app.config["EMBEDDING_MODEL"]
-    )
-    return response.data[0].embedding
+    try:
+        response = openai_client.embeddings.create(
+            input=text,
+            model=app.config["EMBEDDING_MODEL"]
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        raise RuntimeError(f"Error generating embedding: {e}")
 
 @app.route("/login")
 def login():
@@ -327,6 +328,7 @@ def conference_adder():
 def connection_finder():
     connection_email_search_result = request.args.get("connection_email_search", "")
     searched_user_info = []
+    logged_in_user_id = session.get("user_id")
 
     # search for similar emails (starting with what user typed)
     if connection_email_search_result:
@@ -337,7 +339,7 @@ def connection_finder():
             .all()
         )
     
-
+  
     if searched_user_info:
         for u in searched_user_info:
             app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
@@ -345,7 +347,7 @@ def connection_finder():
     else:
         app.logger.info("No user found with that email.")
 
-    return render_template('friend_search.html', searched_user_info=searched_user_info)
+    return render_template('friend_search.html', searched_user_info=searched_user_info, logged_in_user_id = logged_in_user_id, session_user_name=session.get('user'))
     # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
 
 
