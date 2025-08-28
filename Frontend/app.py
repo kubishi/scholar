@@ -34,7 +34,7 @@ class User(db.Model):
     user_name = db.Column(db.String(50))
     user_email = db.Column(db.String(50))
 
-class Favorite_Conf(db.Model):
+class FavoriteConf(db.Model):
     user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
     fav_conf_id = db.Column(db.String(50), primary_key=True)
 
@@ -65,11 +65,15 @@ def get_embedding(text):
     """Generate an embedding vector for the given text."""
     if not text:
         raise ValueError("Input text for embedding cannot be empty.")
-    response = openai_client.embeddings.create(
-        input=text,
-        model=app.config["EMBEDDING_MODEL"]
-    )
-    return response.data[0].embedding
+    try:
+        response = openai_client.embeddings.create(
+            input=text,
+            model=app.config["EMBEDDING_MODEL"]
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        print(f"Error generating embedding: {e}")
+        raise
 
 @app.route("/login")
 def login():
@@ -338,7 +342,7 @@ def connection_finder():
 @app.route("/saved_conference")
 def saved_conference():
     logged_in_user_id = session.get("user_id")
-    favorited_conferences = db.session.query(Favorite_Conf).filter_by(user_id = logged_in_user_id).all()
+    favorited_conferences = db.session.query(FavoriteConf).filter_by(user_id = logged_in_user_id).all()
 
     for fav in favorited_conferences:
         print(fav.fav_conf_id)
@@ -359,7 +363,7 @@ def save_favorite():
 
     print(f"Saved conference ID: {conference_id}")
 
-    new_user_conf_pair = Favorite_Conf(user_id=user_id, fav_conf_id=conference_id)
+    new_user_conf_pair = FavoriteConf(user_id=user_id, fav_conf_id=conference_id)
     db.session.add(new_user_conf_pair)
     db.session.commit()
 
