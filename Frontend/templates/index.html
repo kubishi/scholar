@@ -45,27 +45,35 @@
   </div>
 
   <!-- START FORM: Wrap everything in a single form -->
-<div class="search-box p-3 mb-2 rounded-4">
-  <form method="GET" action="/">
-    <div class="d-flex align-items-center gap-2">
-      <div class="text-box mb-2">
-        <textarea class="main_search_box form-control border-dark" id="searchInput" name="query" placeholder="Search academic topics..."></textarea>
-        <button type="submit" class="submit-button btn btn-dark">Search</button>
+  <div class="search-box p-3 mb-2 rounded-4">
+    <form method="GET" action="/">
+      <div class="d-flex align-items-center gap-2">
+        <div class="text-box mb-2">
+          <textarea class="main_search_box form-control border-dark" 
+          id="searchInput" 
+          name="{{ 'query' if request.args.get('search_type', 'semantic') == 'semantic' else 'ID_query' }}" 
+          placeholder="{{ 'Search academic topics...' if request.args.get('search_type', 'semantic') == 'semantic' else 'Search by conference ID...' }}">{{ (request.args.get('query') if request.args.get('search_type', 'semantic') == 'semantic' else request.args.get('ID_query')) or '' }}</textarea>
+          <button type="submit" class="submit-button btn btn-dark">Search</button>
+        </div>
       </div>
-
-    </div>
-
-    <div class="d-flex gap-2 align-items-center mb-2">
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="search_type" id="Semantic-Toggle" value="semantic" checked>
-        <label class="form-check-label" for="Semantic-Toggle">Semantic Search</label>
+  
+      <div class="d-flex gap-2 align-items-center mb-2">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="search_type" id="Semantic-Toggle" value="semantic"
+                {% if request.args.get('search_type', 'semantic') == 'semantic' %}checked{% endif %}>
+          <label class="form-check-label" for="Semantic-Toggle">Semantic Search</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="search_type" id="ID_Toggle" value="id"
+                 {% if request.args.get('search_type') == 'id' %}checked{% endif %}>
+          <label class="form-check-label" for="ID_Toggle">ID Search</label>
+        </div>
+        <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100"
+               value="{{ request.args.get('num_results', 3) }}">
       </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="search_type" id="ID_Toggle" value="id">
-        <label class="form-check-label" for="ID_Toggle">ID Search</label>
-      </div>
-      <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100">
-    </div>
+    </form>
+  </div>
+  
 
 
 
@@ -229,27 +237,24 @@
 <script>
   const searchInput = document.getElementById('searchInput');
   const form = searchInput.closest('form');
+  
   document.querySelectorAll('input[name="search_type"]').forEach(radio => {
     radio.addEventListener('change', () => {
       searchInput.name = radio.value === 'semantic' ? 'query' : 'ID_query';
       searchInput.placeholder = radio.value === 'semantic' 
                                 ? 'Search academic topics...' 
                                 : 'Search by conference ID...';
-                                : 'Search by conference ID...';
-    
-                                : 'Search by conference ID...';                   
-    
     });
   });
+  
   searchInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) { // Allow Shift+Enter for new line
-        event.preventDefault(); // Prevent new line in textarea
-        form.submit(); 
-        console.log('Enter key pressed, performing custom action!');
+    if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+      event.preventDefault(); // Prevent new line
+      form.submit();          // Submit the form
+      console.log('Enter key pressed, performing custom action!');
     }
   });
-</script>
-
-
+  </script>
+  
 
 {% endblock %}
