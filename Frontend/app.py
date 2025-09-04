@@ -335,7 +335,7 @@ def connection_finder():
         searched_user_info = (
             db.session.query(User)
             .filter(User.user_email.like(f"{connection_email_search_result}%"))
-            .limit(10)
+            .limit(5)
             .all()
         )
     
@@ -343,6 +343,7 @@ def connection_finder():
     if searched_user_info:
         for u in searched_user_info:
             app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
+
 
     else:
         app.logger.info("No user found with that email.")

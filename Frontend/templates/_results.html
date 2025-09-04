@@ -1,10 +1,9 @@
-<div class="search_result container">
+<div class="search_result">
     <h4> Conferences Results: </h4>
     {% if articles %}
       {% for article in articles %}
           {% if article.metadata.url %}
-              <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3"
-                  data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+              <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3">
                   <h5 class="mb-1">
                       <strong>{{ loop.index }}.</strong>
                       {{ article.id }}
@@ -95,3 +94,28 @@
       {% endif %}
     {% endif %}
 </div>
+
+<script>
+  document.querySelectorAll('.favorite-btn').forEach(button => {
+    button.addEventListener('click', async function(event) {
+      event.preventDefault();
+      const conferenceId = this.dataset.conferenceId;
+
+      const response = await fetch('/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conference_id: conferenceId })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('✅ Favorited! Saved with ID: ' + result.id);
+        this.classList.remove('btn-outline-primary');
+        this.classList.add('btn-success');
+        this.textContent = 'Saved!';
+      } else {
+        alert('❌ Failed to favorite: ' + (result.error || 'Try again.'));
+      }
+    });
+  });
+</script>
