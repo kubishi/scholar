@@ -33,7 +33,7 @@
   </div>
 </nav>
 
-<div class="container">
+<div class="container pb-2">
   <div class="d-flex flex-column align-items-center pt-4 pb-2">
     <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo rounded-4" style="border-width: 5px;">
     <div class="brand-text">
@@ -72,43 +72,39 @@
                value="{{ request.args.get('num_results', 3) }}">
       </div>
     </form>
-  </div>
-  
 
+    <div class=" d-flex gap-2 mb-1 justify-content-evenly">
+      <button class="toggle-advanced-button btn btn-dark rounded-3 flex-fill" type="button" data-bs-toggle="collapse"
+      data-bs-target="#advancedSearch"
+      aria-expanded="{{ 'true' if advanced_open else 'false' }}"
+      aria-controls="advancedSearch">
+      &#x2193; Advanced Search
+      </button>
 
+      {% if session %}
+        <a href="/add_conf" class="conference-add-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer">
+          + Add Conference
+        </a>
 
-        <div class=" d-flex gap-2 mb-2 justify-content-evenly">
-          <button class="toggle-advanced-button btn btn-dark rounded-3 flex-fill" type="button" data-bs-toggle="collapse"
-          data-bs-target="#advancedSearch"
-          aria-expanded="{{ 'true' if advanced_open else 'false' }}"
-          aria-controls="advancedSearch">
-          &#x2193; Advanced Search
-          </button>
+        <a href="/saved_conference" class="saved-conf-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
+          &#9829; View Saved
+        </a>
+    
+        <a href="/connection_search" class="friend-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
+          &#x2605; Find Friends
+        </a>
+      
+      {% else %}
+        <button class="btn btn-outline-secondary flex-fill" disabled title="Login to add a conference">
+          🔒 Add Conference
+        </button>
+      
+      {% endif %}
 
-          {% if session %}
-            <a href="/add_conf" class="conference-add-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer">
-              + Add Conference
-            </a>
+    
+      <!-- Toggle Button -->
 
-            <a href="/saved_conference" class="saved-conf-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
-              &#9829; View Saved
-            </a>
-        
-            <a href="/connection_search" class="friend-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
-              &#x2605; Find Friends
-            </a>
-          
-          {% else %}
-            <button class="btn btn-outline-secondary flex-fill" disabled title="Login to add a conference">
-              🔒 Add Conference
-            </button>
-          
-          {% endif %}
-
-        
-          <!-- Toggle Button -->
-
-        </div>
+    </div>
         
         <!-- Collapsible Advanced Search Section -->
         <div class="collapse mt-2 {% if advanced_open %}show{% endif %}" id="advancedSearch">
@@ -159,30 +155,7 @@
 </div>
 
 
-<script>
-  document.querySelectorAll('.favorite-btn').forEach(button => {
-    button.addEventListener('click', async function(event) {
-      event.preventDefault();
-      const conferenceId = this.dataset.conferenceId;
 
-      const response = await fetch('/favorite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conference_id: conferenceId })
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert('✅ Favorited! Saved with ID: ' + result.id);
-        this.classList.remove('btn-outline-primary');
-        this.classList.add('btn-success');
-        this.textContent = 'Saved!';
-      } else {
-        alert('❌ Failed to favorite: ' + (result.error || 'Try again.'));
-      }
-    });
-  });
-</script>
 
 <!-- Script to show topics on click -->
 <script>

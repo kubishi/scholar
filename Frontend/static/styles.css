@@ -67,7 +67,8 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  /* stacks children vertically */
+  max-width: 950px;
+  margin: 0 auto;
 }
 
 ::-webkit-input-placeholder {
