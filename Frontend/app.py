@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request
+from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from datetime import datetime
@@ -340,7 +340,6 @@ def connection_finder():
             .all()
         )
     
-  
     if searched_user_info:
         for u in searched_user_info:
             app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
@@ -366,14 +365,16 @@ def saved_conference():
 @app.route("/favorite", methods=["POST"])
 def save_favorite():
     if "user_id" not in session:
-        flash("Please log in to favorite conferences.", "warning")
-        return redirect(request.referrer or url_for("index"))
+        # JSON response for AJAX
+        if request.is_json or request.headers.get("X-Requested-With") == "fetch":
+            return jsonify({"ok": False, "error": "auth_required"}), 401
+        # (fallback form path if you keep it elsewhere)
+        ...
+    data = request.get_json(silent=True) or {}
+    conf_id = data.get("conference_id") or data.get("conf_id")
 
-
-    conf_id = request.form.get("conference_id") or request.form.get("conf_id")
     if not conf_id:
-        flash("No conference selected.", "danger")
-        return redirect(request.referrer or url_for("index"))
+      return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 
     user_id = session["user_id"]
 
@@ -381,13 +382,13 @@ def save_favorite():
     if fav:
         db.session.delete(fav)
         db.session.commit()
-        flash("Removed from favorites.", "info")
+        status = "removed"
     else:
         db.session.add(Favorite_Conf(user_id=user_id, fav_conf_id=conf_id))
         db.session.commit()
-        flash("Added to favorites!", "success")
+        status = "added"
 
-    return redirect(request.referrer or url_for("index"))
+    return jsonify({"ok": True, "status": status, "conf_id": conf_id})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
