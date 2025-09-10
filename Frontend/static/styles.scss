@@ -52,7 +52,9 @@ body {
 
 .search_result {
     display: flex;
-    flex-direction: column;  /* stacks children vertically */
+    flex-direction: column;
+    max-width: 950px;
+    margin: 0 auto;
   }
 
 ::placeholder {
@@ -225,6 +227,7 @@ body {
   height: 40px;    
   z-index: 2;
 }
+
 
 
 @media screen and (max-width: 768px) {

@@ -1,10 +1,9 @@
-<div class="search_result container">
+<div class="search_result">
     <h4> Conferences Results: </h4>
     {% if articles %}
       {% for article in articles %}
           {% if article.metadata.url %}
-              <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3"
-                  data-topics="{{ article.metadata.topics | replace('\n', ', ') }}">
+              <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3">
                   <h5 class="mb-1">
                       <strong>{{ loop.index }}.</strong>
                       {{ article.id }}
@@ -13,11 +12,13 @@
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
-                    <a href="#"
-                      class="favorite-button btn btn-sm favorite-btn"
-                      data-conference-id="{{ article.id }}">
-                      Favorite
-                    </a>
+                     <form action="{{ url_for('save_favorite') }}" method="post" style="display:inline;">
+                      {{ form.hidden_tag() }}
+                      <input type="hidden" name="conference_id" value="{{ article.id }}">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        Favorite
+                      </button>
+                    </form>
                   {% else %}
                     <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
                       🔒 Favorite
