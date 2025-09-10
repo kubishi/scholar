@@ -1,6 +1,5 @@
 from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
 from pinecone import Pinecone # type: ignore
-from openai import OpenAI
 from datetime import datetime
 import json
 from os import environ as env
@@ -13,13 +12,14 @@ from flask_wtf import CSRFProtect
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
+from .services.openai_service import embed # type: ignore
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
     id_query,
     fetch_by_id,
     upsert_vector,
-)
+) # type: ignore
 
 # --Flask App setup---
 app = Flask(__name__)
@@ -58,25 +58,9 @@ oauth.register(
     server_metadata_url=f'https://{app.config["AUTH0_DOMAIN"]}/.well-known/openid-configuration'
 )
 
-# OpenAI Setup
-openai_client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
-
 app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
-
-def get_embedding(text):
-    """Generate an embedding vector for the given text."""
-    if not text:
-        raise ValueError("Input text for embedding cannot be empty.")
-    try:
-        response = openai_client.embeddings.create(
-            input=text,
-            model=app.config["EMBEDDING_MODEL"]
-        )
-        return response.data[0].embedding
-    except Exception as e:
-        raise RuntimeError(f"Error generating embedding: {e}")
 
 @app.route("/login")
 def login():
@@ -177,7 +161,7 @@ def index():
     elif query:
         try:
             # Step 1: Get embedding
-            vector = get_embedding(query)
+            vector = embed(query)
 
             # Step 2: Query Pinecone
             results = semantic_query(vector, top_k=50, include_metadata=True)
@@ -256,7 +240,7 @@ def edit_conference(conf_id):
 
 
     if form.validate_on_submit():
-        topic_vector = get_embedding(form.topic_list.data)
+        topic_vector = embed(form.topic_list.data)
 
         updated_vector = {
             "id": conf_id,
@@ -284,7 +268,7 @@ def edit_conference(conf_id):
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
-        topic_vector = get_embedding(form.topic_list.data)
+        topic_vector = embed(form.topic_list.data)
         
         conference_id = form.conference_id.data.strip().upper()
         conference_name = form.conference_name.data.strip()
@@ -297,7 +281,7 @@ def conference_adder():
         conference_link = form.conference_link.data.strip()
 
         if conference_id:
-            topic_vector = get_embedding(topic_list)
+            topic_vector = embed(topic_list)
 
             vector = {
                 "id": conference_id,
