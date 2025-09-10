@@ -1,18 +1,17 @@
 from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
-from pinecone import Pinecone # type: ignore
 from datetime import datetime
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
+from .models import User, Favorite_Conf # type: ignore
+from .services.db_services import db, migrate # type: ignore
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
@@ -33,18 +32,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
-
-class User(db.Model):
-    google_auth_id = db.Column(db.String(60), primary_key=True)
-    user_name = db.Column(db.String(50))
-    user_email = db.Column(db.String(50))
-
-class Favorite_Conf(db.Model):
-    user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
-    fav_conf_id = db.Column(db.String(50), primary_key=True)
+db.init_app(app)
+migrate.init_app(app, db)
 
 # Auth0 Setup
 oauth = OAuth(app)
@@ -143,8 +132,6 @@ def index():
         num_results = 5
 
     advanced_open = any([
-        date_span_first,
-        date_span_second,
         date_span_first,
         date_span_second,
         location,
@@ -344,19 +331,14 @@ def saved_conference():
 @app.route("/favorite", methods=["POST"])
 def save_favorite():
     if "user_id" not in session:
-        # JSON response for AJAX
-        if request.is_json or request.headers.get("X-Requested-With") == "fetch":
-            return jsonify({"ok": False, "error": "auth_required"}), 401
-        # (fallback form path if you keep it elsewhere)
-        ...
+        return jsonify({"ok": False, "error": "auth_required"}), 401
+
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
-
     if not conf_id:
-      return jsonify({"ok": False, "error": "missing_conference_id"}), 400
+        return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 
     user_id = session["user_id"]
-
     fav = Favorite_Conf.query.filter_by(user_id=user_id, fav_conf_id=conf_id).first()
     if fav:
         db.session.delete(fav)
