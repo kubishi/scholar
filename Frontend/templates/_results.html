@@ -12,12 +12,17 @@
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
-                      <button 
-                        type="button"
-                        class="btn btn-sm btn-outline-primary favorite-btn"
-                        data-conference-id="{{ article.id }}">
-                        ☆ Favorite
-                      </button>
+                    {% set is_fav = article.id in favorite_ids %}
+                    <button
+                      type="button"
+                      class="btn btn-sm favorite-btn {{ 'btn-success' if is_fav else 'btn-outline-primary' }}"
+                      data-conference-id="{{ article.id }}"
+                      data-state="{{ 'saved' if is_fav else 'empty' }}"
+                      aria-pressed="{{ 'true' if is_fav else 'false' }}"
+                      aria-label="Toggle favorite"
+                    >
+                      {{ '✓ Saved!' if is_fav else '☆ Favorite' }}
+                    </button>
                   {% else %}
                     <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
                       🔒 Favorite
@@ -96,34 +101,62 @@
     {% endif %}
 </div>
 <script>
-const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+  // ---- helpers ----
+  function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : null;
+  }
 
-document.querySelectorAll('.favorite-btn').forEach(btn => {
-  btn.addEventListener('click', async () => {
+  function setFavButtonState(btn, saved) {
+    if (saved) {
+      btn.classList.remove('btn-outline-primary');
+      btn.classList.add('btn-success');
+      btn.textContent = '✓ Saved!';
+      btn.dataset.state = 'saved';
+      btn.setAttribute('aria-pressed', 'true');
+    } else {
+      btn.classList.remove('btn-success');
+      btn.classList.add('btn-outline-primary');
+      btn.textContent = '☆ Favorite';
+      btn.dataset.state = 'empty';
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  // ---- event delegation (works for current and future results) ----
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.favorite-btn');
+    if (!btn) return;
+
+    const csrfToken = getCsrfToken();
+    if (!csrfToken) {
+      alert('CSRF token missing. Make sure <meta name="csrf-token" ...> is in your base template.');
+      return;
+    }
+
     const id = btn.dataset.conferenceId;
-    const res = await fetch('/favorite', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken,
-        'X-Requested-With': 'fetch'
-      },
-      body: JSON.stringify({ conference_id: id })
-    });
-    const data = await res.json();
+    btn.disabled = true;
 
-    if (data.ok) {
-      if (data.status === 'added') {
-        btn.classList.remove('btn-outline-primary');
-        btn.classList.add('btn-success');
-        btn.textContent = '✓ Saved!';
-      } else {
-        btn.classList.remove('btn-success');
-        btn.classList.add('btn-outline-primary');
-        btn.textContent = '☆ Favorite';
-      }
+    try {
+      const res = await fetch('/favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,     // Flask-WTF checks this
+          'X-Requested-With': 'fetch'   // tells server to return JSON
+        },
+        body: JSON.stringify({ conference_id: id })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Request failed');
+
+      setFavButtonState(btn, data.status === 'added');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to save: ' + err.message);
+    } finally {
+      btn.disabled = false;
     }
   });
-});
-
 </script>

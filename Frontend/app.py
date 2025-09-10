@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .forms import ConferenceForm, CSRFOnlyForm # type: ignore
+from .forms import ConferenceForm # type: ignore
 
 from flask_wtf import CSRFProtect
 # --Flask App setup---
@@ -22,7 +22,8 @@ csrf = CSRFProtect(app)
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{app.config["DB_USER"]}:{app.config["DB_PASSWORD"]}@{app.config["DB_HOST"]}:{app.config["DB_PORT"]}/{app.config["DB_NAME"]}"
+    f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
+    f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -131,8 +132,13 @@ def fetch_record_count():
 # MAIN PAGE
 @app.route("/")
 def index():
-    form = CSRFOnlyForm()
     redirect_response = redirect_clean_params("index")
+    favorite_ids = set()
+    if session.get("user_id"):
+        rows = (db.session.query(Favorite_Conf.fav_conf_id)
+                .filter_by(user_id=session["user_id"])
+                .all())
+        favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
     if redirect_response:
         return redirect_response
     
@@ -218,6 +224,7 @@ def index():
 
     return render_template("index.html", 
                            articles=articles,
+                           favorite_ids=favorite_ids,
                            query=query,
                            ID_query=ID_query,  
                            num_results=num_results,
@@ -228,7 +235,6 @@ def index():
                            advanced_open=advanced_open,
                            location=location,
                            ranking_source=ranking_source,
-                           form=form,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 #edit page
