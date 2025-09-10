@@ -12,11 +12,13 @@
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
-                    <a href="#"
-                      class="favorite-button btn btn-sm favorite-btn"
-                      data-conference-id="{{ article.id }}">
-                      Favorite
-                    </a>
+                     <form action="{{ url_for('save_favorite') }}" method="post" style="display:inline;">
+                      {{ form.hidden_tag() }}
+                      <input type="hidden" name="conference_id" value="{{ article.id }}">
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        Favorite
+                      </button>
+                    </form>
                   {% else %}
                     <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
                       🔒 Favorite
@@ -94,28 +96,3 @@
       {% endif %}
     {% endif %}
 </div>
-
-<script>
-  document.querySelectorAll('.favorite-btn').forEach(button => {
-    button.addEventListener('click', async function(event) {
-      event.preventDefault();
-      const conferenceId = this.dataset.conferenceId;
-
-      const response = await fetch('/favorite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conference_id: conferenceId })
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        alert('✅ Favorited! Saved with ID: ' + result.id);
-        this.classList.remove('btn-outline-primary');
-        this.classList.add('btn-success');
-        this.textContent = 'Saved!';
-      } else {
-        alert('❌ Failed to favorite: ' + (result.error || 'Try again.'));
-      }
-    });
-  });
-</script>

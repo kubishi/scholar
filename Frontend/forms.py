@@ -13,3 +13,6 @@ class ConferenceForm(FlaskForm):
     topic_list = TextAreaField("Conference Topics/Description", validators=[DataRequired()])
     conference_link = URLField("Conference URL", validators=[DataRequired(), URL()])
     submit = SubmitField("Enter")
+    
+class CSRFOnlyForm(FlaskForm):
+    pass
