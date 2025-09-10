@@ -12,13 +12,12 @@
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
-                     <form action="{{ url_for('save_favorite') }}" method="post" style="display:inline;">
-                      {{ form.hidden_tag() }}
-                      <input type="hidden" name="conference_id" value="{{ article.id }}">
-                      <button type="submit" class="btn btn-sm btn-outline-primary">
-                        Favorite
+                      <button 
+                        type="button"
+                        class="btn btn-sm btn-outline-primary favorite-btn"
+                        data-conference-id="{{ article.id }}">
+                        ☆ Favorite
                       </button>
-                    </form>
                   {% else %}
                     <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
                       🔒 Favorite
@@ -96,3 +95,35 @@
       {% endif %}
     {% endif %}
 </div>
+<script>
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+document.querySelectorAll('.favorite-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const id = btn.dataset.conferenceId;
+    const res = await fetch('/favorite', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+        'X-Requested-With': 'fetch'
+      },
+      body: JSON.stringify({ conference_id: id })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      if (data.status === 'added') {
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+        btn.textContent = '✓ Saved!';
+      } else {
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-outline-primary');
+        btn.textContent = '☆ Favorite';
+      }
+    }
+  });
+});
+
+</script>
