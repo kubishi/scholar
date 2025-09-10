@@ -8,12 +8,19 @@ from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
+from .services.pinecone_service import (
+    describe_count,
+    semantic_query,
+    id_query,
+    fetch_by_id,
+    upsert_vector,
+)
 
-from flask_wtf import CSRFProtect
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -50,10 +57,6 @@ oauth.register(
     },
     server_metadata_url=f'https://{app.config["AUTH0_DOMAIN"]}/.well-known/openid-configuration'
 )
-
-# Pinecone Setup
-pc = Pinecone(api_key=app.config["PINECONE_API_KEY"])
-pinecone_index = pc.Index(host=app.config["PINECONE_HOST"])
 
 # OpenAI Setup
 openai_client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
@@ -105,8 +108,7 @@ def callback():
         user.user_email = user_email
 
     db.session.commit() 
-    
-    
+
     return redirect("/")
 
 @app.route("/logout")
@@ -125,9 +127,7 @@ def logout():
     )
 
 def fetch_record_count():
-    stats = pinecone_index.describe_index_stats()
-    record_count = stats["total_vector_count"]
-    return record_count
+    return describe_count()
 
 # MAIN PAGE
 @app.route("/")
@@ -171,13 +171,7 @@ def index():
     articles = []
     
     if ID_query:
-        results = pinecone_index.query(
-            id=ID_query, 
-            top_k=1,
-            include_metadata=True,
-            include_values=False
-        )
-
+        results = id_query(ID_query)
         articles = results.get("matches", [])
 
     elif query:
@@ -186,12 +180,7 @@ def index():
             vector = get_embedding(query)
 
             # Step 2: Query Pinecone
-            results = pinecone_index.query(
-                vector=vector,
-                top_k=50,
-                include_metadata=True
-            )
-
+            results = semantic_query(vector, top_k=50, include_metadata=True)
             all_articles = results.get("matches", [])
 
             # Step 3: Filter if any filters are set
@@ -240,7 +229,7 @@ def index():
 #edit page
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
-    existing = pinecone_index.fetch(ids=[conf_id])
+    existing = fetch_by_id(conf_id)
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
@@ -284,7 +273,7 @@ def edit_conference(conf_id):
                 "contributer": session['user']['userinfo']['sub'],
             }
         }
-        pinecone_index.upsert(vectors=[updated_vector])
+        upsert_vector(updated_vector)
         flash("Conference updated successfully!", "success")
         return redirect(url_for("index"))
     
@@ -325,7 +314,7 @@ def conference_adder():
                     "contributer": session['user']['userinfo']['sub'],
                 }
             }
-            pinecone_index.upsert(vectors=[vector])
+            upsert_vector(vector)
             flash("Conference added successfully!", "success")
             return redirect(url_for("index"))  # redirect after POST
 
