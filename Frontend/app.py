@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request ,jsonify
+from flask import Flask, flash, redirect, render_template, session, url_for, request
 from pinecone import Pinecone # type: ignore
 from openai import OpenAI
 from datetime import datetime
@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .forms import ConferenceForm # type: ignore
+from .forms import ConferenceForm, CSRFOnlyForm # type: ignore
 
 from flask_wtf import CSRFProtect
 # --Flask App setup---
@@ -131,7 +131,7 @@ def fetch_record_count():
 # MAIN PAGE
 @app.route("/")
 def index():
-    
+    form = CSRFOnlyForm()
     redirect_response = redirect_clean_params("index")
     if redirect_response:
         return redirect_response
@@ -228,6 +228,7 @@ def index():
                            advanced_open=advanced_open,
                            location=location,
                            ranking_source=ranking_source,
+                           form=form,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 #edit page
@@ -362,25 +363,31 @@ def saved_conference():
     
     return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences, session_user_name=session.get('user'))
 
-@app.route('/favorite', methods=['POST'])
+@app.route("/favorite", methods=["POST"])
 def save_favorite():
-    if 'user_id' not in session:
-        return "Unauthorized", 401 
-     
-    data = request.get_json()
-    conference_id = data.get('conference_id')
-    user_id = session['user_id']
+    if "user_id" not in session:
+        flash("Please log in to favorite conferences.", "warning")
+        return redirect(request.referrer or url_for("index"))
 
-    if not conference_id:
-        return "No conference_id provided", 400
 
-    print(f"Saved conference ID: {conference_id}")
+    conf_id = request.form.get("conference_id") or request.form.get("conf_id")
+    if not conf_id:
+        flash("No conference selected.", "danger")
+        return redirect(request.referrer or url_for("index"))
 
-    new_user_conf_pair = Favorite_Conf(user_id=user_id, fav_conf_id=conference_id)
-    db.session.add(new_user_conf_pair)
-    db.session.commit()
+    user_id = session["user_id"]
 
-    return jsonify({'id': conference_id}), 200
+    fav = Favorite_Conf.query.filter_by(user_id=user_id, fav_conf_id=conf_id).first()
+    if fav:
+        db.session.delete(fav)
+        db.session.commit()
+        flash("Removed from favorites.", "info")
+    else:
+        db.session.add(Favorite_Conf(user_id=user_id, fav_conf_id=conf_id))
+        db.session.commit()
+        flash("Added to favorites!", "success")
+
+    return redirect(request.referrer or url_for("index"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
