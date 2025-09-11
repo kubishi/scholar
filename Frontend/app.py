@@ -12,6 +12,7 @@ from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db, migrate # type: ignore
+from PyPDF2 import PdfReader
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
@@ -25,6 +26,18 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
+
+@app.route("/file-upload", methods=["POST"])
+def upload_file():
+    file = request.files['file']
+    reader = PdfReader(file)
+
+    # Only extract text from the first page
+    first_page = reader.pages[0]
+    extracted_text = first_page.extract_text()
+
+    print(extracted_text)
+    return jsonify({"text": extracted_text})
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -212,10 +225,11 @@ def edit_conference(conf_id):
             except ValueError:
                 return None
         return None
+    
     #Displaying the intital data
     form = ConferenceForm(
         conference_id=conf_id,
-        conference_name=conf_meta.get("conference_name", ""),
+        conference_name=conf_meta.get("name", ""),
         country=conf_meta.get("country", ""),
         city=conf_meta.get("city", ""),
         deadline=parse_date(conf_meta.get("deadline", "")),
@@ -224,9 +238,12 @@ def edit_conference(conf_id):
         topic_list=conf_meta.get("topics", ""),
         conference_link=conf_meta.get("url", "")
     )
-
+    if request.method == 'POST':
+        print("POST data:", request.form.to_dict(),"\n")
+        print("Errors:", form.errors)
 
     if form.validate_on_submit():
+        print("Form validated successfully.")
         topic_vector = embed(form.topic_list.data)
 
         updated_vector = {
@@ -317,16 +334,33 @@ def connection_finder():
     return render_template('friend_search.html', searched_user_info=searched_user_info, logged_in_user_id = logged_in_user_id, session_user_name=session.get('user'))
     # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
 
-
 @app.route("/saved_conference")
 def saved_conference():
     logged_in_user_id = session.get("user_id")
-    favorited_conferences = db.session.query(Favorite_Conf).filter_by(user_id = logged_in_user_id).all()
+    favorited_rows = db.session.query(Favorite_Conf).filter_by(user_id=logged_in_user_id).all()
+    favorited_ids = [fav.fav_conf_id for fav in favorited_rows]
 
-    for fav in favorited_conferences:
-        print(fav.fav_conf_id)
-    
-    return render_template('saved_conference.html', logged_in_user_id = logged_in_user_id, favorited_conferences=favorited_conferences, session_user_name=session.get('user'))
+    articles = []
+
+    if favorited_ids:
+        for conf_id in favorited_ids:
+            pinecone_response = fetch_by_id(conf_id.strip())
+            if conf_id in pinecone_response.vectors:
+                vector_data = pinecone_response.vectors[conf_id]
+                articles.append({
+                    "id": conf_id,
+                    "metadata": vector_data.metadata,
+                    "score": vector_data.metadata.get("score", 0),
+                    "favorited": True  # optional, your template can use this too
+                })
+
+    return render_template(
+        'saved_conference.html',
+        logged_in_user_id=logged_in_user_id,
+        articles=articles,
+        favorite_ids=favorited_ids,  # <-- pass this so template knows which are favorited
+        session_user_name=session.get('user')
+    )
 
 @app.route("/favorite", methods=["POST"])
 def save_favorite():
@@ -335,6 +369,7 @@ def save_favorite():
 
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
+    print(conf_id)
     if not conf_id:
         return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 

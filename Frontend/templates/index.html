@@ -33,6 +33,8 @@
   </div>
 </nav>
 
+
+
 <div class="container pb-2">
   <div class="d-flex flex-column align-items-center pt-4 pb-2">
     <img src="static/img/logo_bg.png" width="100" height="100" alt="" class="main_logo rounded-4" style="border-width: 5px;">
@@ -70,11 +72,11 @@
         </div>
         <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100"
                value="{{ request.args.get('num_results', 3) }}">
+      
       </div>
-    </form>
 
     <div class=" d-flex gap-2 mb-1 justify-content-evenly">
-      <button class="toggle-advanced-button btn btn-dark rounded-3 flex-fill" type="button" data-bs-toggle="collapse"
+      <button class="toggle-advanced-button btn btn-dark border-0 rounded-3 flex-fill" type="button" data-bs-toggle="collapse"
       data-bs-target="#advancedSearch"
       aria-expanded="{{ 'true' if advanced_open else 'false' }}"
       aria-controls="advancedSearch">
@@ -82,15 +84,15 @@
       </button>
 
       {% if session %}
-        <a href="/add_conf" class="conference-add-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer">
+        <a href="/add_conf" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" target="_blank" rel="noopener noreferrer">
           + Add Conference
         </a>
 
-        <a href="/saved_conference" class="saved-conf-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
+        <a href="/saved_conference" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
           &#9829; View Saved
         </a>
     
-        <a href="/connection_search" class="friend-button btn btn-dark rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
+        <a href="/connection_search" class="friend-button btn btn-dark border-0 rounded-3 flex-fill" target="_blank" rel="noopener noreferrer" >
           &#x2605; Find Friends
         </a>
       
@@ -141,11 +143,15 @@
                 </select>
                 <div id="ranking-score-container" style="display: none;" class="mt-2"></div>
               </div>
+              <div action="/file-upload" class="dropzone dropzone-center border border-info border-3" id="my-awesome-dropzone"></div>
             </div>
           </div>
         </div>
       </form>
   </div>
+
+</form>
+
 
 <div class="container">
     {% if query or ID_query %}
@@ -154,6 +160,41 @@
     
 </div>
 
+
+<script>
+  Dropzone.autoDiscover = false;
+
+  var myDropzone = new Dropzone("#my-awesome-dropzone", {
+      paramName: "file",
+      maxFiles: 1,
+      acceptedFiles: ".pdf",
+      dictDefaultMessage: "Click or drag a PDF of abstract here to upload",
+      addRemoveLinks: true,
+      headers: {
+          "X-CSRFToken": "{{ csrf_token() }}"
+      },
+      init: function() {
+          this.on("success", function(file, response) {
+              console.log("File uploaded:", response);
+              // Put the text into the search bar
+              if(response.text) {
+                  document.getElementById("searchInput").value = response.text;
+              }
+          });
+  
+          this.on("maxfilesexceeded", function(file) {
+              this.removeAllFiles();
+              this.addFile(file);
+          });
+  
+          this.on("addedfile", function(file) {
+              file.previewElement.addEventListener("click", () => {
+                  this.removeFile(file);
+              });
+          });
+      }
+  });
+  </script>
 
 
 

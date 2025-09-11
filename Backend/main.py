@@ -25,7 +25,7 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 
 thisdir = pathlib.Path(__file__).parent.resolve()
-datapath = thisdir / 'test.csv'
+datapath = thisdir / 'csvs' / 'test.csv'
 pc = Pinecone(api_key=PINECONE_API_KEY)
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
