@@ -1,7 +1,7 @@
 from flask import current_app
 from pinecone import Pinecone
 
-_index = None  # lazy singleton
+_index = None
 
 def _get_index():
     global _index
