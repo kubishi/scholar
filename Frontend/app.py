@@ -12,6 +12,7 @@ from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db, migrate # type: ignore
+from PyPDF2 import PdfReader
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
@@ -25,6 +26,18 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
+
+@app.route("/file-upload", methods=["POST"])
+def upload_file():
+    file = request.files['file']
+    reader = PdfReader(file)
+
+    # Only extract text from the first page
+    first_page = reader.pages[0]
+    extracted_text = first_page.extract_text()
+
+    print(extracted_text)
+    return jsonify({"text": extracted_text})
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
