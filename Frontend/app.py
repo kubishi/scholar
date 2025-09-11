@@ -325,7 +325,7 @@ def connection_finder():
     
     if searched_user_info:
         for u in searched_user_info:
-            app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
+            app.logger.info(f"{u.user_name}, {u.user_email}")
 
 
     else:
