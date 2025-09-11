@@ -130,7 +130,6 @@ body {
 
   .toggle-advanced-button:hover{
     background: #78C4EB;
-    border: #78C4EB;
     color: white;
   }
 
@@ -140,7 +139,6 @@ body {
 
   .conference-add-button:hover{
     background: #A47DCA;
-    border: #A47DCA;
     color: white;
   }
 
@@ -180,7 +178,6 @@ body {
 
 .friend-button:hover {
   background: #FBA1C5; 
-  border: #FBA1C5;
   color: white;
 
 }
@@ -191,7 +188,6 @@ body {
 
 .saved-conf-button:hover {
   background: #C3D888;
-  border: #C3D888;
   color: white;
 }
 
@@ -227,6 +223,15 @@ body {
   height: 40px;    
   z-index: 2;
 }
+
+.dropzone-center {
+  display: flex;
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
+  position: relative;
+  text-align: center;
+}
+
 
 
 
