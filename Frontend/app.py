@@ -5,6 +5,7 @@ from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
+from PyPDF2 import PdfReader
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
@@ -12,7 +13,6 @@ from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db, migrate # type: ignore
-from PyPDF2 import PdfReader
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
@@ -326,7 +326,6 @@ def connection_finder():
     if searched_user_info:
         for u in searched_user_info:
             app.logger.info(f"{u.user_name}, {u.user_email}")
-
 
     else:
         app.logger.info("No user found with that email.")
