@@ -3,7 +3,7 @@
     {% if articles %}
       {% for article in articles %}
           {% if article.metadata.url %}
-              <div class="mb-4 border border-1 border-dark p-2 btn text-start bg-white rounded-3">
+              <div class="mb-4 border border-1 border-dark p-2 text-start bg-white rounded-3">
                   <h5 class="mb-1">
                       <strong>{{ loop.index }}.</strong>
                       {{ article.id }}
