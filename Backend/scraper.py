@@ -196,7 +196,7 @@ def save_openai_to_csv(data: Dict[str, Any], url: str,
     existing_df.to_csv("test.csv", index=False)
     print("Data saved successfully.")
 
-scored_conferences = pd.read_csv("Backend/100conference.csv")
+scored_conferences = pd.read_csv("Backend/csvs/100conference.csv")
 def main():
     for name, acronym, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median in zip(
         scored_conferences["Title"], 
