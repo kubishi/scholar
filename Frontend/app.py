@@ -1,19 +1,25 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request
-from pinecone import Pinecone # type: ignore
-from openai import OpenAI
+from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
 from datetime import datetime
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
 from authlib.integrations.flask_client import OAuth
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .forms import ConferenceForm, CSRFOnlyForm # type: ignore
+from .forms import ConferenceForm # type: ignore
+from .services.openai_service import embed # type: ignore
+from .models import User, Favorite_Conf # type: ignore
+from .services.db_services import db, migrate # type: ignore
+from .services.pinecone_service import (
+    describe_count,
+    semantic_query,
+    id_query,
+    fetch_by_id,
+    upsert_vector,
+) # type: ignore
 
-from flask_wtf import CSRFProtect
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -22,21 +28,12 @@ csrf = CSRFProtect(app)
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{app.config["DB_USER"]}:{app.config["DB_PASSWORD"]}@{app.config["DB_HOST"]}:{app.config["DB_PORT"]}/{app.config["DB_NAME"]}"
+    f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
+    f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
-
-class User(db.Model):
-    google_auth_id = db.Column(db.String(60), primary_key=True)
-    user_name = db.Column(db.String(50))
-    user_email = db.Column(db.String(50))
-
-class Favorite_Conf(db.Model):
-    user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
-    fav_conf_id = db.Column(db.String(50), primary_key=True)
+db.init_app(app)
+migrate.init_app(app, db)
 
 # Auth0 Setup
 oauth = OAuth(app)
@@ -50,29 +47,9 @@ oauth.register(
     server_metadata_url=f'https://{app.config["AUTH0_DOMAIN"]}/.well-known/openid-configuration'
 )
 
-# Pinecone Setup
-pc = Pinecone(api_key=app.config["PINECONE_API_KEY"])
-pinecone_index = pc.Index(host=app.config["PINECONE_HOST"])
-
-# OpenAI Setup
-openai_client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
-
 app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
-
-def get_embedding(text):
-    """Generate an embedding vector for the given text."""
-    if not text:
-        raise ValueError("Input text for embedding cannot be empty.")
-    try:
-        response = openai_client.embeddings.create(
-            input=text,
-            model=app.config["EMBEDDING_MODEL"]
-        )
-        return response.data[0].embedding
-    except Exception as e:
-        raise RuntimeError(f"Error generating embedding: {e}")
 
 @app.route("/login")
 def login():
@@ -104,8 +81,7 @@ def callback():
         user.user_email = user_email
 
     db.session.commit() 
-    
-    
+
     return redirect("/")
 
 @app.route("/logout")
@@ -124,15 +100,18 @@ def logout():
     )
 
 def fetch_record_count():
-    stats = pinecone_index.describe_index_stats()
-    record_count = stats["total_vector_count"]
-    return record_count
+    return describe_count()
 
 # MAIN PAGE
 @app.route("/")
 def index():
-    form = CSRFOnlyForm()
     redirect_response = redirect_clean_params("index")
+    favorite_ids = set()
+    if session.get("user_id"):
+        rows = (db.session.query(Favorite_Conf.fav_conf_id)
+                .filter_by(user_id=session["user_id"])
+                .all())
+        favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
     if redirect_response:
         return redirect_response
     
@@ -155,8 +134,6 @@ def index():
     advanced_open = any([
         date_span_first,
         date_span_second,
-        date_span_first,
-        date_span_second,
         location,
         ranking_source,
         ranking_score
@@ -165,27 +142,16 @@ def index():
     articles = []
     
     if ID_query:
-        results = pinecone_index.query(
-            id=ID_query, 
-            top_k=1,
-            include_metadata=True,
-            include_values=False
-        )
-
+        results = id_query(ID_query)
         articles = results.get("matches", [])
 
     elif query:
         try:
             # Step 1: Get embedding
-            vector = get_embedding(query)
+            vector = embed(query)
 
             # Step 2: Query Pinecone
-            results = pinecone_index.query(
-                vector=vector,
-                top_k=50,
-                include_metadata=True
-            )
-
+            results = semantic_query(vector, top_k=50, include_metadata=True)
             all_articles = results.get("matches", [])
 
             # Step 3: Filter if any filters are set
@@ -218,6 +184,7 @@ def index():
 
     return render_template("index.html", 
                            articles=articles,
+                           favorite_ids=favorite_ids,
                            query=query,
                            ID_query=ID_query,  
                            num_results=num_results,
@@ -228,13 +195,12 @@ def index():
                            advanced_open=advanced_open,
                            location=location,
                            ranking_source=ranking_source,
-                           form=form,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
 #edit page
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
-    existing = pinecone_index.fetch(ids=[conf_id])
+    existing = fetch_by_id(conf_id)
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
@@ -261,7 +227,7 @@ def edit_conference(conf_id):
 
 
     if form.validate_on_submit():
-        topic_vector = get_embedding(form.topic_list.data)
+        topic_vector = embed(form.topic_list.data)
 
         updated_vector = {
             "id": conf_id,
@@ -278,7 +244,7 @@ def edit_conference(conf_id):
                 "contributer": session['user']['userinfo']['sub'],
             }
         }
-        pinecone_index.upsert(vectors=[updated_vector])
+        upsert_vector(updated_vector)
         flash("Conference updated successfully!", "success")
         return redirect(url_for("index"))
     
@@ -289,7 +255,7 @@ def edit_conference(conf_id):
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
-        topic_vector = get_embedding(form.topic_list.data)
+        topic_vector = embed(form.topic_list.data)
         
         conference_id = form.conference_id.data.strip().upper()
         conference_name = form.conference_name.data.strip()
@@ -302,7 +268,7 @@ def conference_adder():
         conference_link = form.conference_link.data.strip()
 
         if conference_id:
-            topic_vector = get_embedding(topic_list)
+            topic_vector = embed(topic_list)
 
             vector = {
                 "id": conference_id,
@@ -319,7 +285,7 @@ def conference_adder():
                     "contributer": session['user']['userinfo']['sub'],
                 }
             }
-            pinecone_index.upsert(vectors=[vector])
+            upsert_vector(vector)
             flash("Conference added successfully!", "success")
             return redirect(url_for("index"))  # redirect after POST
 
@@ -340,7 +306,6 @@ def connection_finder():
             .all()
         )
     
-  
     if searched_user_info:
         for u in searched_user_info:
             app.logger.info(f"{u.user_name}, {u.user_email}, {u.google_auth_id}")
@@ -366,28 +331,25 @@ def saved_conference():
 @app.route("/favorite", methods=["POST"])
 def save_favorite():
     if "user_id" not in session:
-        flash("Please log in to favorite conferences.", "warning")
-        return redirect(request.referrer or url_for("index"))
+        return jsonify({"ok": False, "error": "auth_required"}), 401
 
-
-    conf_id = request.form.get("conference_id") or request.form.get("conf_id")
+    data = request.get_json(silent=True) or {}
+    conf_id = data.get("conference_id") or data.get("conf_id")
     if not conf_id:
-        flash("No conference selected.", "danger")
-        return redirect(request.referrer or url_for("index"))
+        return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 
     user_id = session["user_id"]
-
     fav = Favorite_Conf.query.filter_by(user_id=user_id, fav_conf_id=conf_id).first()
     if fav:
         db.session.delete(fav)
         db.session.commit()
-        flash("Removed from favorites.", "info")
+        status = "removed"
     else:
         db.session.add(Favorite_Conf(user_id=user_id, fav_conf_id=conf_id))
         db.session.commit()
-        flash("Added to favorites!", "success")
+        status = "added"
 
-    return redirect(request.referrer or url_for("index"))
+    return jsonify({"ok": True, "status": status, "conf_id": conf_id})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
