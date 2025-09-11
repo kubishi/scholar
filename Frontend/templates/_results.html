@@ -71,6 +71,7 @@
                   <!-- Topics are hidden by default -->
                   <p class="mt-1 text-muted" style="font-size: 0.9rem;">
                       Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
+                      Full Name: {{ article.metadata.get('name', 'N/A') }} <br>
                       Topics: {{ article.metadata.topics | replace('\n', ', ') }}
                   </p>
   
