@@ -1,100 +1,358 @@
 Title,Acronym,CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median
-ACM Symposium on User Interface Software and Technology,UIST,A*,A*,A,A,A,A,A,A,51.0,72.0
-AAAI Conference on Human Computation and Crowdsourcing,HCOMP,B,B,,,,,,,,
-3-D Digital Imaging and Modelling,3DIM,,,,C,C,C,C,C,,
-A Satellite workshop on Formal Approaches to Testing of Software,FATES,,,,C,C,C,C,C,,
-"ACIS Conference on Software Engineering Research, Management and Applications",SERA,C,C,C,C,C,C,C,C,,
-ACM Annual Computer Science Conference,CSC,,,,C,C,C,C,C,,
-"ACM Conference on Applications, Technologies, Architectures, and Protocols for Computer Communication",SIGCOMM,A*,A*,A*,A*,A*,A*,A*,A,,
-ACM Conference on Computer Supported Cooperative Work,CSCW,A,A,A,A,A,A,A,A,24.0,31.0
-ACM Conference on Computer and Communications Security,CCS,A*,A*,A*,A*,A*,A*,A*,A,92.0,136.0
-ACM Conference on Digital Libraries,JCDL,,,,A*,A*,A*,A*,,23.0,33.0
-ACM Conference on Economics and Computation,EC,A*,A*,A*,A*,B,B,B,B,3.0,3.0
-ACM Conference on Embedded Networked Sensor Systems,SENSYS,A*,A*,A*,A*,A*,A*,A*,A,39.0,64.0
-ACM Conference on Embedded Software,EMSOFT,Journal published,Journal published,A,A,A,A,A,A,,
-ACM Conference on Hypertext and Social Media,Hypertext,,,,A,A,A,A,A,,
-ACM Conference on Object Oriented Programming Systems Languages and Applications,OOPSLA,A,A,A*,A*,A*,A*,A*,A,,
-ACM Conference on Security and Privacy in Wireless and Mobile Networks,ACM_WiSec,B,,,,,,,,,
-ACM Digital Rights Management Workshop,DRM,,,,C,C,C,C,C,,
-ACM Information Technology Education,SIGITE,National: USA,National: USA,National: USA,C,C,C,C,C,,
-ACM Int'l Symposium on Field Programmable Gate Arrays,FPGA,TBR,,,,,,,,40.0,62.0
-"ACM International Conference on Advances in Computer Entertainment (merged with DIMEA, Digital Interactive Media in Entertainment and Arts, in 2009)",ACE,C,B,B,B,B,B,B,B,,
-ACM International Conference on Advances in Geographic Information Systems,SIGSPATIAL,A,A,National: USA,A,B,B,B,B,,
-ACM International Conference on Emerging Networking Experiments and Technologies,CoNEXT,A,A,A,A,A,A,A,A,30.0,43.0
-ACM International Conference on Information and Knowledge Management,CIKM,A,A,A,A,A,A,A,A,91.0,133.0
-ACM International Conference on Interactive Surfaces and Spaces (was International Workshop on Horizontal Interactive Human-Computer Systems: Tabletop),ISS,Journal Published,Journal Published,A,A,A,A,B,B,14.0,19.0
-ACM International Conference on Knowledge Discovery and Data Mining,KDD,A*,A*,A*,A*,A*,A*,A*,A,124.0,213.0
-ACM International Conference on Mobile Computing and Networking,MOBICOM,A*,A*,A*,A*,A*,A*,A*,A,24.0,42.0
-ACM International Conference on Recommender Systems,RecSys,A,A,B,B,B,B,B,B,53.0,81.0
-ACM International Conference on Research and Development in Information Retrieval,SIGIR,A*,A*,A*,A*,A*,A*,A*,A,103.0,149.0
-ACM International Conference on Supercomputing,ICS,A,A,A,A,A,A,A,A,26.0,37.0
-ACM International Conference on Systems for Energy-Efficient Built Environments,BuildSys,,,,A,,,,,,
-ACM International Conference on Web Search and Data Mining,WSDM,A,A*,A*,A*,A*,A*,B,B,77.0,130.0
-"ACM International Conference on the Foundations of Software Engineering (was ESEC/FSE, changed 2024; duplicate previously listed as ESEC, removed from DB)",FSE,A*,A*,A*,A*,B,A,A,A,62.0,103.0
-ACM International Joint Conference on Pervasive and Ubiquitous Computing (PERVASIVE and UbiComp combined from 2013),UbiComp,journal published,journal published,journal published,A*,A*,A*,A*,A,27.0,44.0
-ACM International Symposium on Computer Architecture,ISCA,A*,A*,A*,A*,A*,A*,A*,A,62.0,96.0
-ACM International Symposium on High Performance Distributed Computing,HPDC,A,A,A,A,A,A,A,A,21.0,34.0
-ACM International Wireless Communications and Mobile Computing Conference,IWCMC,B,B,B,B,B,B,B,B,35.0,49.0
-ACM International Workshop On Multimedia Databases,MMDB,,,,C,C,C,C,C,,
-ACM Multimedia,ACMMM,A*,A*,A*,A*,A*,A*,A*,A,101.0,138.0
-ACM SIG International Conference on Computer Graphics and Interactive Techniques,SIGGRAPH,A*,A*,A*,A*,A*,A*,A*,A,,
-ACM SIGCHI_NZ Conference on Human-Computer Interaction,SIGCHI-NZ,,,,Australasian,Australasian,Australasian,Australasian,C,,
-ACM SIGGRAPH/Eurographics Symposium on Computer Animation,SCA,B,B,B,B,B,B,B,B,,
-ACM SIGIR Workshop on XML and Information Retrieval,SIGIR/XML,,,,C,C,C,C,C,,
-ACM SIGMIS Computers and People Research,ACM-SIGMIS CPR,,,,B,B,B,B,B,,
-"ACM SIGMOBILE International Conference on Mobile Systems, Applications and Services",Mobisys,A,B,B,B,B,B,B,B,,
-ACM SIGMOD-SIGACT-SIGART Conference on Principles of Database Systems,PODS,A*,A*,A*,A*,A*,A*,A*,A,24.0,30.0
-ACM SIGOPS Symposium on Operating Systems Principles,SOSP,A*,A*,A*,A*,A*,A*,A*,A,,
-"ACM SIGPLAN Conference on Languages, Tools, and Compilers for Embedded Systems",LCTES,B,B,A,A,A,A,A,A,,
-ACM SIGPLAN Workshop on Partial Evaluation and Program Manipulation,PEPM,C,C,B,B,B,B,B,B,,
-ACM SIGPLAN Workshop on Types in Language Design and Implementation (was TIC),TLDI,,,,C,C,C,C,C,,
-ACM SIGSIM Conference on Principles of Advanced Discrete Simulation (was Parallel and Distributed Simulation),PADS,B,B,B,B,B,B,B,B,,
-ACM SIGSOFT Workshop on Program Analysis for Software Tools and Engineering,PASTE,,,,,B,B,B,B,,
-ACM SIGUCCS Conference on User Services,SIGUCCS,National: USA,National: USA,National: USA,C,C,C,C,C,,
-ACM Special Interest Group on Computer Science Education Conference,SIGCSE,A,A,A,A,A,A,A,A,,
-ACM Special Interest Group on Management of Data Conference,SIGMOD,A*,A*,A*,A*,A*,A*,A*,A,,
-ACM Special Interest Group on Supporting Group Work (was SIGGRoup),Group,B,,,B,B,B,B,B,,
-"ACM Symposium on Access Control Models and Technologies (previously ACM Workshop on Role-Based Access Control, RBAC, changed in 2000)",SACMAT,C,C,C,C,C,C,C,C,16.0,28.0
-ACM Symposium on Applied Computing,SAC,Multiconference,Multiconference,B,B,B,B,B,B,36.0,50.0
-ACM Symposium on Document Engineering,DocEng,B,B,B,B,B,B,A,,13.0,21.0
-ACM Symposium on Mobile Ad Hoc Networking and Computing,MOBIHOC,A,A,A,A,A,A,A,A,24.0,42.0
-ACM Symposium on Principles of Database Systems,SPDS,,,,C,C,C,C,C,24.0,30.0
-ACM Symposium on Principles of Distributed Computing,PODC,A*,A*,A*,A*,A*,A*,A*,A,30.0,51.0
-ACM Symposium on Software Reusability,SSR,,,,A,A,A,A,,,
-ACM Symposium on Solid and Physical Modelling,SPM,C,B,B,B,B,B,B,B,,
-ACM Symposium on Theory of Computing,STOC,A*,A*,A*,A*,A*,A*,A*,A,57.0,84.0
-ACM Virtual Reality Software and Technology,VRST,A,A,A,A,A,A,A,A,26.0,38.0
-ACM Workshop on Formal Methods in Security Engineering: From Specifications to Code,FMSE,,,,C,C,C,C,C,,
-ACM Workshop on Hot Topics in Networks,HOTNETS,National: USA,National: USA,National: USA,A,A,A,A,A,22.0,32.0
-ACM Workshop on Hot Topics in Software Upgrades,HotSWUp,,,,C,C,C,C,C,,
-ACM Workshop on Role Based Access Control (now SACMAT),RBAC,,,,,,C,C,C,,
-ACM Workshop on Scalable Trusted Computing,STC,,,,B,B,B,B,B,,
-ACM Workshop on Secure Web Services,SWS,,,,C,C,C,C,C,,
-ACM Workshop on Web Information and Data Management,WIDM,,,,B,B,B,B,B,,
-ACM-SIGACT Symposium on Principles of Programming Languages,POPL,A*,A*,A*,A*,A*,A*,A*,A,,
-ACM-SIGPLAN Conference on Programming Language Design and Implementation,PLDI,A*,A*,A*,A*,A*,A*,A*,A,51.0,82.0
-ACM-SIGRAPH Interactive 3D Graphics and Games,I3DG,B,B,B,B,B,B,A*,A,,
-ACM/IEEE International Conference on Distributed Smart Cameras,ICDSC,,B,B,B,B,B,B,B,,
-ACM/IEEE International Conference on Human-Robot Interaction,HRI,A,,,,,,,,54.0,76.0
-"ACM/IEEE International Conference on Modelling, Analysis and Simulation of Wireless and Mobile Systems",MSWIM,A,A,A,A,A,A,A,A,,
-ACM/IEEE Symposium on Edge Computing,SEC,unranked,unranked,,,,,,,17.0,26.0
-ACM/IFIP/USENIX International Middleware Conference,Middleware,A,A,A,A,A,A,A,A,,
-ACM/SIAM Symposium on Discrete Algorithms,SODA,A*,A*,A*,A*,A*,A*,A*,A,55.0,77.0
-ACM/SPEC International Conference on Performance Engineering,ICPE,B,B,,,,,,,23.0,32.0
-ACM/SPIE Multimedia Computing and Networking,MMCN,,,,A,A,A,A,A,,
-ACS/IEEE International Conference on Computer Systems and Applications,AICCSA,C,C,C,C,C,C,C,C,,
-ASIAN Symposium on Programming Languages and Systems,APLAS,B,B,B,B,B,B,B,B,,
-Accounting and Finance Association of Australia and New Zealand Conference,AFAANZ,,,,Australasian,Australasian,Australasian,Australasian,C,,
-Active and Real-Time Database Systems,ARTDB,,,,C,C,C,C,C,,
-Advanced Concepts for Intelligent Vision Systems,ACIVS,B,B,B,B,B,B,B,B,,
-Advanced Course on Artificial Intelligence,ACAI,,,,C,C,C,C,C,,
-Advanced Research in VLSI,ARVLSI,,,,C,C,C,C,C,,
-Advanced Visual Interfaces,AVI,B,B,B,B,B,B,B,B,15.0,22.0
-Advances in Cryptology,CRYPTO,A*,A*,A*,A*,A*,A*,A*,A,61.0,95.0
-Advances in Information Systems,ADVIS,,,,C,C,C,C,C,27.0,36.0
-Advances in Intelligent Systems,AIS,,,,C,C,C,C,C,40.0,48.0
-Advances in Modal Logic,AiML,B,B,A,A,A,A,A,A,,
-Advances in Neural Information Processing Systems (was NIPS),NeurIPS,A*,A*,A*,A*,A*,A*,A*,A,,
-Advances in the Theory of Computing,AITC,,,,C,C,C,C,C,,
-Agent-Oriented Information Systems Workshop,AOIS,,,,,,B,B,B,,
-Algebraic Methodology and Software Technology,AMAST,,,,C,C,C,C,C,,
+Algorithmic Learning Theory,ALT,B,B,B,B,B,B,A,A,34.0,52.0
+Algorithms and Complexity in Durham,ACID,,,,C,C,C,C,C,,
+Algorithms and Data Structures Symposium (was Workshop on Algorithms and Data Structures),WADS,B,B,B,B,B,B,A,A,14.0,17.0
+Algorithms and Experiments,ALEX,,,,B,B,B,B,,,
+Ambient Intelligence Developments,Aml.d,,,,C,C,C,C,C,,
+American Federation of Information Processing Societies,AFIPS,,,,A,,,,C,,
+American Medical Informatics Annual Fall Symposium,AMIA,National: USA,National: USA,National: USA,A,A,A,A,,,
+Americas Conference on Information Systems,AMCIS,,,,A,A,A,A,A,29.0,43.0
+Annual Computer Security Applications Conference,ACSAC,A,National: usa,National: usa,A,A,A,A,A,,
+Annual Conference of the Australasian Society for Computers in Learning in Tertiary Education,ASCILITE,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Annual Conference of the International Academy for Information Management,IAIM,,,,C,C,C,C,C,,
+Annual Conference of the International Speech Communication Association (was Eurospeech),Interspeech,,,,,,A,A,A,,
+Annual Conference on Computer Science Logic,CSL,B,B,B,B,B,B,B,,16.0,19.0
+Annual Conference on Evolutionary Programming,EP,,,,C,C,C,C,C,,
+Annual Conference on Innovation and Technology in Computer Science Education,ITiCSE,B,A,A,A,A,A,A,A,,
+"Annual Conference on Privacy, Security and Trust",PST,C,C,C,C,C,C,C,C,,
+"Annual Convention for Survey, Mapping and Remote Sensing",RS,,,,C,C,C,C,C,,
+Annual Fall Workshop on Computational Geometry,CGW,,,,C,C,C,C,C,,
+"Annual IASTED International Conference on Networks, Parallel and Distributed Processing and Applications",NPDP,,,,,,C,C,,,
+Annual International Conference on Ada,TRI-Ada,,,,C,C,C,C,C,,
+Annual International Workshop on Presence,ISPR,C,B,B,B,B,B,B,B,,
+Annual Meeting of the Cognitive Science Society,CogSci,B,A,A,A,A,A,A,A,32.0,46.0
+Annual Meeting of the Decision Sciences Institute,DSI,,,,C,C,C,C,C,,
+Annual Meeting of the Special Interest Group on Discourse and Dialog,SIGdial,B,B,C,C,C,C,C,C,31.0,48.0
+Annual PKI R&D Workshop,PKI,,,,C,C,C,C,C,,
+Annual PPIG Workshop,PPIG,,,,B,B,B,B,B,,
+Annual Simulation Symposium,ANSS,,,,B,B,C,C,C,13.0,21.0
+AoM Organizational Communication and Information Systems,OCIS,,,,A,A,A,A,A,,
+Apple University Consortium Academic and Developers Conference,AUCADC,,,,C,C,C,C,C,,
+Application of Computers and Operations Research in the Minerals Industries,APCOMin,,,,A,A,A,A,A,,
+Application of Concurrency to System Design,ACSD,,B,B,B,B,B,B,B,,
+Applications of Information Visualization,IV-App,C,C,C,C,C,C,C,C,,
+Applications of Natural Language to Data Bases,NLDB,C,C,C,C,C,C,C,C,18.0,28.0
+Applied Computing Conference,ACC,C,C,C,C,C,C,C,C,133.0,171.0
+Applied Perception in Graphics and Visualization,APGV,,,,C,C,C,C,C,,
+Architectural Support for Programming Languages and Operating Systems,ASPLOS,A*,A*,A*,A*,A*,A*,A*,A,71.0,122.0
+Argentine Symposium on Artificial Intelligence,ASAI,,,,,C,C,C,C,,
+Artificial Intelligence Applications and Innovations,AIAI,C,C,Regional,Regional,,,,,25.0,36.0
+Artificial Intelligence and Applications Conference,AIA,,,,C,C,C,C,,25.0,36.0
+Artificial Intelligence in Knowledge Management,AIKM,,,,C,C,C,C,C,8.0,13.0
+Artificial Intelligence in Medicine,AIIM,,,,A,A,A,A,A,78.0,124.0
+Artificial Neural Networks in Engineering Conference,ANNIE,,,,B,B,B,B,B,,
+"ArtsIT, Interactivity & Game Creation (was International Conference on Arts and Technology)",ArtsIT,C,C,C,C,C,C,C,C,,
+"Asia Conference on Information, Computer and Communications Security",AsiaCCS,A,A,B,B,B,B,B,B,,
+Asia Information Retrieval Symposium,AIRS,,C,C,C,C,C,C,C,,
+Asia International Conference on Modelling and Simulation,AMS,,,,C,C,C,C,C,,
+Asia Pacific Conference on Communications,APCC,C,C,B,B,B,B,B,B,11.0,17.0
+Asia Pacific Conference on Hardware Description Languages (was Asia Pacific CHipDesign Languages),APCHDL,,,,C,C,C,C,C,,
+Asia Pacific Decision Science Institute Conference,APDSI,,,,C,C,C,C,C,,
+Asia Pacific Research Symposium on Accounting Information Systems,APRSAIS,,,,C,C,C,C,C,,
+Asia Pacific Symposium on Intelligent and Evolutionary Systems (was Australia-Japan Joint Workshop on  Intelligent and Evolutionary Systems),IES,C,C,C,C,C,C,C,C,,
+Asia and South Pacific Design Automation Conference,ASPDAC,C,C,C,C,C,C,C,C,38.0,45.0
+Asia-Pacific Bioinformatics Conference,APBC,B,B,B,B,B,B,B,B,,
+Asia-Pacific Computer Human Interaction Conference,APCHI,,,,C,C,C,C,C,,
+Asia-Pacific Conference on Complex Systems,Complex,,,,C,C,C,C,C,,
+Asia-Pacific Conference on Conceptual Modelling,APCCM,Australasian C,Australasian C,Australasian C,B,B,B,B,B,,
+Asia-Pacific Conference on Simulated Evolution and Learning,SEAL,,,B,B,B,B,B,B,,
+Asia-Pacific Forum on Engineering and Technology Education,AFETE,,,,C,C,C,C,C,,
+Asia-Pacific Network Operations and Management Symposium,APNOMS,C,C,C,C,C,C,C,C,,
+Asia-Pacific Services Computing Conference,APSCC,C,C,C,C,C,C,C,C,,
+Asia-Pacific Software Engineering Conference,APSEC,C,B,B,B,B,B,C,C,16.0,25.0
+Asian Computing Science Conference,ASIAN,,,,B,B,B,B,B,,
+Asian Conference on Computer Vision,ACCV,B,B,B,B,B,B,B,B,39.0,64.0
+Asian Conference on Intelligent Information and Database Systems,ACIIDS,B,B,Unranked,Unranked,,,,,19.0,32.0
+Asian Conference on Machine Learning,ACML,Unranked,Unranked,Unranked,Unranked,Unranked,Unranked,,,23.0,43.0
+Asian International Mobile Computing Conference,AMOC,,,,C,C,C,C,C,,
+Asian Symposium on Computer Mathematics,ASCM,,,,C,C,C,C,C,,
+"Asilomar Conference on Signals, Systems and Computing",ACSSC,National: USA,National: USA,National: USA,C,C,C,C,C,33.0,49.0
+Aspect-Orientation Asia,AO-Asia,,,,C,C,C,C,C,,
+Aspect-Oriented Software Development,AOSD,,,,A,A,A,A,A,,
+Association for Computational Linguistics,ACL,A*,A*,A*,A*,A*,A*,A*,A,215.0,362.0
+Association for Computer-Aided Architectural Design Research in Asia (CAADRIA) annual conference,CAADRIA,C,B,B,B,B,B,B,B,,
+Australasia Conference on Information Security and Privacy,AISP,,,,Australasian,Australasian,Australasian,Australasian,C,17.0,23.0
+Australasian Cognitive Science Society Conference,AuCSS,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Compumod Users' Conference,COMPUMOD,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Computer Architecture Conference,ACAC,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Computer Music Conference,ACMA,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Computer Science Conference,ACSC,,,,Australasian,Australasian,Australasian,Australasian,B,22.0,35.0
+Australasian Computer Systems Architecture Conference (now Asia-Pacific Computer Systems Architecture Conference),ACSAC,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Computers in Education Conference,ACEC,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Computing Education Conference (ACE),ACE,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Conference on Combinatorial Mathematics and Combinatorial Computing,ACCMCC,Australasian C,Australasian C,Australasian C,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Conference on Information Security and Privacy,ACISP,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,17.0,23.0
+Australasian Conference on Information Systems,ACIS,,,,Australasian,Australasian,Australasian,Australasian,A,23.0,47.0
+Australasian Conference on Parallel and Real-Time Systems,APRTS,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Conference on Pattern Languages of Programs,KoalaPLoP,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Conference on Robotics and Automation,ACRA,Australasian C,Australasian C,Australasian C,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Database Conference,ADC,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Document Computing Symposium,ADCS,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,,,
+Australasian Information Security Conference,AISC,Australasian C,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,17.0,23.0
+Australasian Information Security Workshop 2007 (Privacy Enhancing Technologies),AISW-PET,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Joint Conference on Artificial Intelligence,AI,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Language Technology Workshop,ALTA,Australasian C,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,,11.0,16.0
+Australasian Refinement Workshop,AuRW,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Remote Sensing Conference,ARSC,,,,Australasian,Australasian,Australasian,Australasian,,,
+Australasian Speech Science and Technology,SST,Australasian C,Australasian C,Australasian C,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Symposium on Grid Computing and e-Research (now AusPDC),AusGrid,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Symposium on Parallel and Distributed Computing (was AusGrid),AusPDC,Australasian C,Australasian C,Australasian C,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Urban and Regional Information Systems Association Conference,AURISA,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian User Interface Conference,AUIC,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Women in Computing Workshop,WIC,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australasian Workshop on Combinatorial Algorithms,AWOCA,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australasian Workshop on Health Data and Knowledge Management,HDKM,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Computer Human Interaction Conference,OZCHI,Australasian B,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,18.0,24.0
+Australian Conference for Knowledge Management and Intelligent Decision Support,ACKMIDS,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Conference on Artificial Life and Computational Intelligence,ACALCI,,,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Conference on Mathematics and Computers in Sport,MCSpo,,,,Australasian,Australasian,Australasian,Australasian,,,
+Australian Conference on Neural Networks,ACNN,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Conference on Software Metrics,ACOSM,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Data Mining Conference,AusDM,Australasian C,Australasian B,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Digital Forensics Conference,,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Game Developers Conference,AGDC,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Information Security Management Conference,ISM,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Information Warfare and Security Conference,WarSec,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Institute of Computer Ethics Conference,AICE,Australasian C,Australasian C,Australasian C,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Institute of Computer Ethics Conference,AICEC,,,,Australasian,Australasian,Australasian,Australasian,,,
+Australian Joint Conference on Artificial Intelligence,AusAI,,,,Australasian,Australasian,Australasian,Australasian,,,
+Australian Knowledge Acquisition Workshop,AKAW,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian MADYMO Users Meeting,MADYMO,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian MATLAB Conference,MATLAB,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Pattern Recognition Society Conference,DICTA,,,,,Australasian,Australasian,Australasian,,20.0,29.0
+Australian Software Engineering Conference,ASWEC,,,Australasian B,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Supercomputing Conference,ACS,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Symposium on Information Visualisation,ASIV,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian UNIX Users Group National Conference,AUUG,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Women in IT Conference,AusWIT,,,,Australasian,Australasian,Australasian,Australasian,,,
+Australian Women in IT Conference,OzWIT,,,,Australasian,Australasian,Australasian,Australasian,B,,
+"Australian Workshop on Mobile Computing, Databases and Applications",MCDA,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Workshop on Requirements Engineering,AWRE,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Australian Workshop on Safety Critical Systems and Software,SCSS,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian Workshop on Software Architecture,AWSA,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian World Wide Web Conference,AusWeb,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian and New Zealand Academy of Management Conference,ANZAM,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian and New Zealand Intelligent Information Systems Conference,ANZIIS,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Australian and New Zealand Marketing Academy Conference,ANZMAC,,,,Australasian,Australasian,Australasian,Australasian,C,,
+Automated Software Engineering Conference,ASE,A*,A*,A,A,A,A,A,A,54.0,74.0
+Automation of Software Test,AST,C,C,C,C,C,C,C,C,,
+Bioinformatics Visualization,BioViz,,,,C,C,C,C,C,,
+Body Sensor Networks,BSN,C,C,C,C,C,C,C,C,15.0,22.0
+British Computer Society Conference on Human-Computer Interaction,HCI,National,National,National,National,National,National,National,A,5.0,5.0
+British Machine Vision Conference,BMVC,A,,,,,,,B,65.0,109.0
+CENTERIS - Conference on ENTERprise Information Systems,CENTERIS,,,,Unranked,,,,,,
+CGAL User Workshop,CGAL,,,,C,C,C,C,C,,
+CHI PLAY: The Annual Symposium on Computer-Human Interaction in Play,CHI PLAY,Journal Published,Journal Published,,,,,,,,
+CONFERENCE ON COMPUTER SCIENCE AND INTELLIGENCE SYSTEMS,FedCSIS,Multi-conference,Multi-conference,,,,,,,,
+Challenges of Large Applications in Distributed Environments,CLADE,,,,C,C,C,C,C,,
+Collaborative Electronic Commerce Technology and Research,CollECTeR,,,,B,B,B,B,B,,
+"Colloquium on Mathematics and Computer Science: Algorithms, Trees, Combinatorics and Probabilities",MathInfo,,,,C,C,C,C,C,,
+Cologne-Twente Workshop on Graphs and Combinatorial Optimization,CTW,C,C,C,C,C,C,C,C,,
+Combinatorial Pattern Matching,CPM,B,B,B,B,B,B,B,B,13.0,17.0
+Committee on Data for Science and Technology,CODATA,,,,C,C,C,C,C,,
+Complex Objects Visualization Workshop,COV,,,,C,C,C,C,C,,
+Complexity and information-theoretic approaches to biology,CITB,,,,B,B,B,B,B,,
+Computability in Europe: Logic and Theory of Algorithms,CiE,C,C,C,C,C,C,C,C,9.0,12.0
+Computational Intelligence in Security for Information Systems,CISIS,National: Spain,National: Spain,National: Spain,National-Spanish,B,B,B,B,11.0,17.0
+Computational Techniques and Applications Conference,CTAC,,,,C,C,C,C,C,,
+Computational Topology Workshop,CT,,,,C,C,C,C,C,,
+Computer Aided Verification,CAV,A*,A*,A*,A*,A*,A*,A*,A,38.0,57.0
+Computer Algebra in Scientific Computing,CASC,B,B,,,,,,,9.0,11.0
+"Computer Animation, Information Visualisation, and Digital Effects",CAivDE,C,C,C,C,C,C,C,C,,
+Computer Graphics International,CGI,C,B,B,B,B,B,B,B,59.0,92.0
+Computer Science Research Conference,CSRC,,,,C,C,C,C,C,14.0,18.0
+Computer Sciences and Information Technologies,CSIT,National,National,,,,,,,25.0,33.0
+Computer Supported Collaborative Learning,CSCL,,B,A,A,A,A,A*,A,33.0,47.0
+Computing in Education Group of Victoria Conference,CEG,,,,C,C,C,C,C,,
+Computing: The Australasian Theory Symposium,CATS,,,,Australasian,Australasian,Australasian,Australasian,B,,
+Conference for the International Simulation and Gaming Association,ISAGA,C,C,C,C,C,C,C,C,,
+Conference in Uncertainty in Artificial Intelligence,UAI,A,A,A*,A*,A*,A*,A*,A,56.0,87.0
+Conference of the Association for Machine Translation in the Americas,AMTA,National/Regional,National/Regional,B,B,B,B,B,B,,
+Conference of the Association of Asian-Pacific Operational Research Societies,APORS,C,C,C,C,C,C,C,C,,
+Conference of the Commission Internationale pour l'Etude et l'Amelioration de l'Enseignement des Mathematiques,CIEAEM,,,,C,C,C,C,C,,
+Conference of the European Association for Machine Translation,EAMT,C,B,B,B,B,B,B,B,17.0,31.0
+Conference of the European Society for Fuzzy Logic and Technologies,EUSFLAT,C,C,,,,,,,,
+Conference of the International Society for Decision Support Systems,ISDSS,,,,C,C,C,C,C,,
+Conference of the Pacific Association for Computational Linguistics,PACLING,,B,B,B,B,B,B,B,,
+Conference on Agile Software Development,XP,B,B,B,B,B,B,B,B,24.0,36.0
+Conference on Algebra and Coalgebra in Computer Science,CALCO,B,B,,,,,,,,
+Conference on Algorithmic Aspects in Information and Management,AAIM,C,C,C,C,C,C,C,C,,
+Conference on Algorithms and Hardware for Parallel Processing,CONPAR,,,,C,C,C,C,C,,
+Conference on Artificial Intelligence for Applications,CAIA,,,,B,B,B,B,B,,
+Conference on Artificial Neural Networks and Expert systems,ANNES,,,,C,C,C,C,C,,
+Conference on Combinatorial Optimization and Applications,COCOA,C,B,B,B,B,B,B,B,9.0,14.0
+Conference on Computational Natural Language Learning,CoNLL,B,A,A,A,A,A,A,A,39.0,60.0
+"Conference on Computers, Freedom, and Privacy",CFP,,,,C,C,C,C,C,,
+"Conference on Discrete Mathematics, Algebra and their Application",DIMA,,,,C,C,C,C,C,,
+Conference on File and Storage Technologies,FAST,A,A,A,A,A,A,A,A,39.0,66.0
+Conference on Fun with Algorithms,FUN,National: Italy,National: Italy,National: Italy,B,B,B,B,B,,
+Conference on Games (was Computational Intelligence and Games CIG),COG,C,C,C,C,C,C,C,C,31.0,46.0
+Conference on Graph Theory and Discrete Geometry,CGTDG,,,,C,C,C,C,C,,
+"Conference on Information Science, Technology and Management",CISTM,,,,B,B,B,B,B,9.0,15.0
+Conference on Information Sciences and Systems,CISS,National: USA,National: USA,National: USA,C,C,C,C,C,21.0,41.0
+"Conference on Innovation in Clouds, Internet and Networks",ICIN,National: France,National: France,National: France,Unranked,,,,,17.0,30.0
+Conference on Innovative Data Systems Research,CIDR,A,A,A,A,A,A,A,A,32.0,49.0
+Conference on Integer Programming and Combinatorial Optimization,IPCO,A,A,A,A,A,A,A,A,,
+Conference on Intelligent Computer Mathematics,CICM,C,C,,,,,,,3.0,4.0
+"Conference on Interactive Theorem Proving (previously TPHOLs, changed in 2009)",ITP,A,A,A,A,A,A,A,A,17.0,24.0
+Conference on Learning Theory,COLT,A*,A*,A*,A*,A*,A*,A*,A,74.0,103.0
+Conference on Office Information Systems,SIGOA,,,,C,C,C,C,C,,
+"Conference on Orders, Algorithms and Applications",Ordal,,,,C,C,C,C,C,,
+Conference on RFID Security,RFIDSec,,,,C,C,C,C,C,,
+Conference on Robot Learning,CoRL,Unranked,,,,,,,,88.0,150.0
+Conference on Security and Cryptography for Networks,SCN,National: Italy,National: Italy,National: Italy,B,B,B,B,B,,
+Conference on Security in Network Architectures and Information Systems,SAR-SSI,,,,C,C,C,C,C,,
+"Conference on Software Engineering Education and Training (previously Conference is Software Engineering Education, CSEE, changed in 1997)",CSEET,C,C,C,C,C,C,C,C,21.0,31.0
+Conference on Software in Telecommunications and Computer Networks,SOFTCOM,National: Croatia,National: Croatia,National: Croatia,B,B,B,B,B,,
+Conference on Theory and Applications of Models of Computation,TAMC,C,B,B,B,B,B,B,B,11.0,24.0
+Conference on Visualization and Data Analysis,VDA,National: USA,National: USA,National: USA,C,C,C,C,C,,
+Conference on the Quality of Software Architectures,QoSA,,,,,B,B,A,A,,
+Constraint Databases and Applications,CDB,,,,C,C,C,C,C,,
+Constraint Programming Day,CPD,,,,C,C,C,C,C,,
+"Cooperative Design, Visualization, and Engineering",CDVE,C,C,C,C,C,C,C,C,8.0,8.0
+Coordinated and Multiple Views in Exploratory Visualization,CMV,,,,C,C,C,C,C,,
+Cryptographers Track at RSA Conference,CT-RSA,B,B,B,B,B,B,B,B,23.0,50.0
+Cryptography Policy and Algorithms Conference,CryPAC,,,,C,C,C,C,C,,
+Cultural Attitudes towards Technology and Communications,CATAC,,,,B,B,B,B,B,,
+Cultural Heritage Knowledge Visualisation,CHKV,,,,C,C,C,C,C,,
+Current Trends in Theory and Practice of Computer Science,SOFSEM,B,B,B,B,B,B,B,B,,
+DIMACS Workshop on Intrinsic Complexity of Computation,DIMACS Intrinsic,,,,C,C,C,C,C,,
+DNA Computing and Molecular Programming,DNA,B,B,B,B,B,B,B,B,,
+Data Compression Conference,DCC,B,B,A*,A*,A*,A*,A*,A,24.0,39.0
+Data Semantics in Web Information Systems,DASWIS,,,,C,C,C,C,C,,
+Data Warehousing and Knowledge Discovery,DaWaK,B,B,B,B,B,B,B,B,12.0,20.0
+Database Programming Languages,DBPL,,B,B,B,B,B,B,B,,
+"Datenbanksysteme für Business, Technologie und Web",BTW,National:Germany,National:Germany,,,,,,,14.0,18.0
+Deductive and Object-Oriented Databases,DOOD,,,,A,A,A,A,,,
+Design Automation Conf,DAC,TBR,,,A,A,A,A,,60.0,85.0
+Design and Aesthetics in Visualisation,DAViz,,,,C,C,C,C,C,,
+Design and Management of Data Warehouses,DMDW,,,,C,C,C,C,C,,
+Design for User Experience,DUX,,,,B,B,B,B,B,,
+"Design, Automation and Test in Europe Conference",DATE,B,B,B,B,B,B,B,B,46.0,71.0
+Designing Interactive Systems,DIS,A,A,B,B,B,B,B,B,49.0,62.0
+Developments in Language Theory,DLT,C,B,B,B,B,B,B,B,8.0,10.0
+Developments in eSystems Engineering,DeSE,C,C,C,C,,,,,18.0,27.0
+Digital Arts and Culture,DAC,,,,C,C,C,C,C,,
+Digital Audio Effects Conference,DAFX,C,B,B,B,B,B,B,,,
+Digital Games Research Conference,DIGRA,C,C,C,C,C,C,C,C,,
+Digital Image Computing Techniques and Applications,DICTA,Australasian C,Australasian B,Australasian B,Australasian,B,B,B,B,20.0,29.0
+Discourse Anaphora and Anaphor Resolution Colloquium,DAARC,,,,C,C,C,C,C,,
+Discovery Science,DS,B,Unranked,Unranked,Unranked,,,,,34.0,43.0
+"Discrete Models: Combinatorics, Computation and Geometry",DM-CCG,,,,C,C,C,C,C,,
+Discrete and Algorithmic Geometry,DAG,,,,C,C,C,C,C,,
+Distributed Communities on the Web Workshop,Dcw,,,,C,C,C,C,C,,
+Distributed Simulation Symposium,DSS,,,,B,B,B,B,,14.0,21.0
+Doing IT at Melbourne,DITAM,,,,,L,L,L,,,
+Domain - Specific Languages for Software Engineering,DSLSE,,,,C,C,C,C,C,,
+Domain Specific Aspect Languages,DSAL,,,,C,C,C,C,C,,
+Dutch Computational Geometry Day,DutchCG,,,,C,C,C,C,C,,
+Dynamic Graph Workshop,DGW,,,,C,C,C,C,C,,
+Dynamic Languages Symposium,DLS,C,C,B,B,B,B,B,B,,
+ECRYPT Workshop on Cryptographic Hash Functions,ECRYPT,,,,C,C,C,C,C,,
+ECRYPT Workshop on Tools for Cryptanalysis,ECRYPT,,,,C,C,C,C,C,,
+"EMAS (merger of DALT, AOSE and PROMAS)",EMAS,B,B,B,B,B,B,B,,15.0,25.0
+ENVI and IDL Data Analysis and Visualization Symposium,VISualize,,,,C,C,C,C,C,,
+ERATO Conference on Quantum Information Science,EQIS,,,,C,C,C,C,C,,
+ERCIM Annual Workshop on Constraint Solving and Constraint Logic Programming,ERCIM/CSCLP,,,,B,B,B,B,B,,
+ETHICOMP Conference,ETHICOMP,C,B,B,B,B,B,B,B,,
+EURO AMERICAN CONFERENCE ON TELEMATICS AND INFORMATION SYSTEMS,EATIS,C,C,C,C,Unranked,Unranked,,,,
+Educational Data Mining,EDM,B,B,B,B,B,B,B,B,32.0,45.0
+Embedded Sensor Networks Workshop,Emnets,,,,C,C,C,C,C,,
+Empirical Methods in Natural Language Processing,EMNLP,A*,A,A,A,A,A,A,A,193.0,310.0
+Enabling Grids for E-Science European Conference,EGEE,,,,C,C,C,C,C,,
+Engineering Applications of Artifical Intelligence,EAAI,,,,A,A,A,A,,97.0,135.0
+Engineering Federated Information (Database) Systems,EFIS/EFDBS,,,,C,C,C,C,,,
+Engineering Interactive Computing Systems,EICS,Journal Published,Journal Published,Unranked,Unranked,,,,,12.0,16.0
+Ershov Conference,PSI,,,National: Russia,B,B,B,B,B,,
+Euro Virtual Reality,Euro VR,C,C,C,C,C,C,C,C,,
+"EuroConference on Combinatorics, Graph Theory and Applications",EUroComb,C,C,C,C,C,C,C,C,,
+Eurographics Symposium on Parallel Graphics and Visualization,EGPGV,C,B,B,B,B,B,B,B,,
+Eurographics/IEEE Symposium on Visualization,EuroVis,B,B,B,B,B,B,B,B,,
+Euromicro Conference on Real-Time Systems,ECRTS,B,A,A,A,A,A,A,A,21.0,36.0
+Euromicro Conference on Software Engineering and Advanced Applications,SEAA,B,B,B,B,B,C,C,C,23.0,36.0
+"Euromicro International Conference on Parallel, Distributed and Network Based Processing",PDP,C,C,C,C,C,C,C,C,16.0,29.0
+European Association for Computational Linguistics,EACL,A,A,A,A,A,A,A,A,56.0,88.0
+European Chapter on Combinatorial Optimization,ECCO,C,C,C,C,C,C,C,C,,
+European Computing Conference,ECC,,,,C,C,C,C,C,14.0,21.0
+European Conference of Information Warfare,ECIW,,,,C,C,C,C,C,,
+European Conference on Ambient Intelligence,AmI,,C,C,C,C,C,C,C,,
+European Conference on Artificial Intelligence,ECAI,A,A,A,A,A,A,A,A,36.0,66.0
+European Conference on Artificial Life,ECAL,,,,B,B,B,B,B,,
+European Conference on Computational Biology,ECCB,C,B,B,B,B,B,B,B,,
+European Conference on Computational Learning Theory (Now in COLT),EuroCOLT,,,,C,C,C,C,C,,
+European Conference on Computer Supported Cooperative Work,ECSCW,B,B,B,B,B,B,B,B,11.0,14.0
+European Conference on Computer Vision,ECCV,A*,A*,A,A,A,A,A,A,206.0,306.0
+European Conference on Digital Government (was European Conference on e-Government ECEG),ECDG,C,C,C,C,C,C,C,C,,
+European Conference on Evolutionary Computation in Combinatorial Optimisation,EvoCOP,B,B,Unranked,Unranked,,,,,,
+European Conference on Genetic Programming,EUROGP,B,B,B,B,B,B,B,B,,
+European Conference on Information Management and Evaluation,ECIME,,,,C,C,C,C,C,,
+European Conference on Information Retrieval,ECIR,A,A,A,A,B,B,B,B,42.0,60.0
+European Conference on Information Systems,ECIS,,,,A,A,A,A,A,39.0,52.0
+European Conference on Knowledge Management,EKM,,,,B,B,B,B,B,12.0,14.0
+European Conference on Machine Learning (Joined with PKDD from 2008),ECML,,,,,,A,A,A,,
+European Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Database (PKDD and ECML combined from 2008),ECML PKDD,A,A,A,A,A,A,A,A,,
+European Conference on Modelling Foundations and Applications,ECMFA,B,NEW,,,,,,,,
+European Conference on Multi-Agent Systems,EUMAS,C,C,C,C,C,C,C,C,11.0,14.0
+European Conference on Object-Oriented Programming,ECOOP,A,A,A,A,A,A,A,A,19.0,26.0
+European Conference on Operations Research,EURO,C,C,C,C,C,C,C,C,,
+European Conference on Pattern Languages of Programs,EuroPLop,National: Germany,National: Germany,National: Germany,B,B,B,B,B,13.0,23.0
+European Conference on Research Methodology for Business and Management Studies,ECRM,,,,C,C,C,C,C,10.0,30.0
+European Conference on Software Architecture,ECSA,A,A,A,A,A,A,,,20.0,28.0
+European Conference on Software Maintenance and Reengineering,CSMR,,,,C,C,C,C,C,,
+European Conference on Symbolic and Quantitative Approaches to Reasoning with Uncertainty,ECSQARU,C,C,C,C,C,C,C,C,12.0,16.0
+European Conference on Technology Enhanced Learning,EC-TEL,B,B,,,,,,,19.0,26.0
+European Conference on Universal Multiservice Networks,ECUMN,,,,C,C,C,C,C,,
+European Congress on Intelligent Techniques and Soft Computing,EUFIT,,,,C,C,C,C,C,,
+European Dependable Computing Conference,EDCC,Unranked,Unranked,Unranked,Unranked,,,,,14.0,21.0
+European Graphics Conference,EUROGRAPH,,,,A,A,A,A,A,,
+European Grid Conference,EGC,,,,B,B,B,B,,4.0,6.0
+European Institute for Computer Anti-Virus Research EICAR Conference,EICAR,,,,C,C,C,C,C,,
+European Lisp Workshop,ELW,,,,C,C,C,C,C,,
+European MPI Users' Group Conference,EuroMPI,C,C,C,C,C,C,C,C,,
+European Natural Language Generation Workshop,EuroNLG,,,,B,B,B,B,B,,
+European PKI Workshop: Theory and Practice,EUROPKI,,,,B,B,B,B,B,,
+European SPI,EuroSPI,B,B,B,B,B,B,B,B,17.0,22.0
+European Signal Processing Conference,EUSIPCO,,,,B,B,B,B,B,36.0,44.0
+European Simulation Symposium,ESS,,,,B,B,B,B,B,11.0,14.0
+European Symposium On Research In Computer Security,ESORICS,A,A,A,A,A,A,A,A,33.0,48.0
+European Symposium on Algorithms,ESA,A,A,A,A,A,A,A,A,25.0,30.0
+European Symposium on Artificial Neural Networks,ESANN,B,B,B,B,B,B,B,B,18.0,24.0
+European Symposium on Gender and ICT,ESGICT,,,,C,C,C,C,C,,
+European Symposium on Programming,ESOP,A,A,A,A,A,A,A,A,23.0,30.0
+European Workshop on Advanced Mobile Robots,EuroBot,,,,C,C,C,C,C,,
+European Workshop on Computational Geometry,EuroCG,C,C,C,C,C,C,C,C,,
+European Workshop on Learning Robots,EWLR,,,,B,B,B,B,,,
+European Workshop on Modelling Autonomous Agents in a Multi-Agent World,MAAMAW,,,,C,C,C,C,C,,
+European Workshop on Security and Privacy in Ad -Hoc and Sensor Networks,ESAS,,,,C,C,C,C,C,,
+"European, Mediterranean and Middle Eastern Conference on Information Systems",EMCIS,,,,B,B,B,B,B,14.0,25.0
+European-Japanese Conference on Information Modelling and Knowledge Bases,EJC,C,C,C,C,C,C,C,C,7.0,11.0
+Eurosys Conference,EuroSys,A,A,A,A,A,A,A,A,,
+Exploring Modelling Methods in Systems Analysis and Design,EMMSAD,C,C,C,C,C,C,C,C,,
+Extended Semantic Web Conference (was European Semantic Web Conference),ESWC,B,A,A,A,A,A,A,,28.0,45.0
+Extending Database Technology,EDBT,A,A,A,A,A,A,A,A,29.0,38.0
+Extreme Markup Languages,Extreme,,,,C,C,C,C,C,,
+Eye Tracking Research and Applications,ETRA,B,B,,,,,,,31.0,43.0
+FIRA Robot World Congress,FIRA,,,,C,C,C,C,C,,
+Field Programmable Logic and Applications,FPL,TBR,,,,,,,,28.0,41.0
+Financial Cryptography and Data Security Conference,FC,A,A,B,B,B,B,A,A,47.0,86.0
+Finite Differences-Finite Elements-Finite Volumes-Boundary Elements,F-and-B,,,,C,C,C,C,C,,
+Flexible Query-Answering Systems,FQAS,C,C,C,C,C,C,C,C,,
+Florida Artificial Intelligence Research Society Conference,FlAIRS,National: USA,National: USA,,,,,,C,,
+Formal Methods Pacific,FMP,,,,C,C,C,C,C,,
+Formal Methods in Computer-Aided Design,FMCAD,B,B,Unranked,Unranked,,,,,18.0,23.0
+Formal Methods in Software Engineering and Defence Systems Workshop,FMSEDS,,,,C,C,C,C,C,,
+Formal Power Series and Algebraic Combinatorics,FPSAC,,,,B,B,B,B,B,,
+Formal Techniques in Real-Time and Fault Tolerant Systems,FTRTFT,,,,B,B,B,B,,,
+Formal and Computational Cryptography,FCC,,,,C,C,C,C,C,,
+Forum on Specification and Design Languages,FDL,C,C,C,C,C,C,C,C,,
+Foundations of Aspect-Oriented Languages,FOAL,,,,C,C,C,C,C,,
+Foundations of Genetic Algorithms,FOGA,A,A,A*,A*,A*,A*,A*,A,,
+Foundations of Software Science and Computational Structures,FOSSACS,A,A,A,A,A,A,C,C,17.0,23.0
+Foundations of Software Technology and Theoretical Computer Science,FST&TCS,National: India,National: India,National: India,B,B,B,B,B,11.0,15.0
+Frontiers in Education,FIE,C,C,B,B,B,B,B,,72.0,109.0
+Functional and Declarative Programming in Education,FDPE,,,,C,C,C,C,C,,
+Fundamental Approaches to Software Engineering,FASE,B,B,B,B,B,B,B,B,18.0,23.0
+"GI International Conference on Detection of Intrusions and Malware, and Vulnerability Assessment",DIMVA,C,C,C,C,C,C,C,C,,
+GIS Planet Conference,GISPlanet,,,,C,C,C,C,C,,
+Game Developers Conference,GDC,,,,C,C,C,C,C,,
+Genetic and Evolutionary Computations,GECCO,A,A,A,A,A,A,A,A,,
