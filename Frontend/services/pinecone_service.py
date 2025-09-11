@@ -21,7 +21,7 @@ def upsert_vector(vector: dict):
     # vector = {"id": "...", "values": [...], "metadata": {...}}
     _get_index().upsert(vectors=[vector])
 
-def semantic_query(vector, top_k=100, include_metadata=True):
+def semantic_query(vector, top_k=75, include_metadata=True):
     return _get_index().query(vector=vector, top_k=top_k, include_metadata=include_metadata)
 
 def id_query(conf_id: str):
