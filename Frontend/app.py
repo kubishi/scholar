@@ -225,10 +225,11 @@ def edit_conference(conf_id):
             except ValueError:
                 return None
         return None
+    
     #Displaying the intital data
     form = ConferenceForm(
         conference_id=conf_id,
-        conference_name=conf_meta.get("conference_name", ""),
+        conference_name=conf_meta.get("name", ""),
         country=conf_meta.get("country", ""),
         city=conf_meta.get("city", ""),
         deadline=parse_date(conf_meta.get("deadline", "")),
@@ -237,9 +238,12 @@ def edit_conference(conf_id):
         topic_list=conf_meta.get("topics", ""),
         conference_link=conf_meta.get("url", "")
     )
-
+    if request.method == 'POST':
+        print("POST data:", request.form.to_dict(),"\n")
+        print("Errors:", form.errors)
 
     if form.validate_on_submit():
+        print("Form validated successfully.")
         topic_vector = embed(form.topic_list.data)
 
         updated_vector = {
