@@ -42,7 +42,8 @@ def brave_search_conference_website(conf_name, conf_acronym, count=10):
         "facebook.com",
         "youtube.com",
         "link.springer.com",
-        "clocate.com"
+        "clocate.com",
+        "myhuiban.com"
     ]
 
     for item in items:
@@ -55,4 +56,4 @@ def brave_search_conference_website(conf_name, conf_acronym, count=10):
 
     return None
 
-print(brave_search_conference_website("Symposium on Intelligent and Evolutionary Systems", "IES"))
+print(brave_search_conference_website("ACM Symposium on User Interface Software and Technology", "UIST"))
