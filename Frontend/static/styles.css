@@ -289,6 +289,7 @@ body {
   /* vertical center */
   position: relative;
   text-align: center;
+  min-height: 200px;
 }
 
 @media screen and (max-width: 768px) {
