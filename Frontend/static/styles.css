@@ -256,8 +256,15 @@ body {
 }
 
 .text-box {
-  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   width: 100%;
+  position: relative;
 }
 
 .text-box textarea {
@@ -265,32 +272,27 @@ body {
   height: 10vh;
   min-height: 40px;
   max-height: 100px;
+  margin-bottom: 0.5rem;
 }
 
-.submit-button {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
+.search-controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-controls button {
   height: 40px;
-  z-index: 2;
   min-width: 80px;
-}
-
-.count-box-setter {
-  position: absolute;
-  bottom: 50px;
-  right: 5px;
-  height: 30px;
-  z-index: 2;
-  min-width: 80px;
-}
-
-.search-count-section {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  height: 40px;
-  z-index: 2;
 }
 
 .dropzone-center {
@@ -310,7 +312,33 @@ body {
   min-height: 200px;
 }
 
+.responsive-link::after {
+  content: attr(data-full);
+}
+
+/* On smaller screens, show "Link" instead */
+@media (max-width: 768px) {
+  /* adjust breakpoint as needed */
+  .responsive-link::after {
+    content: attr(data-short);
+  }
+  .responsive-link {
+    text-decoration: underline;
+    /* optional, to indicate it's a link */
+  }
+}
+
+.short-url {
+  display: none;
+}
+
 @media screen and (max-width: 768px) {
+  .full-url {
+    display: none;
+  }
+  .short-url {
+    display: inline;
+  }
   .title_subtext {
     display: none;
     /* Hides the text on screens 768px wide or less */
