@@ -140,9 +140,9 @@ def index():
     date_span_second = convert_date_format(request.args.get("date_span_second"))
 
     try:
-        num_results = int(request.args.get("num_results", 3))
+        num_results = int(request.args.get("num_results", 10))
     except ValueError:
-        num_results = 5
+        num_results = 10
 
     advanced_open = any([
         date_span_first,
