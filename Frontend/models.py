@@ -18,6 +18,20 @@ class Submitted_Conferences(db.Model):
         nullable=False,
         default='waiting'
     )
+    edit_type = db.Column(
+        db.Enum('edit', 'new', name='submission_edit_type'),
+        nullable=False,
+        default='waiting'
+    )
     time_approved_at = db.Column(db.DateTime, nullable=True)
     time_updated_at = db.Column(db.DateTime, nullable=True)
     time_submitted_at = db.Column(db.DateTime, nullable=True)
+
+    conference_name = db.Column(db.String(255), nullable=False)
+    country = db.Column(db.String(100), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    deadline = db.Column(db.DateTime, nullable=True)
+    start = db.Column(db.DateTime, nullable=True)
+    end = db.Column(db.DateTime, nullable=True)
+    topics = db.Column(db.Text, nullable=True)      
+    url = db.Column(db.String(500), nullable=True) 
