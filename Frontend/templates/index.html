@@ -25,7 +25,11 @@
           id="searchInput" 
           name="{{ 'query' if request.args.get('search_type', 'semantic') == 'semantic' else 'ID_query' }}" 
           placeholder="{{ 'Search academic topics...' if request.args.get('search_type', 'semantic') == 'semantic' else 'Search by conference ID...' }}">{{ (request.args.get('query') if request.args.get('search_type', 'semantic') == 'semantic' else request.args.get('ID_query')) or '' }}</textarea>
-          <button type="submit" class="submit-button btn btn-dark">Search</button>
+          <div class="search-count-section">
+            <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100"
+            value="{{ request.args.get('num_results', 10) }}">
+            <button type="submit" class="submit-button btn btn-dark">Search</button>
+          </div>
         </div>
       </div>
   
@@ -40,8 +44,7 @@
                  {% if request.args.get('search_type') == 'id' %}checked{% endif %}>
           <label class="form-check-label" for="ID_Toggle">ID Search</label>
         </div>
-        <input class="count-box-setter form-control border-dark" type="number" name="num_results" placeholder="Count" style="max-width: 100px;" max="100"
-               value="{{ request.args.get('num_results', 10) }}">
+
       
       </div>
 
