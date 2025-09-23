@@ -1,4 +1,4 @@
-from .services.db_services import db
+from Frontend.services.db_services import db
 
 class User(db.Model):
     google_auth_id = db.Column(db.String(60), primary_key=True)
@@ -8,3 +8,16 @@ class User(db.Model):
 class Favorite_Conf(db.Model):
     user_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
     fav_conf_id = db.Column(db.String(50), primary_key=True)
+
+class Submitted_Conferences(db.Model):
+    __tablename__ = 'user_submitted_conferences'
+    conf_id = db.Column(db.String(50), primary_key=True)
+    submitter_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
+    status = db.Column(
+        db.Enum('waiting', 'archived', 'approved', name='submission_status'),
+        nullable=False,
+        default='waiting'
+    )
+    time_approved_at = db.Column(db.DateTime, nullable=True)
+    time_updated_at = db.Column(db.DateTime, nullable=True)
+    time_submitted_at = db.Column(db.DateTime, nullable=True)
