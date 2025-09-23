@@ -4,11 +4,12 @@
       {% for article in articles %}
           {% if article.metadata.url %}
               <div class="mb-4 border border-1 border-dark p-2 text-start bg-white rounded-3">
-                  <h5 class="mb-1">
+                  <h5 class="conference-header mb-1">
                       <strong>{{ loop.index }}.</strong>
                       {{ article.id }}
-                      <a href="{{ article.metadata.url }}" rel="noopener noreferrer" style="margin-left: 10px; font-weight: normal; font-size: 0.9em;">
-                      {{ article.metadata.url }}
+                      <a href="{{ article.metadata.url }}">
+                        <span class="full-url">{{ article.metadata.url }}</span>
+                        <span class="short-url">Go to Page &#10172;</span>
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
