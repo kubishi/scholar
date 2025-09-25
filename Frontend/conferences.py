@@ -5,10 +5,10 @@ from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db # type: ignore
-from .services.pinecone_service import (
+from .services.pinecone_service import ( # type: ignore
     fetch_by_id,
     upsert_vector,
-) # type: ignore
+) 
 
 bp = Blueprint("conferences", __name__) 
 

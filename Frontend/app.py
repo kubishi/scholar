@@ -7,17 +7,17 @@ from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
 from PyPDF2 import PdfReader
 
-from .conferences import bp as conferences_bp
+from .conferences import bp as conferences_bp # type: ignore
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .services.openai_service import embed, pdf_summary # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db, migrate # type: ignore
-from .services.pinecone_service import (
+from .services.pinecone_service import ( # type: ignore
     describe_count,
     semantic_query,
     id_query,
-) # type: ignore
+) 
 
 # --Flask App setup---
 app = Flask(__name__)
