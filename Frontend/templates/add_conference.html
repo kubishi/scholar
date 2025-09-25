@@ -9,7 +9,7 @@
 <div class="container my-4" style="max-width: 700px;">
   <h1 class="mb-4">Enter Conferences</h1>
 
-  <form method="POST" action="{{ url_for('conference_adder') }}" class="my-3">
+  <form method="POST" action="{{ url_for('conferences.conference_adder') }}" class="my-3">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">
