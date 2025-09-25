@@ -10,7 +10,7 @@ from PyPDF2 import PdfReader
 from .conferences import bp as conferences_bp
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .services.openai_service import embed # type: ignore
+from .services.openai_service import embed, pdf_summary # type: ignore
 from .models import User, Favorite_Conf # type: ignore
 from .services.db_services import db, migrate # type: ignore
 from .services.pinecone_service import (
@@ -24,18 +24,6 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 csrf = CSRFProtect(app)
-
-@app.route("/file-upload", methods=["POST"])
-def upload_file():
-    file = request.files['file']
-    reader = PdfReader(file)
-
-    # Only extract text from the first page
-    first_page = reader.pages[0]
-    extracted_text = first_page.extract_text()
-
-    print(extracted_text)
-    return jsonify({"text": extracted_text})
 
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -62,6 +50,30 @@ app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
 app.register_blueprint(conferences_bp)
+
+@app.route("/file-upload", methods=["POST"])
+def upload_file():
+    file = request.files['file']
+    reader = PdfReader(file)
+
+    page_texts = []
+    
+    # Extract text from each page
+    for page in reader.pages:
+        txt = page.extract_text()  
+        if txt:
+            txt = txt.strip()
+            if txt:
+                page_texts.append(txt)
+    extracted_text = "\n\n".join(page_texts)
+    if not extracted_text:
+        return jsonify({"error": "No extractable text found in the PDF."}), 400
+    try:
+        summary = pdf_summary(extracted_text)
+    except Exception as e:
+        #print(f"Error during summarization: {e}")
+        return jsonify({"error": "Failed to summarize the document."}), 500
+    return jsonify({"text": summary})
 
 @app.route("/login")
 def login():
