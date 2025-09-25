@@ -47,12 +47,13 @@
               <div class="d-flex gap-2 align-items-center">
                 <label for="numResults" class="form-label mb-0">Results:</label>
                 <input class="form-control border-dark" 
-                       type="number" 
-                       name="num_results" 
-                       placeholder="Count" 
-                       style="max-width: 100px;" 
-                       max="100"
-                       value="{{ request.args.get('num_results', 10) }}">
+                      type="number" 
+                      name="num_results" 
+                      placeholder="Count" 
+                      style="max-width: 100px;" 
+                      min="1"
+                      max="100"
+                      value="{{ request.args.get('num_results', 10) }}">
                 <button type="submit" class="btn btn-dark">Search</button>
               </div>
             </div>
