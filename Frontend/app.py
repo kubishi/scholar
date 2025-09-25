@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
+from flask import Flask, redirect, render_template, session, url_for, request, jsonify
 from datetime import datetime
 import json
 from os import environ as env
@@ -17,8 +17,6 @@ from .services.pinecone_service import (
     describe_count,
     semantic_query,
     id_query,
-    fetch_by_id,
-    upsert_vector,
 ) # type: ignore
 
 # --Flask App setup---
