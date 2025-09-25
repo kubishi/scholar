@@ -68,7 +68,7 @@
       &#x2193; Advanced Search
       </button>
 
-      {% if session %}
+      {% if session_user_name %}
         <a href="/add_conf" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer">
           + Add Conference
         </a>
@@ -85,10 +85,16 @@
         <button class="btn btn-outline-secondary flex-fill" disabled title="Login to add a conference">
           🔒 Add Conference
         </button>
+
+        <button class="btn btn-outline-secondary flex-fill" disabled title="Login to view saved conferences">
+          🔒 View Saved
+        </button>
+        <button class="btn btn-outline-secondary flex-fill" disabled title="Login to find friends">
+          🔒 Find Friends
+        </button>
       
       {% endif %}
 
-    
       <!-- Toggle Button -->
 
     </div>
