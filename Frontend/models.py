@@ -12,9 +12,10 @@ class Favorite_Conf(db.Model):
 class Submitted_Conferences(db.Model):
     __tablename__ = 'user_submitted_conferences'
     conf_id = db.Column(db.String(50), primary_key=True)
+    submitter_user_name = db.Column(db.String(50), primary_key=True)
     submitter_id = db.Column(db.String(60), db.ForeignKey('user.google_auth_id'), primary_key=True)
     status = db.Column(
-        db.Enum('waiting', 'archived', 'approved', name='submission_status'),
+        db.Enum('waiting', 'archived', 'approved', 'submitted', name='submission_status'),
         nullable=False,
         default='waiting'
     )

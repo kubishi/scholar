@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block body %}
+
+<picture class="bg-image">
+    <img src="static/img/background3.jpg" alt="Backgound Image" class="w-full h-screen object-cover blur-50 brightness-50 scale-105">
+  </picture>
+
+<div class="container py-4">
+  <h2>Conference Submissions</h2>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Conf ID</th>
+        <th>User Name</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Submitted</th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in submissions %}
+      <tr>
+        <td>{{ s.conf_id }}</td>
+        <td>{{ s.submitter_user_name }}</td>
+        <td>{{ s.conference_name }}</td>
+        <td>{{ s.edit_type }}</td>
+        <td>{{ s.status }}</td>
+        <td>{{ s.time_submitted_at or '' }}</td>
+        <td>{{ s.city or '' }}</td>
+        <td>{{ s.country or '' }}</td>
+        <td>{{ s.start or '' }}</td>
+        <td>{{ s.end or '' }}</td>
+        <td>
+          {% if s.url %}
+            <a href="{{ s.url }}" target="_blank" rel="noopener">site</a>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+            <form method="POST" action="{{ url_for('conf_approval_page') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+              
+                <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">
+                  DELETE
+                </button>
+              
+                {% if s.status == 'approved' %}
+                  <button type="submit" name="action" value="unapprove" class="btn btn-outline-warning btn-sm">
+                    Unapprove
+                  </button>
+                {% else %}
+                  <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">
+                    Approve
+                  </button>
+                {% endif %}
+              </form>
+
+        </td>
+
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+    <!-- submit all -->
+    <form method="POST" action="{{ url_for('submit_all_approved') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-primary">
+        Submit All Approved
+    </button>
+    </form>
+</div>
+{% endblock %}
