@@ -69,15 +69,15 @@
       </button>
 
       {% if session_user_name %}
-        <a href="/add_conf" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer">
+        <a href="{{ url_for('conferences.conference_adder') }}" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer">
           + Add Conference
         </a>
 
-        <a href="/saved_conference" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer" >
+        <a href="{{ url_for('conferences.saved_conference') }}" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer" >
           &#9829; View Saved
         </a>
-    
-        <a href="/connection_search" class="friend-button btn btn-dark border-0 rounded-3 flex-fill"  rel="noopener noreferrer" >
+
+        <a href="{{ url_for('conferences.connection_finder') }}" class="friend-button btn btn-dark border-0 rounded-3 flex-fill"  rel="noopener noreferrer" >
           &#x2605; Find Friends
         </a>
       
@@ -143,12 +143,11 @@
 
 </form>
 
-
+<!--Results-->
 <div class="container">
     {% if query or ID_query %}
       {% include "_results.html" %}
     {% endif %}
-    
 </div>
 
 
@@ -186,8 +185,6 @@
       }
   });
   </script>
-
-
 
 <!-- Script to show topics on click -->
 <script>
@@ -260,6 +257,4 @@
     }
   });
   </script>
-  
-
 {% endblock %}
