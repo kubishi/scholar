@@ -11,7 +11,9 @@
   <table class="table table-striped">
     <thead>
       <tr>
+        
         <th>Conf ID</th>
+
         <th>User Name</th>
         <th>Name</th>
         <th>Type</th>
@@ -26,7 +28,7 @@
     </thead>
     <tbody>
       {% for s in submissions %}
-      <tr>
+      <tr class="{% if s.status == 'approved' %}table-success{% endif %}">
         <td>{{ s.conf_id }}</td>
         <td>{{ s.submitter_user_name }}</td>
         <td>{{ s.conference_name }}</td>
@@ -46,13 +48,13 @@
             <form method="POST" action="{{ url_for('conf_approval_page') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
-              
+                <button type="submit" name="action" value="compare" class="btn btn-info btn-sm">Compare</button>
                 <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">
                   DELETE
                 </button>
               
                 {% if s.status == 'approved' %}
-                  <button type="submit" name="action" value="unapprove" class="btn btn-outline-warning btn-sm">
+                  <button type="submit" name="action" value="unapprove" class="btn btn-warning btn-sm">
                     Unapprove
                   </button>
                 {% else %}
@@ -65,6 +67,36 @@
         </td>
 
       </tr>
+      {% if compare_id == s.conf_id %}
+            <tr>
+            <td colspan="12">
+                <div class="border rounded p-2 bg-light">
+                <strong>Original (Pinecone)</strong>
+                {% if pine_meta %}
+                    <div>Name: {{ pine_meta.conference_name or "—" }}</div>
+                    <div>City/Country: {{ pine_meta.city or "—" }}, {{ pine_meta.country or "—" }}</div>
+                    <div>Dates: {{ pine_meta.start or "—" }} → {{ pine_meta.end or "—" }}</div>
+                    <div>Deadline: {{ pine_meta.deadline or "—" }}</div>
+                    <div>Topics: {{ pine_meta.topics or "—" }}</div>
+                    <div>URL: <a href="{{ pine_meta.url }}" target="_blank" rel="noopener">{{ pine_meta.url }}</a></div>
+                {% else %}
+                    <div class="text-muted">No original found in Pinecone for {{ s.conf_id }}.</div>
+                {% endif %}
+
+                <hr class="my-2">
+                <strong>Edited (Submission)</strong>
+                <div>Name: {{ s.conference_name or "—" }}</div>
+                <div>City/Country: {{ s.city or "—" }}, {{ s.country or "—" }}</div>
+                <div>Dates: {{ s.start or "—" }} → {{ s.end or "—" }}</div>
+                <div>Deadline: {{ s.deadline or "—" }}</div>
+                <div>Topics: {{ s.topics or "—" }}</div>
+                <div>URL: <a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.url }}</a></div>
+                </div>
+            </td>
+            </tr>
+        {% endif %}
+
+      
 
       {% endfor %}
     </tbody>
