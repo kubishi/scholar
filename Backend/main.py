@@ -223,7 +223,7 @@ def main():
         df["deadline"] = df["deadline"].apply(lambda x: x.strftime("%d-%b") if x else None)
         df["query_score"] = df["query_score"].apply(lambda x: round(x, 3))
 
-        cols = ["conference", "name", "core_rank", "deadline", "query_score"]
+        cols = ["conference", "conference_name", "core_rank", "deadline", "query_score"]
         print(df[cols].to_string(index=False))
     else:
         sys.argv.append("--help")
