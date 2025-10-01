@@ -1,0 +1,28 @@
+<nav class="navbar navbar-expand-lg shadow-sm">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    
+    <!-- Brand / Logo -->
+    <a class="d-flex align-items-center text-decoration-none" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='img/logo_bg.png') }}"
+           width="40" height="40" class="menu_logo me-2 rounded-2" alt="Kubishi Scholar logo">
+      <div class="d-flex flex-column">
+        <span class="fs-5 fw-bold text-dark">Kubishi Scholar</span>
+        <span class="title_subtext text-muted">Semantic Conference Discovery</span>
+      </div>
+    </a>
+
+    <!-- Right-aligned login/logout -->
+    <div class="d-flex align-items-center">
+      {% if session.get('user') and session['user'].get('userinfo') %}
+        <span class="me-3">
+          <strong>Welcome, {{ session['user']['userinfo']['name'] }}!</strong>
+        </span>
+        <a href="{{ url_for('logout') }}" class="logout-button btn btn-sm btn-dark">Logout</a>
+      {% else %}
+        <span class="me-3"><strong>Welcome!</strong></span>
+        <a href="{{ url_for('login') }}" class="login-button btn btn-sm btn-dark">Login</a>
+      {% endif %}
+    </div>
+
+  </div>
+</nav>

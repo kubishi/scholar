@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import redirect, url_for, request
 from datetime import datetime
+from rapidfuzz import fuzz
 RANK_ORDER = {
     "A*": 4,
     "A": 3,
@@ -64,7 +65,7 @@ def is_match(article, start_date=None, end_date=None, location="", ranking_sourc
         if location:
             article_loc_country = metadata.get("country", "").strip().lower()
             article_loc_city = metadata.get("city", "").strip().lower()
-            if location not in article_loc_country and location not in article_loc_city:
+            if fuzz.partial_ratio(location, article_loc_country) < 90 and fuzz.partial_ratio(location, article_loc_city) < 90:
                 return False
 
         # Ranking score filter
