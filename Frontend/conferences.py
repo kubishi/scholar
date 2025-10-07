@@ -1,9 +1,10 @@
-from flask import Blueprint, flash, redirect, render_template, session, url_for, request
+from flask import Blueprint, flash, redirect, render_template, session, url_for, request, jsonify, current_app
 from datetime import datetime
 
+from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
-from .services.openai_service import embed # type: ignore
 from .models import User, Favorite_Conf # type: ignore
+from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
 from .services.pinecone_service import ( # type: ignore
     fetch_by_id,
@@ -14,6 +15,7 @@ bp = Blueprint("conferences", __name__)
 
 #edit page
 @bp.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
+@login_required
 def edit_conference(conf_id):
     existing = fetch_by_id(conf_id)
     if not existing.vectors:
@@ -68,6 +70,7 @@ def edit_conference(conf_id):
   
 # ENTER CONFERENCES PAGE
 @bp.route('/add_conf', methods=['GET', 'POST'])
+@login_required
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
@@ -129,9 +132,9 @@ def connection_finder():
         current_app.logger.debug("No user found for connection search input provided.")
 
     return render_template('friend_search.html', searched_user_info=searched_user_info, logged_in_user_id = logged_in_user_id, session_user_name=session.get('user'))
-    # return jsonify([{"name": u.user_name, "email": u.user_email} for u in searched_user_info])
 
 @bp.route("/saved_conference")
+@login_required
 def saved_conference():
     logged_in_user_id = session.get("user_id")
     favorited_rows = db.session.query(Favorite_Conf).filter_by(user_id=logged_in_user_id).all()
