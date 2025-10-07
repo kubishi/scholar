@@ -7,11 +7,12 @@ from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
 from PyPDF2 import PdfReader
 
+from .auth import login_required # type: ignore
 from .conferences import bp as conferences_bp # type: ignore
 from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .services.openai_service import embed, pdf_summary # type: ignore
 from .models import User, Favorite_Conf # type: ignore
+from .services.openai_service import embed, pdf_summary # type: ignore
 from .services.db_services import db, migrate # type: ignore
 from .services.pinecone_service import ( # type: ignore
     describe_count,
@@ -123,9 +124,6 @@ def logout():
         )
     )
 
-def fetch_record_count():
-    return describe_count()
-
 # MAIN PAGE
 @app.route("/")
 def index():
@@ -139,7 +137,7 @@ def index():
     if redirect_response:
         return redirect_response
     
-    record_count = fetch_record_count()
+    record_count = describe_count()
     
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
@@ -221,12 +219,9 @@ def index():
                            ranking_source=ranking_source,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
-
 @app.route("/favorite", methods=["POST"])
+@login_required
 def save_favorite():
-    if "user_id" not in session:
-        return jsonify({"ok": False, "error": "auth_required"}), 401
-
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
     print(conf_id)
