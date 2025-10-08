@@ -316,6 +316,11 @@ body {
   content: attr(data-full);
 }
 
+.conference-review-button {
+  background: #3e50df;
+  color: white;
+}
+
 .short-url {
   display: none;
 }
