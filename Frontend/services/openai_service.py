@@ -36,4 +36,3 @@ def pdf_summary(text: str):
         #temperature=0.5,
     )
     return resp.choices[0].message.content.strip()
-    

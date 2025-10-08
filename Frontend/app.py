@@ -60,8 +60,8 @@ def upload_file():
     page_texts = []
     
     # Extract text from each page
-    for page in reader.pages:
-        txt = page.extract_text()  
+    for i in range(min(3, len(reader.pages))):
+        txt = reader.pages[i].extract_text()
         if txt:
             txt = txt.strip()
             if txt:
