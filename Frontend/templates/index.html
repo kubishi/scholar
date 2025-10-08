@@ -48,12 +48,13 @@
               <div class="d-flex gap-2 align-items-center">
                 <label for="numResults" class="form-label mb-0">Results:</label>
                 <input class="form-control border-dark" 
-                       type="number" 
-                       name="num_results" 
-                       placeholder="Count" 
-                       style="max-width: 100px;" 
-                       max="100"
-                       value="{{ request.args.get('num_results', 10) }}">
+                      type="number" 
+                      name="num_results" 
+                      placeholder="Count" 
+                      style="max-width: 100px;" 
+                      min="1"
+                      max="100"
+                      value="{{ request.args.get('num_results', 10) }}">
                 <button type="submit" class="btn btn-dark">Search</button>
               </div>
             </div>
@@ -69,16 +70,16 @@
       &#x2193; Advanced Search
       </button>
 
-      {% if session %}
-        <a href="/add_conf" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer">
+      {% if session_user_name %}
+        <a href="{{ url_for('conferences.conference_adder') }}" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer">
           + Add Conference
         </a>
 
-        <a href="/saved_conference" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer" >
+        <a href="{{ url_for('conferences.saved_conference') }}" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill" rel="noopener noreferrer" >
           &#9829; View Saved
         </a>
-    
-        <a href="/connection_search" class="friend-button btn btn-dark border-0 rounded-3 flex-fill"  rel="noopener noreferrer" >
+
+        <a href="{{ url_for('conferences.connection_finder') }}" class="friend-button btn btn-dark border-0 rounded-3 flex-fill"  rel="noopener noreferrer" >
           &#x2605; Find Friends
         </a>
       
@@ -86,10 +87,16 @@
         <button class="btn btn-outline-secondary flex-fill" disabled title="Login to add a conference">
           🔒 Add Conference
         </button>
+
+        <button class="btn btn-outline-secondary flex-fill" disabled title="Login to view saved conferences">
+          🔒 View Saved
+        </button>
+        <button class="btn btn-outline-secondary flex-fill" disabled title="Login to find friends">
+          🔒 Find Friends
+        </button>
       
       {% endif %}
 
-    
       <!-- Toggle Button -->
 
     </div>
@@ -140,12 +147,11 @@
 
 </form>
 
-
+<!--Results-->
 <div class="container">
     {% if query or ID_query %}
       {% include "_results.html" %}
     {% endif %}
-    
 </div>
 
 
@@ -183,8 +189,6 @@
       }
   });
   </script>
-
-
 
 <!-- Script to show topics on click -->
 <script>
@@ -257,6 +261,4 @@
     }
   });
   </script>
-  
-
 {% endblock %}

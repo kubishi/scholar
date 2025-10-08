@@ -7,7 +7,7 @@
 
 <div class="container mt-4">
     <h2>Edit Conference</h2>
-    <form method="POST" action="{{ url_for('edit_conference', conf_id=conf_id) }}">
+    <form method="POST" action="{{ url_for('conferences.edit_conference', conf_id=conf_id) }}">
         {{ form.hidden_tag() }}
 
         <div class="mb-3">
