@@ -36,20 +36,6 @@ app.register_blueprint(admin_bp)
 
 csrf = CSRFProtect(app)
 
-@app.route("/file-upload", methods=["POST"])
-def upload_file():
-    file = request.files['file']
-    reader = PdfReader(file)
-
-    # Only extract text from the first page
-    first_page = reader.pages[0]
-    extracted_text = first_page.extract_text()
-
-    print(extracted_text)
-    return jsonify({"text": extracted_text})
-
-
-# --- SQL Database Setup ---
 # ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
