@@ -1,5 +1,5 @@
-from flask import Flask, flash, redirect, render_template, session, url_for, request, jsonify
-from datetime import datetime
+from flask import Flask, redirect, render_template, session, url_for, request, jsonify
+from datetime import datetime, timezone
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -11,7 +11,7 @@ from .config import Config # type: ignore
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
 from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
-from .models import User, Favorite_Conf # type: ignore
+from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
 from .services.db_services import db, migrate # type: ignore
 from .services.pinecone_service import (
     describe_count,
@@ -64,6 +64,11 @@ app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
 
+# Make User model available in templates
+@app.context_processor
+def inject_user_model():
+    return dict(User=User)
+
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -81,6 +86,7 @@ def callback():
     google_auth_id = user_info['sub']
     user_name = user_info['name']
     user_email = user_info['email']
+    print("PERSON NAME", session['user'])
 
     session["user_id"] = google_auth_id
 
@@ -114,6 +120,25 @@ def logout():
 
 def fetch_record_count():
     return describe_count()
+
+# def is_admin():
+#     """Check if the current user has admin privileges."""
+#     if not session.get("user_id"):
+#         return False
+    
+#     user = User.query.filter_by(google_auth_id=session["user_id"]).first()
+#     return user and user.user_privelages == "admin"
+
+# def require_admin(f):
+#     """Decorator to require admin privileges for a route."""
+#     from functools import wraps
+    
+#     @wraps(f)
+#     def decorated_function(*args, **kwargs):
+#         if not is_admin():
+#             return redirect(url_for("index"))
+#         return f(*args, **kwargs)
+#     return decorated_function
 
 # MAIN PAGE
 @app.route("/")
@@ -210,14 +235,18 @@ def index():
                            ranking_source=ranking_source,
                            pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
 
-#edit page
+
+
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
+
     existing = fetch_by_id(conf_id)
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
     conf_meta = existing.vectors[conf_id].metadata
+
+
     def parse_date(date_str):
         if date_str:
             try:
@@ -225,11 +254,11 @@ def edit_conference(conf_id):
             except ValueError:
                 return None
         return None
-    
-    #Displaying the intital data
+
+ 
     form = ConferenceForm(
         conference_id=conf_id,
-        conference_name=conf_meta.get("name", ""),
+        conference_name=conf_meta.get("conference_name"),
         country=conf_meta.get("country", ""),
         city=conf_meta.get("city", ""),
         deadline=parse_date(conf_meta.get("deadline", "")),
@@ -238,33 +267,37 @@ def edit_conference(conf_id):
         topic_list=conf_meta.get("topics", ""),
         conference_link=conf_meta.get("url", "")
     )
+
+    # Handle form submission
     if request.method == 'POST':
-        print("POST data:", request.form.to_dict(),"\n")
+        print("POST data:", request.form.to_dict(), "\n")
         print("Errors:", form.errors)
 
     if form.validate_on_submit():
-        print("Form validated successfully.")
-        topic_vector = embed(form.topic_list.data)
+        # Create a new "edit submission" record in DB
+        updated_submission = Submitted_Conferences(
+            conf_id=conf_id,
+            submitter_user_name=session['user']['userinfo'].get('name', ''),
+            submitter_id=session['user']['userinfo']['sub'],
+            status='waiting',         # pending approval
+            edit_type='edit',
+            conference_name=form.conference_name.data.strip(),
+            country=form.country.data.strip(),
+            city=form.city.data.strip(),
+            deadline=form.deadline.data,
+            start=form.start.data,
+            end=form.end.data,
+            topics=form.topic_list.data.strip(),
+            url=form.conference_link.data.strip(),
+            time_submitted_at=datetime.now().isoformat()
+        )
 
-        updated_vector = {
-            "id": conf_id,
-            "values": topic_vector,
-            "metadata": {
-                "conference_name": form.conference_name.data.strip(),
-                "country": form.country.data.strip(),
-                "city": form.city.data.strip(),
-                "deadline": form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else "",
-                "start": form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else "",
-                "end": form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else "",
-                "topics": form.topic_list.data.strip(),
-                "url": form.conference_link.data.strip(),
-                "contributer": session['user']['userinfo']['sub'],
-            }
-        }
-        upsert_vector(updated_vector)
-        flash("Conference updated successfully!", "success")
+        db.session.add(updated_submission)
+        db.session.commit()
+
+        print("Conference edit submitted successfully! Pending approval.", "success")
         return redirect(url_for("index"))
-    
+
     return render_template("edit_conference.html", form=form, conf_id=conf_id)
   
 # ENTER CONFERENCES PAGE
@@ -272,39 +305,30 @@ def edit_conference(conf_id):
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
-        topic_vector = embed(form.topic_list.data)
-        
         conference_id = form.conference_id.data.strip().upper()
-        conference_name = form.conference_name.data.strip()
-        country = form.country.data.strip()
-        city = form.city.data.strip()
-        deadline = form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else ""
-        start = form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else ""
-        end = form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else ""
-        topic_list = form.topic_list.data.strip()
-        conference_link = form.conference_link.data.strip()
 
-        if conference_id:
-            topic_vector = embed(topic_list)
+        new_submission = Submitted_Conferences(
+            conf_id=conference_id,
+            submitter_user_name=session['user']['userinfo'].get('name', ''),
+            submitter_id=session['user']['userinfo']['sub'],
+            status='waiting',
+            edit_type='new',
+            conference_name=form.conference_name.data.strip(),
+            country=form.country.data.strip(),
+            city=form.city.data.strip(),
+            deadline=form.deadline.data,
+            start=form.start.data,
+            end=form.end.data,
+            topics=form.topic_list.data.strip(),
+            url=form.conference_link.data.strip(),
+            time_submitted_at=datetime.now().isoformat()
+        )
 
-            vector = {
-                "id": conference_id,
-                "values": topic_vector,
-                "metadata": {
-                    "conference_name": conference_name,
-                    "country": country,
-                    "city": city,
-                    "deadline": deadline,
-                    "start": start,
-                    "end": end,
-                    "topics": topic_list,
-                    "url": conference_link,
-                    "contributer": session['user']['userinfo']['sub'],
-                }
-            }
-            upsert_vector(vector)
-            flash("Conference added successfully!", "success")
-            return redirect(url_for("index"))  # redirect after POST
+        db.session.add(new_submission)
+        db.session.commit()
+
+        print("Conference submitted successfully! Pending approval.", "success")
+        return redirect(url_for("index"))
 
     return render_template("add_conference.html", form=form)
 
@@ -384,6 +408,90 @@ def save_favorite():
         status = "added"
 
     return jsonify({"ok": True, "status": status, "conf_id": conf_id})
+
+
+
+@app.route("/conf_approval", methods=["GET", "POST"])
+# @require_admin
+def conf_approval_page():
+
+    if request.method == "POST":
+        conf_id = request.form.get("conf_id")
+        action  = request.form.get("action")
+
+        conf = db.session.query(Submitted_Conferences).filter_by(conf_id=conf_id).first()
+        if not conf:
+            return redirect(url_for("conf_approval_page"))
+
+        if action == "compare":
+            res = fetch_by_id(conf_id)
+            vec = res.vectors.get(conf_id) if res else None
+            pine_meta = vec.metadata if vec else None
+
+            submissions = db.session.query(Submitted_Conferences).all()
+            return render_template(
+                "conf_approval.html",
+                submissions=submissions,
+                compare_id=conf_id,
+                pine_meta=pine_meta
+            )
+
+
+        if action == "approve":
+            conf.status = "approved"; conf.time_approved_at = datetime.now(); db.session.commit()
+        elif action == "unapprove":
+            conf.status = "waiting"; conf.time_approved_at = None; db.session.commit()
+        elif action == "delete":
+            db.session.delete(conf); db.session.commit()
+
+        return redirect(url_for("conf_approval_page"))
+
+
+    submissions = db.session.query(Submitted_Conferences).all()
+    return render_template("conf_approval.html", submissions=submissions, compare_id=None, pine_meta=None) # None makes sure you can't see the stuff on load
+
+
+def _iso_utc(dt):
+    if not dt:
+        return ""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+def approved_to_pinecone(conf):
+    topic_vector = embed(conf.topics)  
+
+    updated_vector = {
+        "id": conf.conf_id,
+        "values": topic_vector,
+        "metadata": {
+            "conference_name": (conf.conference_name or "").strip(),
+            "country": (conf.country or "").strip(),
+            "city": (conf.city or "").strip(),
+            "deadline": _iso_utc(conf.deadline),           
+            "start": _iso_utc(conf.start),                 
+            "end": _iso_utc(conf.end),                     
+            "topics": (conf.topics or "").strip(),
+            "url": (conf.url or "").strip(),
+            "original_contributor_id": conf.submitter_id,  # keep original key if needed
+            "status": conf.status,
+        }
+    }
+    upsert_vector(updated_vector)
+
+
+
+@app.route("/submit_all_approved", methods=["POST"])
+def submit_all_approved():
+    approved = Submitted_Conferences.query.filter_by(status="approved").all()
+    for conf in approved:
+        conf.status = "submitted"
+        approved_to_pinecone(conf)
+    print(f"Submitted {len(approved)} approved conferences.", "success")
+    return redirect(url_for("conf_approval_page"))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
