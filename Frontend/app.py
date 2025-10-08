@@ -20,10 +20,12 @@ from .services.pinecone_service import (
     fetch_by_id,
     upsert_vector,
 ) # type: ignore
+from .admin import admin_bp
 
 # --Flask App setup---
 app = Flask(__name__)
 app.config.from_object(Config)
+app.register_blueprint(admin_bp) 
 
 csrf = CSRFProtect(app)
 
@@ -408,89 +410,6 @@ def save_favorite():
         status = "added"
 
     return jsonify({"ok": True, "status": status, "conf_id": conf_id})
-
-
-
-@app.route("/conf_approval", methods=["GET", "POST"])
-# @require_admin
-def conf_approval_page():
-
-    if request.method == "POST":
-        conf_id = request.form.get("conf_id")
-        action  = request.form.get("action")
-
-        conf = db.session.query(Submitted_Conferences).filter_by(conf_id=conf_id).first()
-        if not conf:
-            return redirect(url_for("conf_approval_page"))
-
-        if action == "compare":
-            res = fetch_by_id(conf_id)
-            vec = res.vectors.get(conf_id) if res else None
-            pine_meta = vec.metadata if vec else None
-
-            submissions = db.session.query(Submitted_Conferences).all()
-            return render_template(
-                "conf_approval.html",
-                submissions=submissions,
-                compare_id=conf_id,
-                pine_meta=pine_meta
-            )
-
-
-        if action == "approve":
-            conf.status = "approved"; conf.time_approved_at = datetime.now(); db.session.commit()
-        elif action == "unapprove":
-            conf.status = "waiting"; conf.time_approved_at = None; db.session.commit()
-        elif action == "delete":
-            db.session.delete(conf); db.session.commit()
-
-        return redirect(url_for("conf_approval_page"))
-
-
-    submissions = db.session.query(Submitted_Conferences).all()
-    return render_template("conf_approval.html", submissions=submissions, compare_id=None, pine_meta=None) # None makes sure you can't see the stuff on load
-
-
-def _iso_utc(dt):
-    if not dt:
-        return ""
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    else:
-        dt = dt.astimezone(timezone.utc)
-    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-def approved_to_pinecone(conf):
-    topic_vector = embed(conf.topics)  
-
-    updated_vector = {
-        "id": conf.conf_id,
-        "values": topic_vector,
-        "metadata": {
-            "conference_name": (conf.conference_name or "").strip(),
-            "country": (conf.country or "").strip(),
-            "city": (conf.city or "").strip(),
-            "deadline": _iso_utc(conf.deadline),           
-            "start": _iso_utc(conf.start),                 
-            "end": _iso_utc(conf.end),                     
-            "topics": (conf.topics or "").strip(),
-            "url": (conf.url or "").strip(),
-            "original_contributor_id": conf.submitter_id,  # keep original key if needed
-            "status": conf.status,
-        }
-    }
-    upsert_vector(updated_vector)
-
-
-
-@app.route("/submit_all_approved", methods=["POST"])
-def submit_all_approved():
-    approved = Submitted_Conferences.query.filter_by(status="approved").all()
-    for conf in approved:
-        conf.status = "submitted"
-        approved_to_pinecone(conf)
-    print(f"Submitted {len(approved)} approved conferences.", "success")
-    return redirect(url_for("conf_approval_page"))
 
 
 if __name__ == "__main__":

@@ -77,34 +77,36 @@
           </td>
           <td>
             <div class="btn-group-vertical btn-group-sm" role="group">
-              <form method="POST" action="{{ url_for('conf_approval_page',
-              compare_id=compare_id) }}">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-              <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
-              <input type="hidden" name="current_compare_id" value="{{ compare_id or '' }}">
-              <input type="hidden" name="action" value="compare">
-              <button type="submit"
-              class="btn btn-info btn-sm">
-              {{ 'Collapse' if compare_id == s.conf_id else 'Compare' }}
-              </button>
+              <!-- Compare -->
+              <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                <input type="hidden" name="current_compare_id" value="{{ compare_id or '' }}">
+                <input type="hidden" name="action" value="compare">
+                <button type="submit" class="btn btn-info btn-sm">
+                  {{ 'Collapse' if compare_id == s.conf_id else 'Compare' }}
+                </button>
               </form>
-                            
+
+              <!-- Approve / Unapprove -->         
               <div class="btn-group btn-group-sm" role="group">
                 {% if s.status == 'approved' %}
-                <form method="POST" action="{{ url_for('conf_approval_page') }}" class="me-1">
+                
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
                   <button type="submit" name="action" value="unapprove" class="btn btn-outline-warning btn-sm">Undo</button>
                 </form>
                 {% else %}
-                <form method="POST" action="{{ url_for('conf_approval_page') }}" class="me-1">
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
                   <button type="submit" name="action" value="approve" class="btn btn-outline-success btn-sm">Approve</button>
                 </form>
                 {% endif %}
                 
-                <form method="POST" action="{{ url_for('conf_approval_page') }}">
+                <!-- Delete -->
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
                   <button type="submit" name="action" value="delete" class="btn btn-outline-danger btn-sm"
@@ -149,11 +151,9 @@
     </tbody>
   </table>
     <!-- submit all -->
-    <form method="POST" action="{{ url_for('submit_all_approved') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <button type="submit" class="btn btn-primary">
-        Submit All Approved
-    </button>
+    <form method="POST" action="{{ url_for('admin.submit_all_approved') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-primary">Submit All Approved</button>
     </form>
 </div>
 {% endblock %}
