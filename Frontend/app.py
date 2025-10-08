@@ -7,11 +7,14 @@ from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
 from PyPDF2 import PdfReader
 
+from .auth import login_required
+from .conferences import bp as conferences_bp 
 from .config import Config 
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format  
 from .forms import ConferenceForm 
 from .services.openai_service import embed 
 from .models import User, Favorite_Conf, Submitted_Conferences
+from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
 from .admin import admin_bp
 
@@ -47,6 +50,7 @@ def upload_file():
 
 
 # --- SQL Database Setup ---
+# ---SQL Database Setup---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
     f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
@@ -71,6 +75,31 @@ oauth.register(
 app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
+app.register_blueprint(conferences_bp)
+
+@app.route("/file-upload", methods=["POST"])
+def upload_file():
+    file = request.files['file']
+    reader = PdfReader(file)
+
+    page_texts = []
+    
+    # Extract text from each page
+    for i in range(min(3, len(reader.pages))):
+        txt = reader.pages[i].extract_text()
+        if txt:
+            txt = txt.strip()
+            if txt:
+                page_texts.append(txt)
+    extracted_text = "\n\n".join(page_texts)
+    if not extracted_text:
+        return jsonify({"error": "No extractable text found in the PDF."}), 400
+    try:
+        summary = pdf_summary(extracted_text)
+    except Exception as e:
+        #print(f"Error during summarization: {e}")
+        return jsonify({"error": "Failed to summarize the document."}), 500
+    return jsonify({"text": summary})
 
 
 # --- Context Processors ---
@@ -398,10 +427,8 @@ def saved_conference():
     )
 
 @app.route("/favorite", methods=["POST"])
+@login_required
 def save_favorite():
-    if "user_id" not in session:
-        return jsonify({"ok": False, "error": "auth_required"}), 401
-
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
     print(conf_id)
