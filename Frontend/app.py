@@ -7,25 +7,29 @@ from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
 from PyPDF2 import PdfReader
 
-from .config import Config # type: ignore
-from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .forms import ConferenceForm # type: ignore
-from .services.openai_service import embed # type: ignore
-from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
-from .services.db_services import db, migrate # type: ignore
+from .config import Config 
+from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format  
+from .forms import ConferenceForm 
+from .services.openai_service import embed 
+from .models import User, Favorite_Conf, Submitted_Conferences
+from .services.db_services import db, migrate
+from .admin import admin_bp
+
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
     id_query,
     fetch_by_id,
     upsert_vector,
-) # type: ignore
-from .admin import admin_bp
+)  
 
-# --Flask App setup---
+
+# --- Flask App setup ---
 app = Flask(__name__)
 app.config.from_object(Config)
-app.register_blueprint(admin_bp) 
+
+# Blueprints
+app.register_blueprint(admin_bp)
 
 csrf = CSRFProtect(app)
 
@@ -41,7 +45,8 @@ def upload_file():
     print(extracted_text)
     return jsonify({"text": extracted_text})
 
-# ---SQL Database Setup---
+
+# --- SQL Database Setup ---
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
     f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
@@ -50,7 +55,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate.init_app(app, db)
 
-# Auth0 Setup
+
+# --- Auth0 Setup ---
 oauth = OAuth(app)
 oauth.register(
     "auth0",
@@ -66,11 +72,15 @@ app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
 
-# Make User model available in templates
+
+# --- Context Processors ---
 @app.context_processor
 def inject_user_model():
+    """Make User model available in templates"""
     return dict(User=User)
 
+
+# --- Authentication Routes ---
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -80,8 +90,6 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-
-    # print("TONEKKKKKKKKN", token["id_token"])
     session["user"] = token
     user_info = token["userinfo"]
 
@@ -94,14 +102,18 @@ def callback():
 
     user = User.query.filter_by(google_auth_id=google_auth_id).first()
     if not user:
-        new_user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
+        new_user = User(
+            google_auth_id=google_auth_id,
+            user_name=user_name,
+            user_email=user_email
+        )
         db.session.add(new_user)
     else:
         # Optionally update existing user info
         user.user_name = user_name
         user.user_email = user_email
 
-    db.session.commit() 
+    db.session.commit()
 
     return redirect("/")
 
@@ -109,7 +121,8 @@ def callback():
 def logout():
     session.clear()
     return redirect(
-        "https://" + app.config["AUTH0_DOMAIN"]
+        "https://"
+        + app.config["AUTH0_DOMAIN"]
         + "/v2/logout?"
         + urlencode(
             {
@@ -120,48 +133,36 @@ def logout():
         )
     )
 
+
+# --- Helper Functions ---
 def fetch_record_count():
     return describe_count()
 
-# def is_admin():
-#     """Check if the current user has admin privileges."""
-#     if not session.get("user_id"):
-#         return False
-    
-#     user = User.query.filter_by(google_auth_id=session["user_id"]).first()
-#     return user and user.user_privelages == "admin"
 
-# def require_admin(f):
-#     """Decorator to require admin privileges for a route."""
-#     from functools import wraps
-    
-#     @wraps(f)
-#     def decorated_function(*args, **kwargs):
-#         if not is_admin():
-#             return redirect(url_for("index"))
-#         return f(*args, **kwargs)
-#     return decorated_function
-
-# MAIN PAGE
+# --- Main Routes ---
 @app.route("/")
 def index():
     redirect_response = redirect_clean_params("index")
     favorite_ids = set()
+
     if session.get("user_id"):
-        rows = (db.session.query(Favorite_Conf.fav_conf_id)
-                .filter_by(user_id=session["user_id"])
-                .all())
+        rows = (
+            db.session.query(Favorite_Conf.fav_conf_id)
+            .filter_by(user_id=session["user_id"])
+            .all()
+        )
         favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
+
     if redirect_response:
         return redirect_response
-    
+
     record_count = fetch_record_count()
-    
+
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
-    
+
     ID_query = request.args.get("ID_query", "").upper()
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
@@ -178,9 +179,9 @@ def index():
         ranking_source,
         ranking_score
     ])
-    
+
     articles = []
-    
+
     if ID_query:
         results = id_query(ID_query)
         articles = results.get("matches", [])
@@ -199,55 +200,64 @@ def index():
                 try:
                     start_date = (
                         datetime.strptime(date_span_first, "%m-%d-%Y")
-                        if date_span_first else None
+                        if date_span_first
+                        else None
                     )
                     end_date = (
                         datetime.strptime(date_span_second, "%m-%d-%Y")
-                        if date_span_second else None
+                        if date_span_second
+                        else None
                     )
-      
+
                     articles = list(filter(
-                                    lambda a: is_match(a, start_date, end_date, location, ranking_source, ranking_score),
-                                    all_articles
-                                    ))
+                        lambda a: is_match(
+                            a,
+                            start_date,
+                            end_date,
+                            location,
+                            ranking_source,
+                            ranking_score
+                        ),
+                        all_articles
+                    ))
                 except Exception as e:
                     print(f"Filtering error: {e}")
                     articles = all_articles
             else:
                 articles = all_articles
-            
+
         except Exception as e:
             print(f"Error processing query: {e}")
-        
+
         # Truncate based on num_results
         articles = articles[:num_results]
 
-    return render_template("index.html", 
-                           articles=articles,
-                           favorite_ids=favorite_ids,
-                           query=query,
-                           ID_query=ID_query,  
-                           num_results=num_results,
-                           date_span_first=date_span_first,
-                           date_span_second=date_span_second,
-                           session_user_name=session.get('user'),
-                           record_count = record_count,
-                           advanced_open=advanced_open,
-                           location=location,
-                           ranking_source=ranking_source,
-                           pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
+    return render_template(
+        "index.html",
+        articles=articles,
+        favorite_ids=favorite_ids,
+        query=query,
+        ID_query=ID_query,
+        num_results=num_results,
+        date_span_first=date_span_first,
+        date_span_second=date_span_second,
+        session_user_name=session.get('user'),
+        record_count=record_count,
+        advanced_open=advanced_open,
+        location=location,
+        ranking_source=ranking_source,
+        pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None
+    )
 
 
-
+# --- Conference Management Routes ---
 @app.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 def edit_conference(conf_id):
-
     existing = fetch_by_id(conf_id)
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
     conf_meta = existing.vectors[conf_id].metadata
-
 
     def parse_date(date_str):
         if date_str:
@@ -257,7 +267,6 @@ def edit_conference(conf_id):
                 return None
         return None
 
- 
     form = ConferenceForm(
         conference_id=conf_id,
         conference_name=conf_meta.get("conference_name"),
@@ -281,7 +290,7 @@ def edit_conference(conf_id):
             conf_id=conf_id,
             submitter_user_name=session['user']['userinfo'].get('name', ''),
             submitter_id=session['user']['userinfo']['sub'],
-            status='waiting',         # pending approval
+            status='waiting',  # pending approval
             edit_type='edit',
             conference_name=form.conference_name.data.strip(),
             country=form.country.data.strip(),
@@ -301,8 +310,7 @@ def edit_conference(conf_id):
         return redirect(url_for("index"))
 
     return render_template("edit_conference.html", form=form, conf_id=conf_id)
-  
-# ENTER CONFERENCES PAGE
+
 @app.route('/add_conf', methods=['GET', 'POST'])
 def conference_adder():
     form = ConferenceForm()
@@ -334,6 +342,8 @@ def conference_adder():
 
     return render_template("add_conference.html", form=form)
 
+
+# --- User Connection Routes ---
 @app.route("/connection_search")
 def connection_finder():
     connection_email_search_result = request.args.get("connection_email_search", "")
