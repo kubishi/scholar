@@ -16,6 +16,7 @@ bp = Blueprint("conferences", __name__)
 
 #edit page
 @bp.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
+@login_required
 def edit_conference(conf_id):
     existing = fetch_by_id(conf_id)
     if not existing.vectors:
@@ -77,6 +78,7 @@ def edit_conference(conf_id):
   
 # ENTER CONFERENCES PAGE
 @bp.route('/add_conf', methods=['GET', 'POST'])
+@login_required
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
