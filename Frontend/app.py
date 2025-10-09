@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, session, url_for, request, jsonify
-from datetime import datetime, timezone
+from datetime import datetime
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -14,17 +14,14 @@ from .config import Config
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format  
 from .forms import ConferenceForm 
 from .services.openai_service import embed 
-from .models import User, Favorite_Conf, Submitted_Conferences
+from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
-
 
 from .services.pinecone_service import (
     describe_count,
     semantic_query,
     id_query,
-    fetch_by_id,
-    upsert_vector,
 )  
 
 
@@ -150,12 +147,6 @@ def logout():
         )
     )
 
-
-# --- Helper Functions ---
-def fetch_record_count():
-    return describe_count()
-
-
 # --- Main Routes ---
 @app.route("/")
 def index():
@@ -173,7 +164,7 @@ def index():
     if redirect_response:
         return redirect_response
 
-    record_count = fetch_record_count()
+    record_count = describe_count()
 
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
