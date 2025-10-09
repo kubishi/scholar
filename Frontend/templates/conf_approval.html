@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block body %}
+
+<picture class="bg-image">
+    <img src="static/img/background3.jpg" alt="Backgound Image" class="w-full h-screen object-cover blur-50 brightness-50 scale-105">
+  </picture>
+
+<div class="container py-4">
+  <h2>Conference Submissions</h2>
+
+  <div class="table-responsive">
+    <table class="table table-striped table-hover table-sm">
+      <thead class="table-dark">
+        <tr>
+          <th>Conf ID</th>
+          <th>Submitter</th>
+          <th>Conference Name</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Location</th>
+          <th>Dates</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+        <tr class="{% if s.status == 'approved' %}table-warning{% elif s.status == 'submitted' %}table-success{% endif %}">
+          <td><code>{{ s.conf_id }}</code></td>
+          <td>{{ s.submitter_user_name }}</td>
+          <td>
+            <strong>{{ s.conference_name }}</strong>
+            {% if s.url %}
+            <br><small><a href="{{ s.url }}" target="_blank" class="text-decoration-none">🔗 site</a></small>
+            {% endif %}
+          </td>
+          <td>
+            {% if s.edit_type == 'new' %}
+            <span class="badge bg-primary">New</span>
+            {% else %}
+            <span class="badge bg-info">Edit</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if s.status == 'waiting' %}
+            <span class="badge bg-secondary">Waiting</span>
+            {% elif s.status == 'approved' %}
+            <span class="badge bg-warning">Approved</span>
+            {% elif s.status == 'submitted' %}
+            <span class="badge bg-success">Submitted</span>
+            {% else %}
+            <span class="badge bg-dark">{{ s.status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            <small class="text-muted">
+              {{ s.time_submitted_at.strftime('%m/%d/%y %H:%M') if s.time_submitted_at else '—' }}
+            </small>
+          </td>
+          <td>
+            {% if s.city or s.country %}
+            {{ s.city or '—' }}, {{ s.country or '—' }}
+            {% else %}
+            —
+            {% endif %}
+          </td>
+          <td>
+            {% if s.start or s.end %}
+            <small>
+              {% if s.start %}{{ s.start.strftime('%m/%d/%y') if s.start else '—' }}{% endif %}
+              {% if s.start and s.end %} → {% endif %}
+              {% if s.end %}{{ s.end.strftime('%m/%d/%y') if s.end else '—' }}{% endif %}
+            </small>
+            {% else %}
+            —
+            {% endif %}
+          </td>
+          <td>
+            <div class="btn-group-vertical btn-group-sm" role="group">
+              <!-- Compare -->
+              <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                <input type="hidden" name="current_compare_id" value="{{ compare_id or '' }}">
+                <input type="hidden" name="action" value="compare">
+                <button type="submit" class="btn btn-info btn-sm">
+                  {{ 'Collapse' if compare_id == s.conf_id else 'Compare' }}
+                </button>
+              </form>
+
+              <!-- Approve / Unapprove -->         
+              <div class="btn-group btn-group-sm" role="group">
+                {% if s.status == 'approved' %}
+                
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <button type="submit" name="action" value="unapprove" class="btn btn-outline-warning btn-sm">Undo</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <button type="submit" name="action" value="approve" class="btn btn-outline-success btn-sm">Approve</button>
+                </form>
+                {% endif %}
+                
+                <!-- Delete -->
+                <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <button type="submit" name="action" value="delete" class="btn btn-outline-danger btn-sm"
+                          onclick="return confirm('Delete this submission?')">Delete</button>
+                </form>
+              </div>
+            </div>
+          </td>
+        </tr>
+      {% if compare_id == s.conf_id %}
+            <tr>
+            <td colspan="9">
+                <div class="border rounded p-2 bg-light">
+                <strong>Original (Pinecone)</strong>
+                {% if pine_meta %}
+                    <div class="{% if pine_meta.conference_name != s.conference_name %}bg-warning{% endif %}">Name: {{ pine_meta.conference_name or "—" }}</div>
+                    <div class="{% if pine_meta.city != s.city or pine_meta.country != s.country %}bg-warning{% endif %}">City/Country: {{ pine_meta.city or "—" }}, {{ pine_meta.country or "—" }}</div>
+                    <div class="{% if pine_meta.start != s.start or pine_meta.end != s.end %}bg-warning{% endif %}">Dates: {{ pine_meta.start or "—" }} → {{ pine_meta.end or "—" }}</div>
+                    <div class="{% if pine_meta.deadline != s.deadline %}bg-warning{% endif %}">Deadline: {{ pine_meta.deadline or "—" }}</div>
+                    <div class="{% if pine_meta.topics != s.topics %}bg-warning{% endif %}">Topics: {{ pine_meta.topics or "—" }}</div>
+                    <div class="{% if pine_meta.url != s.url %}bg-warning{% endif %}">URL: <a href="{{ pine_meta.url }}" target="_blank" rel="noopener">{{ pine_meta.url }}</a></div>
+                {% else %}
+                    <div class="text-muted">No original found in Pinecone for {{ s.conf_id }}.</div>
+                {% endif %}
+
+                <hr class="my-2">
+                <strong>Edited (Submission)</strong>
+                <div class="{% if pine_meta and pine_meta.conference_name != s.conference_name %}bg-warning{% endif %}">Name: {{ s.conference_name or "—" }}</div>
+                <div class="{% if pine_meta and (pine_meta.city != s.city or pine_meta.country != s.country) %}bg-warning{% endif %}">City/Country: {{ s.city or "—" }}, {{ s.country or "—" }}</div>
+                <div class="{% if pine_meta and (pine_meta.start != s.start or pine_meta.end != s.end) %}bg-warning{% endif %}">Dates: {{ s.start or "—" }} → {{ s.end or "—" }}</div>
+                <div class="{% if pine_meta and pine_meta.deadline != s.deadline %}bg-warning{% endif %}">Deadline: {{ s.deadline or "—" }}</div>
+                <div class="{% if pine_meta and pine_meta.topics != s.topics %}bg-warning{% endif %}">Topics: {{ s.topics or "—" }}</div>
+                <div class="{% if pine_meta and pine_meta.url != s.url %}bg-warning{% endif %}">URL: <a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.url }}</a></div>
+                </div>
+            </td>
+            </tr>
+        {% endif %}
+
+      
+
+      {% endfor %}
+    </tbody>
+  </table>
+    <!-- submit all -->
+    <form method="POST" action="{{ url_for('admin.submit_all_approved') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-primary">Submit All Approved</button>
+    </form>
+</div>
+{% endblock %}

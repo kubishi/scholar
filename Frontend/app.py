@@ -7,22 +7,30 @@ from authlib.integrations.flask_client import OAuth
 from flask_wtf import CSRFProtect
 from PyPDF2 import PdfReader
 
-from .auth import login_required # type: ignore
-from .conferences import bp as conferences_bp # type: ignore
-from .config import Config # type: ignore
-from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format # type: ignore
-from .models import User, Favorite_Conf # type: ignore
-from .services.openai_service import embed, pdf_summary # type: ignore
-from .services.db_services import db, migrate # type: ignore
-from .services.pinecone_service import ( # type: ignore
+from .auth import login_required
+from .conferences import bp as conferences_bp 
+from .admin import admin_bp
+from .config import Config 
+from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format
+from .services.openai_service import embed 
+from .models import User, Favorite_Conf
+from .services.openai_service import embed, pdf_summary
+from .services.db_services import db, migrate
+
+from .services.pinecone_service import (
     describe_count,
     semantic_query,
     id_query,
-) 
+)  
 
-# --Flask App setup---
+
+# --- Flask App setup ---
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Blueprints
+app.register_blueprint(admin_bp)
+app.register_blueprint(conferences_bp)
 
 csrf = CSRFProtect(app)
 
@@ -35,7 +43,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate.init_app(app, db)
 
-# Auth0 Setup
+
+# --- Auth0 Setup ---
 oauth = OAuth(app)
 oauth.register(
     "auth0",
@@ -50,7 +59,7 @@ oauth.register(
 app.add_template_filter(city_country_filter, 'city_country')
 app.add_template_filter(to_gcal_datetime_filter, 'to_gcal_datetime')
 app.add_template_filter(format_date, 'format_date')
-app.register_blueprint(conferences_bp)
+
 
 @app.route("/file-upload", methods=["POST"])
 def upload_file():
@@ -76,6 +85,15 @@ def upload_file():
         return jsonify({"error": "Failed to summarize the document."}), 500
     return jsonify({"text": summary})
 
+
+# --- Context Processors ---
+@app.context_processor
+def inject_user_model():
+    """Make User model available in templates"""
+    return dict(User=User)
+
+
+# --- Authentication Routes ---
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -85,27 +103,30 @@ def login():
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
-
-    # print("TONEKKKKKKKKN", token["id_token"])
     session["user"] = token
     user_info = token["userinfo"]
 
     google_auth_id = user_info['sub']
     user_name = user_info['name']
     user_email = user_info['email']
+    print("PERSON NAME", session['user'])
 
     session["user_id"] = google_auth_id
 
     user = User.query.filter_by(google_auth_id=google_auth_id).first()
     if not user:
-        new_user = User(google_auth_id=google_auth_id, user_name=user_name, user_email=user_email)
+        new_user = User(
+            google_auth_id=google_auth_id,
+            user_name=user_name,
+            user_email=user_email
+        )
         db.session.add(new_user)
     else:
         # Optionally update existing user info
         user.user_name = user_name
         user.user_email = user_email
 
-    db.session.commit() 
+    db.session.commit()
 
     return redirect("/")
 
@@ -113,7 +134,8 @@ def callback():
 def logout():
     session.clear()
     return redirect(
-        "https://" + app.config["AUTH0_DOMAIN"]
+        "https://"
+        + app.config["AUTH0_DOMAIN"]
         + "/v2/logout?"
         + urlencode(
             {
@@ -124,26 +146,30 @@ def logout():
         )
     )
 
-# MAIN PAGE
+# --- Main Routes ---
 @app.route("/")
 def index():
     redirect_response = redirect_clean_params("index")
     favorite_ids = set()
+
     if session.get("user_id"):
-        rows = (db.session.query(Favorite_Conf.fav_conf_id)
-                .filter_by(user_id=session["user_id"])
-                .all())
+        rows = (
+            db.session.query(Favorite_Conf.fav_conf_id)
+            .filter_by(user_id=session["user_id"])
+            .all()
+        )
         favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
+
     if redirect_response:
         return redirect_response
-    
+
     record_count = describe_count()
-    
+
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
-    
+
     ID_query = request.args.get("ID_query", "").upper()
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
@@ -160,9 +186,9 @@ def index():
         ranking_source,
         ranking_score
     ])
-    
+
     articles = []
-    
+
     if ID_query:
         results = id_query(ID_query)
         articles = results.get("matches", [])
@@ -187,37 +213,46 @@ def index():
                         datetime.strptime(date_span_second, "%m-%d-%Y")
                         if date_span_second else None
                     )
-      
+
                     articles = list(filter(
-                                    lambda a: is_match(a, start_date, end_date, location, ranking_source, ranking_score),
-                                    all_articles
-                                    ))
+                        lambda a: is_match(
+                            a,
+                            start_date,
+                            end_date,
+                            location,
+                            ranking_source,
+                            ranking_score
+                        ),
+                        all_articles
+                    ))
                 except Exception as e:
                     print(f"Filtering error: {e}")
                     articles = all_articles
             else:
                 articles = all_articles
-            
+
         except Exception as e:
             print(f"Error processing query: {e}")
-        
+
         # Truncate based on num_results
         articles = articles[:num_results]
 
-    return render_template("index.html", 
-                           articles=articles,
-                           favorite_ids=favorite_ids,
-                           query=query,
-                           ID_query=ID_query,  
-                           num_results=num_results,
-                           date_span_first=date_span_first,
-                           date_span_second=date_span_second,
-                           session_user_name=session.get('user'),
-                           record_count = record_count,
-                           advanced_open=advanced_open,
-                           location=location,
-                           ranking_source=ranking_source,
-                           pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None)
+    return render_template(
+        "index.html",
+        articles=articles,
+        favorite_ids=favorite_ids,
+        query=query,
+        ID_query=ID_query,
+        num_results=num_results,
+        date_span_first=date_span_first,
+        date_span_second=date_span_second,
+        session_user_name=session.get('user'),
+        record_count=record_count,
+        advanced_open=advanced_open,
+        location=location,
+        ranking_source=ranking_source,
+        pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None
+    )
 
 @app.route("/favorite", methods=["POST"])
 @login_required

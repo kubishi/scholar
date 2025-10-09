@@ -245,16 +245,10 @@ body {
   content: attr(data-full);
 }
 
-/* On smaller screens, show "Link" instead */
-@media (max-width: 768px) { /* adjust breakpoint as needed */
-  .responsive-link::after {
-    content: attr(data-short);
-  }
-  .responsive-link {
-    text-decoration: underline; /* optional, to indicate it's a link */
-  }
+.conference-review-button {
+  background: #3e50df;
+  color: white;
 }
-
 
 
 .short-url { display: none; }

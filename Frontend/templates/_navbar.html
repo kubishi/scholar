@@ -10,6 +10,14 @@
         <span class="title_subtext text-muted">Semantic Conference Discovery</span>
       </div>
     </a>
+    {% if session.get('user_id') %}
+    {% set user = User.query.filter_by(google_auth_id=session['user_id']).first() %}
+      {% if user and user.user_privelages == "admin" %}
+      <a href="/conf_approval" class="conference-review-button btn btn-dark border-0 rounded-3" rel="noopener noreferrer">
+        review
+      </a>
+      {% endif %}
+  {% endif %}
 
     <!-- Right-aligned login/logout -->
     <div class="d-flex align-items-center">
@@ -22,6 +30,7 @@
         <span class="me-3"><strong>Welcome!</strong></span>
         <a href="{{ url_for('login') }}" class="login-button btn btn-sm btn-dark">Login</a>
       {% endif %}
+
     </div>
 
   </div>
