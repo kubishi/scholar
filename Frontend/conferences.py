@@ -4,6 +4,7 @@ from datetime import datetime
 from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
 from .models import User, Favorite_Conf # type: ignore
+from .models import Submitted_Conferences
 from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
 from .services.pinecone_service import ( # type: ignore
@@ -15,13 +16,13 @@ bp = Blueprint("conferences", __name__)
 
 #edit page
 @bp.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
-@login_required
 def edit_conference(conf_id):
     existing = fetch_by_id(conf_id)
     if not existing.vectors:
         return f"Conference ID {conf_id} not found", 404
 
     conf_meta = existing.vectors[conf_id].metadata
+
     def parse_date(date_str):
         if date_str:
             try:
@@ -29,11 +30,10 @@ def edit_conference(conf_id):
             except ValueError:
                 return None
         return None
-    
-    #Displaying the intital data
+
     form = ConferenceForm(
         conference_id=conf_id,
-        conference_name=conf_meta.get("name", ""),
+        conference_name=conf_meta.get("conference_name"),
         country=conf_meta.get("country", ""),
         city=conf_meta.get("city", ""),
         deadline=parse_date(conf_meta.get("deadline", "")),
@@ -43,72 +43,70 @@ def edit_conference(conf_id):
         conference_link=conf_meta.get("url", "")
     )
 
-    if form.validate_on_submit():
-        #print("Form validated successfully.")
-        topic_vector = embed(form.topic_list.data)
+    # Handle form submission
+    if request.method == 'POST':
+        print("POST data:", request.form.to_dict(), "\n")
+        print("Errors:", form.errors)
 
-        updated_vector = {
-            "id": conf_id,
-            "values": topic_vector,
-            "metadata": {
-                "conference_name": form.conference_name.data.strip(),
-                "country": form.country.data.strip(),
-                "city": form.city.data.strip(),
-                "deadline": form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else "",
-                "start": form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else "",
-                "end": form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else "",
-                "topics": form.topic_list.data.strip(),
-                "url": form.conference_link.data.strip(),
-                "contributer": session['user']['userinfo']['sub'],
-            }
-        }
-        upsert_vector(updated_vector)
-        flash("Conference updated successfully!", "success")
+    if form.validate_on_submit():
+        # Create a new "edit submission" record in DB
+        updated_submission = Submitted_Conferences(
+            conf_id=conf_id,
+            submitter_user_name=session['user']['userinfo'].get('name', ''),
+            submitter_id=session['user']['userinfo']['sub'],
+            status='waiting',  # pending approval
+            edit_type='edit',
+            conference_name=form.conference_name.data.strip(),
+            country=form.country.data.strip(),
+            city=form.city.data.strip(),
+            deadline=form.deadline.data,
+            start=form.start.data,
+            end=form.end.data,
+            topics=form.topic_list.data.strip(),
+            url=form.conference_link.data.strip(),
+            time_submitted_at=datetime.now().isoformat()
+        )
+
+        db.session.add(updated_submission)
+        db.session.commit()
+
+        print("Conference edit submitted successfully! Pending approval.", "success")
         return redirect(url_for("index"))
-    
+
     return render_template("edit_conference.html", form=form, conf_id=conf_id)
   
 # ENTER CONFERENCES PAGE
 @bp.route('/add_conf', methods=['GET', 'POST'])
-@login_required
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
-        topic_vector = embed(form.topic_list.data)
-        
         conference_id = form.conference_id.data.strip().upper()
-        conference_name = form.conference_name.data.strip()
-        country = form.country.data.strip()
-        city = form.city.data.strip()
-        deadline = form.deadline.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.deadline.data else ""
-        start = form.start.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.start.data else ""
-        end = form.end.data.strftime("%Y-%m-%dT%H:%M:%SZ") if form.end.data else ""
-        topic_list = form.topic_list.data.strip()
-        conference_link = form.conference_link.data.strip()
 
-        if conference_id:
-            topic_vector = embed(topic_list)
+        new_submission = Submitted_Conferences(
+            conf_id=conference_id,
+            submitter_user_name=session['user']['userinfo'].get('name', ''),
+            submitter_id=session['user']['userinfo']['sub'],
+            status='waiting',
+            edit_type='new',
+            conference_name=form.conference_name.data.strip(),
+            country=form.country.data.strip(),
+            city=form.city.data.strip(),
+            deadline=form.deadline.data,
+            start=form.start.data,
+            end=form.end.data,
+            topics=form.topic_list.data.strip(),
+            url=form.conference_link.data.strip(),
+            time_submitted_at=datetime.now().isoformat()
+        )
 
-            vector = {
-                "id": conference_id,
-                "values": topic_vector,
-                "metadata": {
-                    "conference_name": conference_name,
-                    "country": country,
-                    "city": city,
-                    "deadline": deadline,
-                    "start": start,
-                    "end": end,
-                    "topics": topic_list,
-                    "url": conference_link,
-                    "contributer": session['user']['userinfo']['sub'],
-                }
-            }
-            upsert_vector(vector)
-            flash("Conference added successfully!", "success")
-            return redirect(url_for("index"))  # redirect after POST
+        db.session.add(new_submission)
+        db.session.commit()
+
+        print("Conference submitted successfully! Pending approval.", "success")
+        return redirect(url_for("index"))
 
     return render_template("add_conference.html", form=form)
+
 
 @bp.route("/connection_search")
 def connection_finder():
