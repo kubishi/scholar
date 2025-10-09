@@ -207,13 +207,11 @@ def index():
                 try:
                     start_date = (
                         datetime.strptime(date_span_first, "%m-%d-%Y")
-                        if date_span_first
-                        else None
+                        if date_span_first else None
                     )
                     end_date = (
                         datetime.strptime(date_span_second, "%m-%d-%Y")
-                        if date_span_second
-                        else None
+                        if date_span_second else None
                     )
 
                     articles = list(filter(
@@ -277,7 +275,6 @@ def save_favorite():
         status = "added"
 
     return jsonify({"ok": True, "status": status, "conf_id": conf_id})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
