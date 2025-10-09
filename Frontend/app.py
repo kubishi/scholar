@@ -11,8 +11,7 @@ from .auth import login_required
 from .conferences import bp as conferences_bp 
 from .admin import admin_bp
 from .config import Config 
-from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format  
-from .forms import ConferenceForm 
+from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format
 from .services.openai_service import embed 
 from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary

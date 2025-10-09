@@ -3,14 +3,11 @@ from datetime import datetime
 
 from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
-from .models import User, Favorite_Conf # type: ignore
-from .models import Submitted_Conferences
+from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
 from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
-from .services.pinecone_service import ( # type: ignore
-    fetch_by_id,
-    upsert_vector,
-) 
+from .services.pinecone_service import fetch_by_id # type: ignore
+
 
 bp = Blueprint("conferences", __name__) 
 
@@ -76,7 +73,7 @@ def edit_conference(conf_id):
 
     return render_template("edit_conference.html", form=form, conf_id=conf_id)
   
-# ENTER CONFERENCES PAGE
+#ADD CONFERENCES PAGE
 @bp.route('/add_conf', methods=['GET', 'POST'])
 @login_required
 def conference_adder():
