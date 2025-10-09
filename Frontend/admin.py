@@ -7,7 +7,7 @@ from .models import Submitted_Conferences
 from .services.pinecone_service import fetch_by_id, upsert_vector
 from .services.openai_service import embed
 
-admin_bp = Blueprint("admin", __name__)
+admin_bp = Blueprint('admin', __name__)
 
 # --- helpers (from your snippet) ---
 def _iso_utc(dt):
