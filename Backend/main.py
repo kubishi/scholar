@@ -62,7 +62,7 @@ class ConferenceDB:
     def insert(self, conferences: List[Dict]):
         """Insert conferences into the Pinecone index."""
         vectors = []
-        print(f"🔍 Number of conferences received: {len(conferences)}")
+        print(f" Number of conferences received: {len(conferences)}")
         for conf in conferences:
             unique_id = conf["conference"]
             vector = {
