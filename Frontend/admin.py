@@ -6,7 +6,7 @@ from .services.db_services import db
 from .models import Submitted_Conferences
 from .services.pinecone_service import fetch_by_id, upsert_vector
 from .services.openai_service import embed
-
+from .auth import login_required
 admin_bp = Blueprint('admin', __name__)
 
 # --- helpers (from your snippet) ---
@@ -41,6 +41,7 @@ def approved_to_pinecone(conf):
 
 # --- routes (just these) ---
 @admin_bp.route("/conf_approval", methods=["GET", "POST"])
+@login_required
 def conf_approval_page():
     if request.method == "POST":
         conf_id = request.form.get("conf_id")
@@ -76,6 +77,7 @@ def conf_approval_page():
     return render_template("conf_approval.html", submissions=submissions, compare_id=None, pine_meta=None)
 
 @admin_bp.route("/submit_all_approved", methods=["POST"])
+@login_required
 def submit_all_approved():
     approved = Submitted_Conferences.query.filter_by(status="approved").all()
     for conf in approved:
