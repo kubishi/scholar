@@ -1,234 +1,132 @@
 import sys
-import pandas
 import pathlib
-from typing import List
+from typing import List, Dict, Any
 from openai import OpenAI
 import argparse
 from datetime import datetime
 
 import os
-from pinecone import Pinecone, ServerlessSpec
-from typing import List, Dict
+import pandas as pd  # <-- use pd
+from pymongo import MongoClient, UpdateOne
 from dotenv import load_dotenv
 
 load_dotenv()
 
 MODELS = {
-    "text-embedding-3-small": {
-        "size": 1536, 
-    },
-    "text-embedding-3-large": {
-        "size": 3072,
-    }
+    "text-embedding-3-small": 1536,
+    "text-embedding-3-large": 3072,
 }
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 
 thisdir = pathlib.Path(__file__).parent.resolve()
-datapath = thisdir / 'csvs' / 'test.csv'
-pc = Pinecone(api_key=PINECONE_API_KEY)
+datapath = thisdir / 'csvs' / 'test_true.csv'
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-CORE_RANKS = ["A*", "A", "B", "C"]
+mongo_client = MongoClient(os.getenv("MONGO_URI"))
+db = mongo_client["kubishi-scholar"]
+collection = db["conferences"]
 
 def get_embeddings(docs: List[str],
-                   model="text-embedding-3-small",
-                   chunk_size=100) -> List[List[float]]:
+                   model: str = "text-embedding-3-small",
+                   chunk_size: int = 100) -> List[List[float]]:
     if model not in MODELS:
-        raise ValueError(f"Invalid model: {model}. Available models: {list(MODELS.keys())}")
-    doc_chunks = [docs[i:i+chunk_size] for i in range(0, len(docs), chunk_size)]
-    embeddings = []
-    for doc_chunk in doc_chunks:
-        res = openai_client.embeddings.create(input=doc_chunk, model=model)
+        raise ValueError(f"Invalid model: {model}. Available: {list(MODELS.keys())}")
+    embeddings: List[List[float]] = []
+    for i in range(0, len(docs), chunk_size):
+        chunk = docs[i:i+chunk_size]
+        res = openai_client.embeddings.create(input=chunk, model=model)
         embeddings.extend([d.embedding for d in res.data])
-
     return embeddings
 
-class ConferenceDB:
-    def __init__(self, model_name="text-embedding-3-small"):
-        """Initialize the Pinecone index."""
-        self.dimension = MODELS[model_name]["size"]
-        
-        if PINECONE_INDEX_NAME not in pc.list_indexes().names():
-            pc.create_index(
-                name=PINECONE_INDEX_NAME,
-                dimension=self.dimension,
-                metric="cosine",
-                spec=ServerlessSpec(cloud="aws", region="us-west-2")  # Adjust region if necessary
-            )
+def build_text(row: pd.Series) -> str:
+    # Compose a compact blurb from your columns
+    title = str(row.get("Title") or "").strip()
+    acro = str(row.get("Acronym") or "").strip()
+    ranks = []
+    for col in ["CORE2023","CORE2021","CORE2020","CORE2018","CORE2017","CORE2014","CORE2013","ERA2010"]:
+        val = str(row.get(col) or "").strip()
+        if val:
+            ranks.append(f"{col}:{val}")
+    h5i = str(row.get("h5_index") or "").strip()
+    h5m = str(row.get("h5_median") or "").strip()
+    header = f"{title} ({acro})" if acro else title
+    tail_parts = []
+    if ranks: tail_parts.append("; ".join(ranks))
+    h5_tail = "; ".join([p for p in [f"h5_index:{h5i}" if h5i else "", f"h5_median:{h5m}" if h5m else ""] if p])
+    if h5_tail: tail_parts.append(h5_tail)
+    tail = " | ".join(tail_parts)
+    return f"{header} — {tail}" if tail else header
 
-        self.index = pc.Index(PINECONE_INDEX_NAME)
-    
-    def insert(self, conferences: List[Dict]):
-        """Insert conferences into the Pinecone index."""
-        vectors = []
-        print(f" Number of conferences received: {len(conferences)}")
-        for conf in conferences:
-            unique_id = conf["conference"]
-            vector = {
-                "id": unique_id,  # Use HTML ID as the unique identifier
-                "values": conf["embedding"],
-                "metadata": {
-                    key: value
-                    for key, value in conf.items()
-                    if key not in ["embedding"]
-                }
-            }
-            vectors.append(vector)
+def to_int_or_none(s: str):
+    s = str(s or "").strip()
+    try:
+        return int(float(s)) if s else None
+    except ValueError:
+        return None
 
-        
-        
-        res = self.index.upsert(vectors=vectors)
-        print(f"Response: {res}")
-        
-    
-    def search_by_embedding(self,
-                            query_vector: List[float],
-                            filter: Dict = None,
-                            limit: int = 5) -> List[Dict]:
-        """Search the Pinecone index using a vector embedding."""
-        results = self.index.query(
-            vector=query_vector,
-            top_k=limit,
-            include_metadata=True,
-            filter=filter
-        )
-        
-        return [
-            {
-                **{
-                    key: value
-                    for key, value in match["metadata"].items()
-                },
-                "query_score": match["score"]
-            }
-            for match in results.get("matches", [])
-        ]
-    
-    def clear_all(self):
-        """Delete all records in the Pinecone index."""
-        try:
-            self.index.delete(delete_all=True)
-        except Exception as e:
-            print(f"Error deleting records: {e}")
+def build_docs(rows: pd.DataFrame, embeddings: List[List[float]], model: str) -> List[Dict[str, Any]]:
+    dims_expected = MODELS[model]
+    docs: List[Dict[str, Any]] = []
+    for i, (idx, row) in enumerate(rows.iterrows()):
+        emb = embeddings[i]
+        if len(emb) != dims_expected:
+            raise ValueError(f"Embedding length {len(emb)} != expected {dims_expected} for model {model}")
 
-def load_data():
-    return pandas.read_csv(datapath)
-
-def upload_data():
-    data = load_data()
-    data = data.astype(object)
-
-    # change nan to None
-    data = data.where(pandas.notnull(data), None)
-    # change numpy nan to None
-    data = data.where(data.notnull(), None)
-    # change all columns to object type
-
-    # Get rows as list of dictionaries
-    conferences = data.to_dict(orient='records')
-
-    # Remove None values from each record
-    conferences = [{k: v for k, v in conf.items() if v is not None} for conf in conferences]
-
-    # Filter out records missing topics or deadline or with placeholders
-    conferences = [
-        conf for conf in conferences
-        if "topics" in conf and conf["topics"]
-        and "deadline" in conf and conf["deadline"]
-        and conf["deadline"].upper() not in {"TBD", "TBA", "DD-MM-YYYY"}
-    ]
-
-    # Generate embeddings
-    topics = [conf["topics"] for conf in conferences]
-    embeddings = get_embeddings(topics)
-    for conf, emb in zip(conferences, embeddings):
-        conf["embedding"] = emb
-
-    # Parse and attach deadline month/day — skip if format is bad
-    valid_conferences = []
-
-    for conf in conferences:
-        try:
-            # Try parsing the deadline
-            deadline_date = datetime.fromisoformat(conf["deadline"])
-            conf["deadline_month"] = deadline_date.month
-            conf["deadline_day"] = deadline_date.day
-            print(conf)
-            valid_conferences.append(conf)
-        except Exception:
-            continue  
-
-
-    # Final insert
-    db = ConferenceDB()
-    db.insert(valid_conferences)
-
-def get_parser():
-    parser = argparse.ArgumentParser(description="Upload conference data to Pinecone.")
-    subparsers = parser.add_subparsers(dest="command")
-    upload_parser = subparsers.add_parser("upload", help="Upload conference data to Pinecone.")
-
-    query_parser = subparsers.add_parser("query", help="Query the Pinecone index.")
-    query_parser.add_argument("query", type=str, help="Query string.")
-    query_parser.add_argument("--limit", type=int, default=20, help="Number of results to return.")
-    query_parser.add_argument("--min-core-rank", choices=CORE_RANKS, help="Minimum core rank to filter results.")
-    query_parser.add_argument("--upcoming", action="store_true", help="Filter upcoming deadlines.")
-    query_parser.add_argument("--sort-by", type=str, help="Sort results by a column.", default="query_score")
-    return parser
+        base_id = (str(row.get("Acronym") or "").strip() or str(row.get("Title") or "").strip() or str(idx))
+        doc = {
+            "_id": base_id,
+            "title": str(row.get("Title") or "").strip(),
+            "acronym": str(row.get("Acronym") or "").strip(),
+            "core": {
+                "CORE2023": str(row.get("CORE2023") or "").strip(),
+                "CORE2021": str(row.get("CORE2021") or "").strip(),
+                "CORE2020": str(row.get("CORE2020") or "").strip(),
+                "CORE2018": str(row.get("CORE2018") or "").strip(),
+                "CORE2017": str(row.get("CORE2017") or "").strip(),
+                "CORE2014": str(row.get("CORE2014") or "").strip(),
+                "CORE2013": str(row.get("CORE2013") or "").strip(),
+                "ERA2010":  str(row.get("ERA2010")  or "").strip(),
+            },
+            "h5_index": to_int_or_none(row.get("h5_index")),
+            "h5_median": to_int_or_none(row.get("h5_median")),
+            "text": row["text_for_embedding"],
+            "embedding": emb,
+            "model": model,
+            "dims": len(emb),
+            "updated_at": pd.Timestamp.utcnow().isoformat(),
+        }
+        docs.append(doc)
+    return docs
 
 def main():
-    parser = get_parser()
+    parser = argparse.ArgumentParser(description="Generate embeddings and store in MongoDB")
+    parser.add_argument("--model", type=str, default="text-embedding-3-small", choices=list(MODELS.keys()))
+    parser.add_argument("--chunk_size", type=int, default=100)
+    parser.add_argument("--csv", type=str, default=str(datapath))
     args = parser.parse_args()
 
-    if not hasattr(args, "command"):
-        sys.argv.append("--help")
-        args = parser.parse_args()
-        return
+    # Load CSV as strings; replace NaN with ""
+    df = pd.read_csv(args.csv, dtype=str).fillna("")
+    required = {"Title","Acronym","CORE2023","CORE2021","CORE2020","CORE2018","CORE2017","CORE2014","CORE2013","ERA2010","h5_index","h5_median"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"CSV missing columns: {sorted(missing)}")
 
-    if args.command == "upload":
-        upload_data()
-    elif args.command == "query":
-        db = ConferenceDB()
-        query_vector = get_embeddings([args.query])[0]
-        filter = {}
-        if args.min_core_rank:
-            min_rank_idx = CORE_RANKS.index(args.min_core_rank)
-            allowed_ranks = CORE_RANKS[:min_rank_idx+1]
-            filter["core_rank"] = {"$in": allowed_ranks}
-        if args.upcoming:
-            today = datetime.today()
-            filter["deadline_month"] = {"$gte": today.month}
-            filter["deadline_day"] = {"$gte": today.day}
+    df["text_for_embedding"] = df.apply(build_text, axis=1)
+    rows = df[df["text_for_embedding"].str.len() > 0].copy()
+    texts = rows["text_for_embedding"].tolist()
 
-        results = db.search_by_embedding(
-            query_vector,
-            filter=filter,
-            limit=args.limit
-        )
-        # rows = []
-        # for i, res in enumerate(results):
-        #     rows.append([res.get(col, "") for col in cols])
-        df = pandas.DataFrame.from_records(results)
-        # sort by deadline (first parse  10-Feb style dates)
-        df["deadline"] = df["deadline"].apply(lambda x: datetime.strptime(x, "%d-%b") if x else None)
-        
-        df["rank_index"] = df["core_rank"].apply(lambda x: CORE_RANKS.index(x) if x in CORE_RANKS else len(CORE_RANKS))
-        args.sort_by = "rank_index" if args.sort_by == "core_rank" else args.sort_by # sort by rank index if sorting by core rank
+    embeddings = get_embeddings(texts, model=args.model, chunk_size=args.chunk_size)
+    docs = build_docs(rows, embeddings, model=args.model)
 
-        ascending = args.sort_by in ["deadline", "deadline_month", "deadline_day"]
-        df = df.sort_values(by=[args.sort_by], ascending=ascending)
+    # --- simple insert (will error if _id exists) ---
+    # collection.insert_many(docs, ordered=False)
 
+    # --- recommended: upsert to avoid duplicates ---
+    ops = [UpdateOne({"_id": d["_id"]}, {"$set": d}, upsert=True) for d in docs]
+    if ops:
+        collection.bulk_write(ops, ordered=False)
 
-        df["deadline"] = df["deadline"].apply(lambda x: x.strftime("%d-%b") if x else None)
-        df["query_score"] = df["query_score"].apply(lambda x: round(x, 3))
+    print(f"Upserted {len(docs)} documents into MongoDB collection.")
 
-        cols = ["conference", "conference_name", "core_rank", "deadline", "query_score"]
-        print(df[cols].to_string(index=False))
-    else:
-        sys.argv.append("--help")
-        args = parser.parse_args()
-        return
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
