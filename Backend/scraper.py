@@ -5,7 +5,6 @@ import requests
 from dotenv import load_dotenv
 import pandas as pd
 import json
-from searchURL import search_conference_website
 from braveSearch import brave_search_conference_website
 import time
 from typing import Optional, Dict, Any
@@ -44,7 +43,7 @@ def fetch_page_content(url: str, max_retries: int = 3, delay: int = 2) -> Option
 
 # Creates blank data to "reset" .csv files for new data
 def reset_csv():
-    data_frame = pd.DataFrame(columns=["conference","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","name","topics"])
+    data_frame = pd.DataFrame(columns=["Acronym","h5_index","core_rank","era_rank","qualis_rank","deadline","notification","start","end","location","Title","topics"])
     data_frame.to_csv('test.csv', index=False) 
     return data_frame
 
@@ -58,7 +57,7 @@ def extract_conference_details(page_content: str):
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "conference": {
+                    "Acronym": {
                         "type": "string",
                         "description": "No years or dates in this area should be included. The acronym/abbreviation of the conference. Example: International Conference on Ad Hoc Networks and Wireless = ADHOC-NOW or International Conference on Cooperative Information Systems = CoopIS."
                     },
@@ -90,7 +89,7 @@ def extract_conference_details(page_content: str):
                         "type": "string",
                         "description": "The country the conference, e.g., Germany"
                     },
-                    "name": {
+                    "Title": {
                         "type": "string",
                         "description": "The full, unabbreviated name for the conference of interest. For example: Algorithmic Aspects of Wireless Sensor Networks, Analysis and Simulation of Wireless and Mobile Systems, ACM International Conference on Hybrid Systems: Computation and Control."
                     },
@@ -101,14 +100,14 @@ def extract_conference_details(page_content: str):
 
                 },
                 "required": [
-                    "conference",
+                    "Acronym",
                     "deadline",
                     "notification",
                     "start",
                     "end",
                     "city",
                     "country",
-                    "name",
+                    "Title",
                     "topics"
                 ],
                 "additionalProperties": False
@@ -145,8 +144,8 @@ def save_openai_to_csv(data: Dict[str, Any], url: str,
                        CORE2017: str, CORE2014: str, CORE2013: str, ERA2010: str,
                        h5_index: str, h5_median: str) -> None:
     # Check if 'conference' key exists in the data dictionary
-    if not data or "conference" not in data:
-        print("Error: Missing 'conference' key in data.")
+    if not data or "Acronym" not in data:
+        print("Error: Missing 'Acronym' key in data.")
         return
     
 # CORE2023,CORE2021,CORE2020,CORE2018,CORE2017,CORE2014,CORE2013,ERA2010,h5_index,h5_median
@@ -172,8 +171,8 @@ def save_openai_to_csv(data: Dict[str, Any], url: str,
     except FileNotFoundError:
         # If the file doesn't exist, create a new one with necessary columns
         existing_df = pd.DataFrame(columns=[
-                    "conference",
-                    "name",
+                    "Acronym",
+                    "Title",
                     "deadline",
                     "notification",
                     "start",
@@ -183,14 +182,14 @@ def save_openai_to_csv(data: Dict[str, Any], url: str,
         ])
 
     # Check for duplicate entry based on the 'conference' field
-    if data["conference"] in existing_df["conference"].values:
+    if data["Acronym"] in existing_df["Acronym"].values:
         # Update the existing row instead of appending
-        existing_df.loc[existing_df["conference"] == data["conference"], "url"] = url
-        print("Updated existing conference entry:", data["conference"])
+        existing_df.loc[existing_df["Acronym"] == data["Acronym"], "url"] = url
+        print("Updated existing conference entry:", data["Acronym"])
     else:
         # Append new data to the existing DataFrame
         existing_df = pd.concat([existing_df, df], ignore_index=True)
-        print("Added new conference entry:", data["conference"])
+        print("Added new conference entry:", data["Acronym"])
 
     # Save the updated DataFrame back to the CSV file
     existing_df.to_csv("test.csv", index=False)
