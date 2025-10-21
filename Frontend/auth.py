@@ -15,12 +15,11 @@ def admin_required(view):
     @wraps(view)
     def wrapper(*a, **k):
         uid = session.get("user_id")
-        if not uid:
+        u = User.query.get(uid) if uid else None   # PK lookup (google_auth_id)
+        if not u:
             return jsonify({"ok": False, "error": "auth_required"}), 401
-        u = User.query.filter_by(google_auth_id=uid).first()
-        role = str(getattr(u, "user_privelages", getattr(u, "user_privileges", ""))).lower() if u else ""
+        role = (getattr(u, "user_privelages", getattr(u, "user_privileges", "")) or "").strip().lower()
         if role != "admin":
             return jsonify({"ok": False, "error": "forbidden", "detail": "admin_only"}), 403
-        g.current_user = u
         return view(*a, **k)
     return wrapper
