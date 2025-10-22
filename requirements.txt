@@ -6,7 +6,7 @@ pinecone==6.0.1
 pinecone-client==6.0.0
 openai==1.65.5
 auth0-python==4.10.0
-Authlib==1.6.4
+Authlib==1.6.5
 Flask-SQLAlchemy==3.1.1
 gunicorn==23.0.0
 Flask-Migrate==4.1.0
