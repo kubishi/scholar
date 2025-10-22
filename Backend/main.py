@@ -18,7 +18,7 @@ MODELS = {
 }
 
 thisdir = pathlib.Path(__file__).parent.resolve()
-datapath = thisdir / 'csvs' / 'test_true.csv'
+datapath = thisdir / 'csvs' / 'test.csv'
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 mongo_client = MongoClient(os.getenv("MONGO_URI"))
@@ -88,6 +88,13 @@ def build_docs(rows: pd.DataFrame, embeddings: List[List[float]], model: str) ->
             },
             "h5_index": to_int_or_none(row.get("h5_index")),
             "h5_median": to_int_or_none(row.get("h5_median")),
+            "deadline": row.get("deadline"),
+            "notification": row.get("notification"),
+            "start": row.get("start"),
+            "end": row.get("end"),
+            "topics": row.get("topics"),
+            "city": row.get("city"),
+            "country": row.get("country"),
             "text": row["text_for_embedding"],
             "embedding": emb,
             "model": model,
@@ -116,6 +123,7 @@ def main():
     texts = rows["text_for_embedding"].tolist()
 
     embeddings = get_embeddings(texts, model=args.model, chunk_size=args.chunk_size)
+    collection.delete_many({})
     docs = build_docs(rows, embeddings, model=args.model)
 
     # --- simple insert (will error if _id exists) ---
