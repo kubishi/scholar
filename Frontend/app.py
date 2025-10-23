@@ -236,7 +236,7 @@ def index():
             coll_name="conferences",
             query_vec=embed(query),
             top_k=5,
-            index_name="_id_",
+            index_name="vector_index",
             path="embedding"
             )
             print("GOOO", doc1)
