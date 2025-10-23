@@ -23,6 +23,14 @@ from .services.pinecone_service import (
     id_query,
 )  
 
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+from .services.mongo_atlas_service import (
+    count_indexes,
+    mongo_vec_query,
+    fetch_by_id
+)
+
 
 # --- Flask App setup ---
 app = Flask(__name__)
@@ -109,7 +117,7 @@ def callback():
     google_auth_id = user_info['sub']
     user_name = user_info['name']
     user_email = user_info['email']
-    print("PERSON NAME", session['user'])
+    # print("PERSON NAME", session['user'])
 
     session["user_id"] = google_auth_id
 
@@ -163,7 +171,7 @@ def index():
     if redirect_response:
         return redirect_response
 
-    record_count = describe_count()
+    record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
 
     query = request.args.get("query", "")
     location = request.args.get("location", "").strip().lower()
@@ -189,12 +197,51 @@ def index():
 
     articles = []
 
+    
+
+
+
+
+
+
+
+  
+
+
+
+    
     if ID_query:
+        # MONGO TEST
+        uri = app.config["MONGO_URI"]
+        print("IDQUERY", ID_query)
+
+        doc = fetch_by_id(
+            uri,
+            db_name="kubishi-scholar",
+            collection_name="conferences",
+            doc_id=ID_query   
+        )
+        # END MONGO TEST
+
+        # Real
         results = id_query(ID_query)
         articles = results.get("matches", [])
+        print("Hullo", results)
 
     elif query:
         try:
+            # MONGO TEST
+            doc1 = mongo_vec_query(app.config["MONGO_URI"],
+            db_name="kubishi-scholar",
+            coll_name="conferences",
+            query_vec=embed(query),
+            top_k=5,
+            index_name="_id_",
+            path="embedding"
+            )
+            print("GOOO", doc1)
+            # END MONGO TEST
+
             # Step 1: Get embedding
             vector = embed(query)
 
