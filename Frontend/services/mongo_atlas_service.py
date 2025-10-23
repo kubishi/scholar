@@ -23,7 +23,7 @@ def count_indexes(uri, db_name, collection_name):
 
 
 def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
-                           index_name="confs_vector_idx", path="embedding"):
+                           index_name="vector_index", path="embedding"):
     """
     Strict Atlas Vector Search only. No fallback. Returns docs with score.
     """
