@@ -158,18 +158,17 @@ def logout():
 @app.route("/")
 def index():
     redirect_response = redirect_clean_params("index")
-    favorite_ids = set()
+    if redirect_response:
+        return redirect_response
 
+    favorite_ids = set()
     if session.get("user_id"):
         rows = (
             db.session.query(Favorite_Conf.fav_conf_id)
             .filter_by(user_id=session["user_id"])
             .all()
         )
-        favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
-
-    if redirect_response:
-        return redirect_response
+        favorite_ids = {r[0] for r in rows}
 
     record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
 
@@ -187,118 +186,61 @@ def index():
     except ValueError:
         num_results = 10
 
-    advanced_open = any([
-        date_span_first,
-        date_span_second,
-        location,
-        ranking_source,
-        ranking_score
-    ])
+    advanced_open = any([date_span_first, date_span_second, location, ranking_source, ranking_score])
 
+    # Use a single variable throughout
     articles = []
 
-    
-
-
-
-
-
-
-
-  
-
-
-
-    
     if ID_query:
-        # MONGO TEST
         uri = app.config["MONGO_URI"]
         print("IDQUERY", ID_query)
 
+        # Mongo fetch by id
         doc = fetch_by_id(
             uri,
             db_name="kubishi-scholar",
             collection_name="conferences",
-            doc_id=ID_query   
+            doc_id=ID_query
         )
-        # END MONGO TEST
+        if doc:
+            articles = [doc]
 
-        # Real
-        results = id_query(ID_query)
-        articles = results.get("matches", [])
-        print("Hullo", results)
+        # If you still want to include old id_query results, merge them:
+        # results = id_query(ID_query)
+        # articles.extend(results.get("matches", []))
 
     elif query:
         try:
-            # MONGO TEST
-            doc1 = mongo_vec_query(app.config["MONGO_URI"],
-            db_name="kubishi-scholar",
-            coll_name="conferences",
-            query_vec=embed(query),
-            top_k=5,
-            index_name="vector_index",
-            path="embedding"
+            results = mongo_vec_query(
+                app.config["MONGO_URI"],
+                db_name="kubishi-scholar",
+                coll_name="conferences",
+                query_vec=embed(query),
+                top_k=min(record_count, num_results),
+                index_name="vector_index",
+                path="embedding"
             )
-            print("GOOO", doc1)
-            # END MONGO TEST
-
-            # Step 1: Get embedding
-            vector = embed(query)
-
-            # Step 2: Query Pinecone
-            results = semantic_query(vector, top_k=50, include_metadata=True)
-            all_articles = results.get("matches", [])
-
-            # Step 3: Filter if any filters are set
-            if date_span_first and date_span_second or location or ranking_score:
-                try:
-                    start_date = (
-                        datetime.strptime(date_span_first, "%m-%d-%Y")
-                        if date_span_first else None
-                    )
-                    end_date = (
-                        datetime.strptime(date_span_second, "%m-%d-%Y")
-                        if date_span_second else None
-                    )
-
-                    articles = list(filter(
-                        lambda a: is_match(
-                            a,
-                            start_date,
-                            end_date,
-                            location,
-                            ranking_source,
-                            ranking_score
-                        ),
-                        all_articles
-                    ))
-                except Exception as e:
-                    print(f"Filtering error: {e}")
-                    articles = all_articles
-            else:
-                articles = all_articles
-
+            print("GOOO", results)
+            articles = results or []
         except Exception as e:
-            print(f"Error processing query: {e}")
-
-        # Truncate based on num_results
-        articles = articles[:num_results]
+            print(f"Vector search error: {e}")
+            articles = []  # do not reference undefined names
 
     return render_template(
         "index.html",
-        articles=articles,
+        articles=articles,                 # consistent
         favorite_ids=favorite_ids,
         query=query,
         ID_query=ID_query,
         num_results=num_results,
         date_span_first=date_span_first,
         date_span_second=date_span_second,
-        session_user_name=session.get('user'),
+        session_user_name=session.get("user"),
         record_count=record_count,
         advanced_open=advanced_open,
         location=location,
         ranking_source=ranking_source,
-        pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None
+        pretty=json.dumps(session.get("user"), indent=4) if session.get("user") else None
     )
 
 @app.route("/favorite", methods=["POST"])
