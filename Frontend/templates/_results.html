@@ -7,7 +7,7 @@
                   <h5 class="conference-header mb-1">
                       <strong>{{ loop.index }}.</strong>
                       {{ article._id }}
-                      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> <!-- add url here -->
+                      <a href="{{article.url}}"> <!-- add url here -->
                         <span class="full-url">{{ article.get('acronym') or 'N/A' }}</span> <!-- add url here -->
                         <span class="short-url">Go to Page &#10172;</span>
                       </a>
