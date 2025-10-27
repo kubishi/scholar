@@ -8,7 +8,7 @@
                       <strong>{{ loop.index }}.</strong>
                       {{ article._id }}
                       <a href="{{article.url}}"> <!-- add url here -->
-                        <span class="full-url">{{ article.get('acronym') or 'N/A' }}</span> <!-- add url here -->
+                        <span class="full-url">{{  article.get('title', 'N/A')}}</span> <!-- add url here -->
                         <span class="short-url">Go to Page &#10172;</span>
                       </a>
                   </h5>
@@ -72,7 +72,6 @@
                   <!-- Topics are hidden by default -->
                   <p class="mt-1 text-muted" style="font-size: 0.9rem;">
                       Deadline to submit: {{ article.deadline | format_date }} <br>
-                      Full Name: {{ article.get('name', 'N/A') }} <br> <!-- pp -->
                       Topics: {{ article.topics | replace('\n', ', ') }}
                   </p>
   
