@@ -8,6 +8,8 @@ from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
 from .services.pinecone_service import fetch_by_id # type: ignore
 
+from pymongo import MongoClient
+
 
 bp = Blueprint("conferences", __name__) 
 
@@ -134,27 +136,30 @@ def connection_finder():
 @login_required
 def saved_conference():
     logged_in_user_id = session.get("user_id")
-    favorited_rows = db.session.query(Favorite_Conf).filter_by(user_id=logged_in_user_id).all()
-    favorited_ids = [fav.fav_conf_id for fav in favorited_rows]
+    favorited_rows = (
+        db.session.query(Favorite_Conf)
+        .filter_by(user_id=logged_in_user_id)
+        .all()
+    )
+    favorite_ids = [fav.fav_conf_id for fav in favorited_rows]
 
     articles = []
+    if favorite_ids:
+        uri = current_app.config["MONGO_URI"]
+        with MongoClient(uri) as client:
+            coll = client["kubishi-scholar"]["conferences"]
+            # fetch all favorites at once
+            cursor = coll.find({"_id": {"$in": favorite_ids}})
+            docs = list(cursor)
 
-    if favorited_ids:
-        for conf_id in favorited_ids:
-            pinecone_response = fetch_by_id(conf_id.strip())
-            if conf_id in pinecone_response.vectors:
-                vector_data = pinecone_response.vectors[conf_id]
-                articles.append({
-                    "id": conf_id,
-                    "metadata": vector_data.metadata,
-                    "score": vector_data.metadata.get("score", 0),
-                    "favorited": True  # optional, your template can use this too
-                })
+        # keep the same order as favorite_ids
+        by_id = {d["_id"]: d for d in docs}
+        articles = [by_id[i] for i in favorite_ids if i in by_id]
 
     return render_template(
-        'saved_conference.html',
+        "saved_conference.html",
         logged_in_user_id=logged_in_user_id,
         articles=articles,
-        favorite_ids=favorited_ids,  # <-- pass this so template knows which are favorited
-        session_user_name=session.get('user')
+        favorite_ids=favorite_ids,
+        session_user_name=session.get("user"),
     )

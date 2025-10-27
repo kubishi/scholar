@@ -47,8 +47,20 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
             {
                 "$project": {
                     "_id": 1,
+                    "acronym": 1,
+                    "city": 1,
+                    "core": 1,
+                    "country": 1,
+                    "deadline": 1,
+                    "end": 1,
+                    "h5_index": 1,
+                    "h5_median": 1,
+                    "notification": 1,
+                    "start": 1,
                     "title": 1,
-                    "score": {"$meta": "vectorSearchScore"}
+                    "topics": 1,
+                    "score": {"$meta": "vectorSearchScore"},
+                    "updated_at": 1
                 }
             }
         ]
