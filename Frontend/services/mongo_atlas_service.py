@@ -60,7 +60,8 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
                     "title": 1,
                     "topics": 1,
                     "score": {"$meta": "vectorSearchScore"},
-                    "updated_at": 1
+                    "updated_at": 1,
+                    "url": 1
                 }
             }
         ]
