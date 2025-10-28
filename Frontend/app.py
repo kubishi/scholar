@@ -193,7 +193,7 @@ def index():
 
     if ID_query:
         uri = app.config["MONGO_URI"]
-        print("IDQUERY", ID_query)
+        #print("IDQUERY", ID_query)
 
         # Mongo fetch by id
         doc = fetch_by_id(
@@ -205,30 +205,56 @@ def index():
         if doc:
             articles = [doc]
 
-        # If you still want to include old id_query results, merge them:
-        # results = id_query(ID_query)
-        # articles.extend(results.get("matches", []))
-
     elif query:
         try:
+            # Vector search
             results = mongo_vec_query(
                 app.config["MONGO_URI"],
                 db_name="kubishi-scholar",
                 coll_name="conferences",
                 query_vec=embed(query),
-                top_k=min(record_count, num_results),
+                top_k=min(record_count, 50),
                 index_name="vector_index",
                 path="embedding"
             )
-            print("GOOO", results)
-            articles = results or []
+            # Step 3: Filter if any filters are set
+            if date_span_first and date_span_second or location or ranking_score:
+                try:
+                    start_date = (
+                        datetime.strptime(date_span_first, "%m-%d-%Y")
+                        if date_span_first else None
+                    )
+                    end_date = (
+                        datetime.strptime(date_span_second, "%m-%d-%Y")
+                        if date_span_second else None
+                    )
+
+                    filtered_articles = [
+                        a for a in results
+                        if is_match(
+                            a,
+                            start_date=start_date,
+                            end_date=end_date,
+                            location=location,
+                            ranking_source=ranking_source,
+                            ranking_score=ranking_score,
+                        )
+                    ]
+                    #print(f"Filtered {len(filtered_articles)} / {len(results)} articles after applying filters.")
+                    articles = filtered_articles
+
+                except Exception as e:
+                    print(f"Filtering error: {e}")
+                    articles = results or []
+            else:
+                articles = results or [] 
         except Exception as e:
             print(f"Vector search error: {e}")
             articles = []  # do not reference undefined names
 
     return render_template(
         "index.html",
-        articles=articles,                 # consistent
+        articles=articles[:num_results],                 # consistent
         favorite_ids=favorite_ids,
         query=query,
         ID_query=ID_query,
