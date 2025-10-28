@@ -41,7 +41,6 @@
                     </button>
                   {% endif %}
 
-                
                   <span class="text-muted me-3">Location: {{ (article.city, article.country) | city_country}}</span>
                   <span class="text-muted me-3">Start: {{ article.start | format_date }}</span>
                   <span class="text-muted">End: {{ article.end | format_date }}</span>
@@ -76,24 +75,47 @@
                   </p>
   
                   <p class="text-muted">Match Score: {{ article.score }}</p>
-                  {# 
-                <!-- 
+                
                   <details class="mt-2">
-                      <summary style="cursor: pointer;">Conference Ranking Scores</summary>
-                      <ul class="list-unstyled mt-1 ms-3">
-                          {% set scores = [] %}
-                          {% for key, value in article.core.items() %}
-                              {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
-                                  {% set _ = scores.append((key, value)) %}
-                              {% endif %}
-                          {% endfor %}
+                  <summary style="cursor: pointer;">Ranking &amp; Metrics</summary>
+                  <div class="mt-2">
 
-                          {% for key, value in scores | sort(attribute=0, reverse=true) %}
-                              <li><strong>{{ key }}:</strong> {{ value }}</li>
-                          {% endfor %}
-                      </ul>
-                  </details> -->
-                  #}
+                    {% set core = article.get('core', {}) %}
+                    {% set keys = ['CORE2023','CORE2021','CORE2020','CORE2018','CORE2017','CORE2014','CORE2013','ERA2010'] %}
+
+                    {# Show CORE/ERA rows if present #}
+                    {% set has_any = false %}
+                    <table class="table table-sm mb-2">
+                      <tbody>
+                        {% for k in keys %}
+                          {% if core.get(k) %}
+                            {% set has_any = true %}
+                            <tr>
+                              <th scope="row" class="fw-semibold">{{ k }}</th>
+                              <td>{{ core[k] }}</td>
+                            </tr>
+                          {% endif %}
+                        {% endfor %}
+                      </tbody>
+                    </table>
+
+                    {# h5 metrics #}
+                    <div class="small">
+                      {% if article.h5_index is not none %}
+                        {% set has_any = true %}
+                        <span class="badge text-bg-secondary me-1">h5-index: {{ article.h5_index }}</span>
+                      {% endif %}
+                      {% if article.h5_median is not none %}
+                        {% set has_any = true %}
+                        <span class="badge text-bg-secondary">h5-median: {{ article.h5_median }}</span>
+                      {% endif %}
+                    </div>
+
+                    {% if not has_any %}
+                      <div class="text-muted small">No ranking data available.</div>
+                    {% endif %}
+                  </div>
+                </details>
               </div>
               
 

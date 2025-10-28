@@ -30,10 +30,6 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
     client = MongoClient(uri)
     try:
         
-
-        # optional sanity print to avoid silent mismatches
-        print(f"[vec] len(query_vec)={len(query_vec)} index={index_name} path={path} top_k={top_k}")
-
         pipeline = [
             {
                 "$vectorSearch": {
@@ -92,11 +88,3 @@ def fetch_by_id(uri, db_name, collection_name, doc_id):
         return None
     finally:
         client.close()
-
-
-# if __name__ == "__main__":
-#     print("Generating real embedding...")
-#     query_vec = embed("algorithmic learning theory conference in Milan")
-#     print("Running MongoDB vector search...")
-#     hits = mongo_vec_query(query_vec)
-#     print("Results:", hits)
