@@ -178,6 +178,9 @@ def index():
     ranking_score = request.args.get("ranking_score", "").strip().upper()
 
     ID_query = request.args.get("ID_query", "").upper()
+    display_sate_span_first = request.args.get("date_span_first")
+    display_sate_span_second = request.args.get("date_span_second")
+
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
 
@@ -222,11 +225,11 @@ def index():
                 try:
                     start_date = (
                         datetime.strptime(date_span_first, "%m-%d-%Y")
-                        if date_span_first else None
+                        if display_sate_span_first else None
                     )
                     end_date = (
                         datetime.strptime(date_span_second, "%m-%d-%Y")
-                        if date_span_second else None
+                        if display_sate_span_first else None
                     )
 
                     filtered_articles = [
@@ -259,8 +262,8 @@ def index():
         query=query,
         ID_query=ID_query,
         num_results=num_results,
-        date_span_first=date_span_first,
-        date_span_second=date_span_second,
+        date_span_first=display_sate_span_first,
+        date_span_second=display_sate_span_second,
         session_user_name=session.get("user"),
         record_count=record_count,
         advanced_open=advanced_open,
