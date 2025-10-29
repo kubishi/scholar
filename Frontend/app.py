@@ -17,11 +17,7 @@ from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
 
-from .services.pinecone_service import (
-    describe_count,
-    semantic_query,
-    id_query,
-)  
+
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi

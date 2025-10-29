@@ -4,12 +4,12 @@ from datetime import datetime, timezone
 
 from .services.db_services import db
 from .models import Submitted_Conferences
-from .services.pinecone_service import fetch_by_id, upsert_vector
+from .services.pinecone_service import upsert_vector
 from .services.openai_service import embed
 from .auth import admin_required
 
 from pymongo import MongoClient
-from .services.mongo_atlas_service import mongo_doc_upsert
+from .services.mongo_atlas_service import mongo_doc_upsert, fetch_by_id
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -26,7 +26,7 @@ def _iso_utc(dt):
 def approved_to_mongo(conf):
     topic_vector = embed(conf.topics or "")
     doc = {
-        "_id": conf.conf_id,
+        "_id": (conf.conf_id or "").strip().upper(),
         "embedding": topic_vector,
         "conference_name": (conf.conference_name or "").strip(),
         "country": (conf.country or "").strip(),
@@ -40,11 +40,11 @@ def approved_to_mongo(conf):
         "time_approved_at": _iso_utc(conf.time_approved_at),
         "status": conf.status,
     }
-    
-    uri = current_app.config["MONGO_URI"]
-    client = MongoClient(uri)
+
+    client = MongoClient(current_app.config["MONGO_URI"])
+
     coll = client["kubishi-scholar"]["conferences"]
-    mongo_doc_upsert(coll, doc)
+    mongo_doc_upsert(coll, doc)  
     client.close()
 
 # --- routes (just these) --- GET PINECONE OUTTA HERE
@@ -52,7 +52,7 @@ def approved_to_mongo(conf):
 @admin_required
 def conf_approval_page():
     if request.method == "POST":
-        conf_id = request.form.get("conf_id")
+        conf_id = (request.form.get("conf_id") or "").strip().upper()  # normalize
         action  = request.form.get("action")
 
         conf = db.session.query(Submitted_Conferences).filter_by(conf_id=conf_id).first()
@@ -60,29 +60,43 @@ def conf_approval_page():
             return redirect(url_for("admin.conf_approval_page"))
 
         if action == "compare":
-            res = fetch_by_id(conf_id)
-            vec = res.vectors.get(conf_id) if res else None
-            pine_meta = vec.metadata if vec else None
-
+            # fetch previous (Mongo) version by _id
+            res = fetch_by_id(
+                uri=current_app.config["MONGO_URI"],   # inside fetch_by_id use MongoClient(uri) positionally
+                db_name="kubishi-scholar",
+                collection_name="conferences",
+                doc_id=conf_id
+            )
             submissions = db.session.query(Submitted_Conferences).all()
             return render_template(
                 "conf_approval.html",
                 submissions=submissions,
                 compare_id=conf_id,
-                pine_meta=pine_meta
+                original_version=res        # <-- pass this to Jinja
             )
 
         if action == "approve":
-            conf.status = "approved"; conf.time_approved_at = datetime.now(timezone.utc); db.session.commit()
+            conf.status = "approved"
+            conf.time_approved_at = datetime.now(timezone.utc)
+            db.session.commit()
         elif action == "unapprove":
-            conf.status = "waiting"; conf.time_approved_at = None; db.session.commit()
+            conf.status = "waiting"
+            conf.time_approved_at = None
+            db.session.commit()
         elif action == "delete":
-            db.session.delete(conf); db.session.commit()
+            db.session.delete(conf)
+            db.session.commit()
 
         return redirect(url_for("admin.conf_approval_page"))
 
     submissions = db.session.query(Submitted_Conferences).all()
-    return render_template("conf_approval.html", submissions=submissions, compare_id=None, pine_meta=None)
+    return render_template(
+        "conf_approval.html",
+        submissions=submissions,
+        compare_id=None,
+        original_version=None     # optional, keeps template happy
+    )
+
 
 @admin_bp.route("/submit_all_approved", methods=["POST"])
 @admin_required
