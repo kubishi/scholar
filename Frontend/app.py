@@ -257,7 +257,7 @@ def index():
 
     return render_template(
         "index.html",
-        articles=articles[:num_results],                 # consistent
+        articles=articles[:num_results],
         favorite_ids=favorite_ids,
         query=query,
         ID_query=ID_query,
