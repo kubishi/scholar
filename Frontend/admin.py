@@ -1,5 +1,5 @@
 # admin.py
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, current_app
 from datetime import datetime, timezone
 
 from .services.db_services import db
@@ -7,6 +7,10 @@ from .models import Submitted_Conferences
 from .services.pinecone_service import fetch_by_id, upsert_vector
 from .services.openai_service import embed
 from .auth import admin_required
+
+from pymongo import MongoClient
+from .services.mongo_atlas_service import mongo_doc_upsert
+
 admin_bp = Blueprint('admin', __name__)
 
 # --- helpers (from your snippet) ---
@@ -19,28 +23,32 @@ def _iso_utc(dt):
         dt = dt.astimezone(timezone.utc)
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-def approved_to_pinecone(conf):
+def approved_to_mongo(conf):
     topic_vector = embed(conf.topics or "")
-    updated_vector = {
-        "id": conf.conf_id,
-        "values": topic_vector,
-        "metadata": {
-            "conference_name": (conf.conference_name or "").strip(),
-            "country": (conf.country or "").strip(),
-            "city": (conf.city or "").strip(),
-            "deadline": _iso_utc(conf.deadline),
-            "start": _iso_utc(conf.start),
-            "end": _iso_utc(conf.end),
-            "topics": (conf.topics or "").strip(),
-            "url": (conf.url or "").strip(),
-            "original_contributor_id": conf.submitter_id,
-            "status": conf.status,
-        }
+    doc = {
+        "_id": conf.conf_id,
+        "embedding": topic_vector,
+        "conference_name": (conf.conference_name or "").strip(),
+        "country": (conf.country or "").strip(),
+        "city": (conf.city or "").strip(),
+        "deadline": _iso_utc(conf.deadline),
+        "start": _iso_utc(conf.start),
+        "end": _iso_utc(conf.end),
+        "topics": (conf.topics or "").strip(),
+        "url": (conf.url or "").strip(),
+        "original_contributor_id": conf.submitter_id,
+        "time_approved_at": _iso_utc(conf.time_approved_at),
+        "status": conf.status,
     }
-    upsert_vector(updated_vector)
+    
+    uri = current_app.config["MONGO_URI"]
+    client = MongoClient(uri)
+    coll = client["kubishi-scholar"]["conferences"]
+    mongo_doc_upsert(coll, doc)
+    client.close()
 
-# --- routes (just these) ---
-@admin_bp.route("/conf_approval", methods=["GET", "POST"])
+# --- routes (just these) --- GET PINECONE OUTTA HERE
+@admin_bp.route("/conf_approval", methods=["GET", "POST"]) 
 @admin_required
 def conf_approval_page():
     if request.method == "POST":
@@ -65,7 +73,7 @@ def conf_approval_page():
             )
 
         if action == "approve":
-            conf.status = "approved"; conf.time_approved_at = datetime.now(); db.session.commit()
+            conf.status = "approved"; conf.time_approved_at = datetime.now(timezone.utc); db.session.commit()
         elif action == "unapprove":
             conf.status = "waiting"; conf.time_approved_at = None; db.session.commit()
         elif action == "delete":
@@ -80,8 +88,10 @@ def conf_approval_page():
 @admin_required
 def submit_all_approved():
     approved = Submitted_Conferences.query.filter_by(status="approved").all()
+
     for conf in approved:
         conf.status = "submitted"
-        approved_to_pinecone(conf)
-    db.session.commit()
+        approved_to_mongo(conf)
+    db.session.commit() 
+    print("CHACHING Approved ")
     return redirect(url_for("admin.conf_approval_page"))

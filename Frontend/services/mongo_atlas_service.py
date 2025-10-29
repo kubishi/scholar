@@ -88,3 +88,10 @@ def fetch_by_id(uri, db_name, collection_name, doc_id):
         return None
     finally:
         client.close()
+
+def mongo_doc_upsert(collection, doc):
+    """Takes a MongoDB collection and upserts the given doc."""
+    
+    if "_id" not in doc:
+        raise ValueError("Document must include an '_id' field.")
+    collection.replace_one({"_id": doc["_id"]}, doc, upsert=True)
