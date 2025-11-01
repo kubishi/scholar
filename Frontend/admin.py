@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 
 from .services.db_services import db
 from .models import Submitted_Conferences
-from .services.pinecone_service import upsert_vector
 from .services.openai_service import embed
 from .auth import admin_required
 
@@ -47,7 +46,7 @@ def approved_to_mongo(conf):
     mongo_doc_upsert(coll, doc)  
     client.close()
 
-# --- routes (just these) --- GET PINECONE OUTTA HERE
+
 @admin_bp.route("/conf_approval", methods=["GET", "POST"]) 
 @admin_required
 def conf_approval_page():
