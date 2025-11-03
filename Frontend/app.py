@@ -17,14 +17,13 @@ from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
 
-
-
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from .services.mongo_atlas_service import (
     count_indexes,
     mongo_vec_query,
-    fetch_by_id
+    fetch_by_id,
+    mongo_lex_query
 )
 
 
@@ -191,18 +190,20 @@ def index():
     articles = []
 
     if ID_query:
-        uri = app.config["MONGO_URI"]
-        #print("IDQUERY", ID_query)
+        print("IDQUERY", ID_query)
 
         # Mongo fetch by id
-        doc = fetch_by_id(
-            uri,
+        doc = mongo_lex_query(
+            app.config["MONGO_URI"],
             db_name="kubishi-scholar",
-            collection_name="conferences",
-            doc_id=ID_query
+            coll_name="conferences",
+            query=ID_query,
+            top_k=50,
+            index_name="default",
         )
+        print(doc)
         if doc:
-            articles = [doc]
+            articles = doc
 
     elif query:
         try:
@@ -212,7 +213,7 @@ def index():
                 db_name="kubishi-scholar",
                 coll_name="conferences",
                 query_vec=embed(query),
-                top_k=min(record_count, 50),
+                top_k=50,
                 index_name="vector_index",
                 path="embedding"
             )
