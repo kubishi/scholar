@@ -67,8 +67,31 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
     finally:
         client.close()
 
+def mongo_lex_query(uri, db_name, coll_name, query, top_k=10, index_name="default", fields=None):
+    if not (query and query.strip()):
+        return []
+    fields = fields or ["title","acronym","topics","city","country","core.CORE2023","core.CORE2021","core.CORE2020"]
+    try:
+        with MongoClient(uri) as c:
+            coll = c[db_name][coll_name]
+            pipeline = [
+                {"$search": {
+                    "index": index_name,
+                    "text": { "query": query, "path": fields }
+                }},
+                {"$limit": int(top_k) if int(top_k) > 0 else 10},
+                {"$project": {
+                    "_id": 1, "title": 1, "acronym": 1, "topics": 1,
+                    "city": 1, "country": 1, "deadline": 1, "start": 1, "end": 1,
+                    "h5_index": 1, "h5_median": 1, "notification": 1, "url": 1,
+                    "updated_at": 1, "score": {"$meta": "searchScore"}
+                }}
+            ]
+            return list(coll.aggregate(pipeline))
 
-
+    except Exception as e:
+        print("❌ Error during lexical query", e)
+        return []
 
 def fetch_by_id(uri, db_name, collection_name, doc_id):
     """
