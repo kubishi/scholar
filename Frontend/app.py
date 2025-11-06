@@ -22,7 +22,6 @@ from pymongo.server_api import ServerApi
 from .services.mongo_atlas_service import (
     count_indexes,
     mongo_vec_query,
-    fetch_by_id,
     mongo_hybrid_search_rrf,
     mongo_lex_query
 )
@@ -31,8 +30,6 @@ from .services.mongo_users import (
     add_favorite,
     remove_favorite
 )
-
-
 
 # --- Flask App setup ---
 app = Flask(__name__)
@@ -350,11 +347,7 @@ def save_favorite():
             user_id,
             conf_id
         )
-
-
-
     return jsonify({"ok": True}), 200
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
