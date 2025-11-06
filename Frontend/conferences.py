@@ -6,8 +6,7 @@ from .forms import ConferenceForm # type: ignore
 from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
 from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
-from .services.pinecone_service import fetch_by_id # type: ignore
-
+from .services.mongo_atlas_service import fetch_by_id
 from pymongo import MongoClient
 
 
@@ -136,23 +135,18 @@ def connection_finder():
 @login_required
 def saved_conference():
     logged_in_user_id = session.get("user_id")
-    favorited_rows = (
-        db.session.query(Favorite_Conf)
-        .filter_by(user_id=logged_in_user_id)
-        .all()
-    )
-    favorite_ids = [fav.fav_conf_id for fav in favorited_rows]
+
+    favorite_ids = MongoClient(current_app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": logged_in_user_id})["favorites"]
+    print("GGGGGG", type(favorite_ids))
 
     articles = []
     if favorite_ids:
         uri = current_app.config["MONGO_URI"]
         with MongoClient(uri) as client:
             coll = client["kubishi-scholar"]["conferences"]
-            # fetch all favorites at once
             cursor = coll.find({"_id": {"$in": favorite_ids}})
             docs = list(cursor)
 
-        # keep the same order as favorite_ids
         by_id = {d["_id"]: d for d in docs}
         articles = [by_id[i] for i in favorite_ids if i in by_id]
 
