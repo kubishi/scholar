@@ -168,7 +168,7 @@ def index():
 
     record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
     
-    mode = request.args.get("search_mode") or request.args.get("search_type", "semantic")
+    mode = request.args.get("search_type", "")
     query = request.args.get("query", "")
     
     location = request.args.get("location", "").strip().lower()
@@ -192,20 +192,20 @@ def index():
     articles = []
     
     if mode == "id":
-        print("IDQUERY", query)
-
-        # Mongo fetch by id
-        doc = mongo_lex_query(
-            app.config["MONGO_URI"],
-            db_name="kubishi-scholar",
-            coll_name="conferences",
-            query=query,
-            top_k=50,
-            index_name="default",
-        )
-        print(doc)
-        if doc:
-            articles = doc
+        try:
+            # Mongo fetch by id
+            results = mongo_lex_query(
+                app.config["MONGO_URI"],
+                db_name="kubishi-scholar",
+                coll_name="conferences",
+                query=query,
+                top_k=50,
+                index_name="default",
+            )
+            articles = results
+        except Exception as e:
+            print(f"ID fetch error: {e}")
+            articles = []  # do not reference undefined names
 
     elif mode == "semantic":
         try:

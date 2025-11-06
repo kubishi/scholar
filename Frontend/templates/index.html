@@ -24,10 +24,14 @@
       <div class="d-flex align-items-center gap-2">
         <div class="text-box mb-2">
           <textarea 
-            class="main_search_box form-control border-dark" 
-            id="searchInput" 
-            name="{{ 'query' if request.args.get('search_type', 'semantic') == 'semantic' else 'ID_query' }}" 
-            placeholder="{{ 'Search academic topics...' if request.args.get('search_type', 'semantic') == 'semantic' else 'Search by conference ID...' }}">{{ (request.args.get('query') if request.args.get('search_type', 'semantic') == 'semantic' else request.args.get('ID_query')) or '' }}</textarea>
+          class="main_search_box form-control border-dark" 
+          id="searchInput"
+          name="query"
+          placeholder="{{ 
+            'Search academic topics...' if request.args.get('search_type','semantic') == 'semantic'
+            else 'Search by conference ID...' if request.args.get('search_type') == 'id'
+            else 'Hybrid: keywords or ID...' 
+          }}">{{ request.args.get('query','') }}</textarea>
           
             <div class="search-controls">
               <!-- Radio buttons -->
