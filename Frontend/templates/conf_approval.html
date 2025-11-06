@@ -116,35 +116,48 @@
             </div>
           </td>
         </tr>
-      {% if compare_id == s.conf_id %}
-            <tr>
+          {% if compare_id == s.conf_id %}
+          <tr>
             <td colspan="9">
-                <div class="border rounded p-2 bg-light">
-                <strong>Original (Pinecone)</strong>
-                {% if pine_meta %}
-                    <div class="{% if pine_meta.conference_name != s.conference_name %}bg-warning{% endif %}">Name: {{ pine_meta.conference_name or "—" }}</div>
-                    <div class="{% if pine_meta.city != s.city or pine_meta.country != s.country %}bg-warning{% endif %}">City/Country: {{ pine_meta.city or "—" }}, {{ pine_meta.country or "—" }}</div>
-                    <div class="{% if pine_meta.start != s.start or pine_meta.end != s.end %}bg-warning{% endif %}">Dates: {{ pine_meta.start or "—" }} → {{ pine_meta.end or "—" }}</div>
-                    <div class="{% if pine_meta.deadline != s.deadline %}bg-warning{% endif %}">Deadline: {{ pine_meta.deadline or "—" }}</div>
-                    <div class="{% if pine_meta.topics != s.topics %}bg-warning{% endif %}">Topics: {{ pine_meta.topics or "—" }}</div>
-                    <div class="{% if pine_meta.url != s.url %}bg-warning{% endif %}">URL: <a href="{{ pine_meta.url }}" target="_blank" rel="noopener">{{ pine_meta.url }}</a></div>
+              <div class="border rounded p-2 bg-light">
+                <strong>Original (Mongo)</strong>
+                {% if original_version %}
+                  <div class="{% if original_version.conference_name != s.conference_name %}bg-warning{% endif %}">
+                    Name: {{ original_version.conference_name or "—" }}
+                  </div>
+                  <div class="{% if original_version.city != s.city or original_version.country != s.country %}bg-warning{% endif %}">
+                    City/Country: {{ original_version.city or "—" }}, {{ original_version.country or "—" }}
+                  </div>
+                  <div class="{% if original_version.start != s.start or original_version.end != s.end %}bg-warning{% endif %}">
+                    Dates: {{ original_version.start or "—" }} → {{ original_version.end or "—" }}
+                  </div>
+                  <div class="{% if original_version.deadline != s.deadline %}bg-warning{% endif %}">
+                    Deadline: {{ original_version.deadline or "—" }}
+                  </div>
+                  <div class="{% if original_version.topics != s.topics %}bg-warning{% endif %}">
+                    Topics: {{ original_version.topics or "—" }}
+                  </div>
+                  <div class="{% if original_version.url != s.url %}bg-warning{% endif %}">
+                    URL: <a href="{{ original_version.url }}" target="_blank" rel="noopener">{{ original_version.url }}</a>
+                  </div>
                 {% else %}
-                    <div class="text-muted">No original found in Pinecone for {{ s.conf_id }}.</div>
+                  <div class="text-muted">New Entry! No previous version found in Mongo for {{ s.conf_id }}.</div>
                 {% endif %}
 
                 <hr class="my-2">
                 <strong>Edited (Submission)</strong>
-                <div class="{% if pine_meta and pine_meta.conference_name != s.conference_name %}bg-warning{% endif %}">Name: {{ s.conference_name or "—" }}</div>
-                <div class="{% if pine_meta and (pine_meta.city != s.city or pine_meta.country != s.country) %}bg-warning{% endif %}">City/Country: {{ s.city or "—" }}, {{ s.country or "—" }}</div>
-                <div class="{% if pine_meta and (pine_meta.start != s.start or pine_meta.end != s.end) %}bg-warning{% endif %}">Dates: {{ s.start or "—" }} → {{ s.end or "—" }}</div>
-                <div class="{% if pine_meta and pine_meta.deadline != s.deadline %}bg-warning{% endif %}">Deadline: {{ s.deadline or "—" }}</div>
-                <div class="{% if pine_meta and pine_meta.topics != s.topics %}bg-warning{% endif %}">Topics: {{ s.topics or "—" }}</div>
-                <div class="{% if pine_meta and pine_meta.url != s.url %}bg-warning{% endif %}">URL: <a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.url }}</a></div>
-                </div>
+                <div>Name: {{ s.conference_name or "—" }}</div>
+                <div>City/Country: {{ s.city or "—" }}, {{ s.country or "—" }}</div>
+                <div>Dates: {{ s.start or "—" }} → {{ s.end or "—" }}</div>
+                <div>Deadline: {{ s.deadline or "—" }}</div>
+                <div>Topics: {{ s.topics or "—" }}</div>
+                <div>URL: <a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.url }}</a></div>
+              </div>
             </td>
-            </tr>
-        {% endif %}
+          </tr>
+          {% endif %}
 
+ 
       
 
       {% endfor %}

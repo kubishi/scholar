@@ -50,11 +50,10 @@ def redirect_clean_params(endpoint_name):
 def is_match(article, start_date=None, end_date=None, location="", ranking_source="", ranking_score=""):
     """Filter article metadata based on date, location, and ranking."""
     try:
-        metadata = article.get("metadata", {})
 
         # Date filter
         if start_date and end_date:
-            start_str = metadata.get("start")
+            start_str = article.get("start")
             if not start_str:
                 return False
             article_start = datetime.fromisoformat(start_str.rstrip("Z"))
@@ -63,17 +62,17 @@ def is_match(article, start_date=None, end_date=None, location="", ranking_sourc
 
         # Location filter
         if location:
-            article_loc_country = metadata.get("country", "").strip().lower()
-            article_loc_city = metadata.get("city", "").strip().lower()
+            article_loc_country = article.get("country", "").strip().lower()
+            article_loc_city = article.get("city", "").strip().lower()
             if fuzz.partial_ratio(location, article_loc_country) < 90 and fuzz.partial_ratio(location, article_loc_city) < 90:
                 return False
 
         # Ranking score filter
         if ranking_source == "scholar":
-            matched_key = next((key for key in metadata if key.lower().startswith("h5_index")), None)
+            matched_key = next((key for key in article if key.lower().startswith("h5_index")), None)
             if not matched_key:
                 return False
-            article_score = metadata.get(matched_key, "")
+            article_score = article.get(matched_key, "")
             try:
                 article_score_val = float(article_score)
                 if float(ranking_score) >= article_score_val:
@@ -82,11 +81,23 @@ def is_match(article, start_date=None, end_date=None, location="", ranking_sourc
                 return False
 
         elif ranking_source:
-            matched_key = next((key for key in metadata if key.lower().startswith(ranking_source)), None)
-            if not matched_key:
-                return False
+            rs = ranking_source.strip().lower()
 
-            article_score = metadata.get(matched_key, "").strip().upper()
+            # pull the conference's grade string
+            if rs.startswith("core") or rs.startswith("era"):
+                # CORE/ERA values live inside article["core"]
+                core = article.get("core") or {}
+                matched_key = next((k for k in core if k.lower().startswith(rs)), None)
+                if not matched_key:
+                    return False
+                article_score = (core.get(matched_key) or "").strip().upper()
+            else:
+                # any other ranking keys you might add at top-level
+                matched_key = next((k for k in article if k.lower().startswith(rs)), None)
+                if not matched_key:
+                    return False
+                article_score = (article.get(matched_key) or "").strip().upper()
+
             if ranking_score:
                 try:
                     user_rank = RANK_ORDER[ranking_score]

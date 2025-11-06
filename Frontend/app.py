@@ -17,12 +17,19 @@ from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
 
-from .services.pinecone_service import (
-    describe_count,
-    semantic_query,
-    id_query,
-)  
-
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+from .services.mongo_atlas_service import (
+    count_indexes,
+    mongo_vec_query,
+    mongo_hybrid_search_rrf,
+    mongo_lex_query
+)
+from .services.mongo_users import (
+    upsert_user,
+    add_favorite,
+    remove_favorite
+)
 
 # --- Flask App setup ---
 app = Flask(__name__)
@@ -86,14 +93,11 @@ def upload_file():
     return jsonify({"text": summary})
 
 
-# --- Context Processors ---
 @app.context_processor
 def inject_user_model():
-    """Make User model available in templates"""
     return dict(User=User)
 
 
-# --- Authentication Routes ---
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -106,29 +110,27 @@ def callback():
     session["user"] = token
     user_info = token["userinfo"]
 
-    google_auth_id = user_info['sub']
-    user_name = user_info['name']
-    user_email = user_info['email']
-    print("PERSON NAME", session['user'])
+    google_auth_id = user_info["sub"]
+    user_name = user_info.get("name", "")
+    user_email = user_info.get("email", "")
 
     session["user_id"] = google_auth_id
 
-    user = User.query.filter_by(google_auth_id=google_auth_id).first()
-    if not user:
-        new_user = User(
-            google_auth_id=google_auth_id,
-            user_name=user_name,
-            user_email=user_email
-        )
-        db.session.add(new_user)
-    else:
-        # Optionally update existing user info
-        user.user_name = user_name
-        user.user_email = user_email
-
-    db.session.commit()
+    # Upsert into Mongo users
+    upsert_user(
+        app.config["MONGO_URI"],
+        "kubishi-scholar",
+        "users",
+        {
+            "_id": google_auth_id,
+            "user_name": user_name,
+            "user_email": user_email,
+            "user_privilege": "user", 
+        }
+    )
 
     return redirect("/")
+
 
 @app.route("/logout")
 def logout():
@@ -150,27 +152,31 @@ def logout():
 @app.route("/")
 def index():
     redirect_response = redirect_clean_params("index")
-    favorite_ids = set()
-
-    if session.get("user_id"):
-        rows = (
-            db.session.query(Favorite_Conf.fav_conf_id)
-            .filter_by(user_id=session["user_id"])
-            .all()
-        )
-        favorite_ids = {r[0] for r in rows}  # {'CONF123', 'NIPS2026', ...}
-
     if redirect_response:
         return redirect_response
 
-    record_count = describe_count()
 
+    favorite_ids = []
+    user_id = session.get("user_id")
+    if user_id:
+        client = MongoClient(app.config["MONGO_URI"])
+        users = client["kubishi-scholar"]["users"]
+        user_doc = users.find_one({"_id": user_id})
+        if user_doc and "favorites" in user_doc:
+            favorite_ids = user_doc["favorites"]
+
+    record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
+    
+    mode = request.args.get("search_type", "")
     query = request.args.get("query", "")
+    
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
 
-    ID_query = request.args.get("ID_query", "").upper()
+    display_sate_span_first = request.args.get("date_span_first")
+    display_sate_span_second = request.args.get("date_span_second")
+
     date_span_first = convert_date_format(request.args.get("date_span_first"))
     date_span_second = convert_date_format(request.args.get("date_span_second"))
 
@@ -179,79 +185,135 @@ def index():
     except ValueError:
         num_results = 10
 
-    advanced_open = any([
-        date_span_first,
-        date_span_second,
-        location,
-        ranking_source,
-        ranking_score
-    ])
+    advanced_open = any([date_span_first, date_span_second, location, ranking_source, ranking_score])
 
+    # Use a single variable throughout
     articles = []
-
-    if ID_query:
-        results = id_query(ID_query)
-        articles = results.get("matches", [])
-
-    elif query:
+    
+    if mode == "id":
         try:
-            # Step 1: Get embedding
-            vector = embed(query)
+            # Mongo fetch by id
+            results = mongo_lex_query(
+                app.config["MONGO_URI"],
+                db_name="kubishi-scholar",
+                coll_name="conferences",
+                query=query,
+                top_k=50,
+                index_name="default",
+            )
+            articles = results
+        except Exception as e:
+            print(f"ID fetch error: {e}")
+            articles = []  # do not reference undefined names
 
-            # Step 2: Query Pinecone
-            results = semantic_query(vector, top_k=50, include_metadata=True)
-            all_articles = results.get("matches", [])
-
+    elif mode == "semantic":
+        try:
+            # Vector search
+            results = mongo_vec_query(
+                app.config["MONGO_URI"],
+                db_name="kubishi-scholar",
+                coll_name="conferences",
+                query_vec=embed(query),
+                top_k=50,
+                index_name="vector_index",
+                path="embedding"
+            )
+            print(f"Hybrid search returned {len(results)} results.")
             # Step 3: Filter if any filters are set
             if date_span_first and date_span_second or location or ranking_score:
                 try:
                     start_date = (
                         datetime.strptime(date_span_first, "%m-%d-%Y")
-                        if date_span_first else None
+                        if display_sate_span_first else None
                     )
                     end_date = (
                         datetime.strptime(date_span_second, "%m-%d-%Y")
-                        if date_span_second else None
+                        if display_sate_span_first else None
                     )
 
-                    articles = list(filter(
-                        lambda a: is_match(
+                    filtered_articles = [
+                        a for a in results
+                        if is_match(
                             a,
-                            start_date,
-                            end_date,
-                            location,
-                            ranking_source,
-                            ranking_score
-                        ),
-                        all_articles
-                    ))
+                            start_date=start_date,
+                            end_date=end_date,
+                            location=location,
+                            ranking_source=ranking_source,
+                            ranking_score=ranking_score,
+                        )
+                    ]
+                    #print(f"Filtered {len(filtered_articles)} / {len(results)} articles after applying filters.")
+                    articles = filtered_articles
+
                 except Exception as e:
                     print(f"Filtering error: {e}")
-                    articles = all_articles
+                    articles = results or []
             else:
-                articles = all_articles
-
+                articles = results or [] 
         except Exception as e:
-            print(f"Error processing query: {e}")
+            print(f"Vector search error: {e}")
+            articles = []  # do not reference undefined names
+    elif mode == "hybrid":
+        try:
+            results = mongo_hybrid_search_rrf(
+                query=query,
+                top_k=50,
+                text_index_name="default",
+                vec_index_name="vector_index",
+                vec_path="embedding",
+                rrf_c=60.0,
+                text_weight=1.0,
+                vec_weight=1.0
+            )
+            print(f"Hybrid search returned {len(results)} results.")
+            # Step 3: Filter if any filters are set
+            if date_span_first and date_span_second or location or ranking_score:
+                try:
+                    start_date = (
+                        datetime.strptime(date_span_first, "%m-%d-%Y")
+                        if display_sate_span_first else None
+                    )
+                    end_date = (
+                        datetime.strptime(date_span_second, "%m-%d-%Y")
+                        if display_sate_span_first else None
+                    )
 
-        # Truncate based on num_results
-        articles = articles[:num_results]
+                    filtered_articles = [
+                        a for a in results
+                        if is_match(
+                            a,
+                            start_date=start_date,
+                            end_date=end_date,
+                            location=location,
+                            ranking_source=ranking_source,
+                            ranking_score=ranking_score,
+                        )
+                    ]
+                    articles = filtered_articles
 
+                except Exception as e:
+                    print(f"Filtering error: {e}")
+                    articles = results or []
+            else:
+                articles = results or [] 
+        except Exception as e:
+            print(f"Hybrid search error: {e}")
+            articles = []  # do not reference undefined names
+            
     return render_template(
         "index.html",
-        articles=articles,
+        articles=articles[:num_results],
         favorite_ids=favorite_ids,
         query=query,
-        ID_query=ID_query,
         num_results=num_results,
-        date_span_first=date_span_first,
-        date_span_second=date_span_second,
-        session_user_name=session.get('user'),
+        date_span_first=display_sate_span_first,
+        date_span_second=display_sate_span_second,
+        session_user_name=session.get("user"),
         record_count=record_count,
         advanced_open=advanced_open,
         location=location,
         ranking_source=ranking_source,
-        pretty=json.dumps(session.get('user'), indent=4) if session.get('user') else None
+        pretty=json.dumps(session.get("user"), indent=4) if session.get("user") else None
     )
 
 @app.route("/favorite", methods=["POST"])
@@ -259,22 +321,33 @@ def index():
 def save_favorite():
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
-    print(conf_id)
+    
     if not conf_id:
         return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 
     user_id = session["user_id"]
-    fav = Favorite_Conf.query.filter_by(user_id=user_id, fav_conf_id=conf_id).first()
-    if fav:
-        db.session.delete(fav)
-        db.session.commit()
-        status = "removed"
-    else:
-        db.session.add(Favorite_Conf(user_id=user_id, fav_conf_id=conf_id))
-        db.session.commit()
-        status = "added"
+    user_doc = MongoClient(app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": user_id})
 
-    return jsonify({"ok": True, "status": status, "conf_id": conf_id})
+    if user_doc and "favorites" in user_doc and conf_id in user_doc["favorites"]:
+        print(conf_id, "Favorite Removed")
+        remove_favorite(
+            app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "users",
+            user_id,
+            conf_id
+        )
+
+    else:
+        print(conf_id, "Favorite Added")
+        add_favorite(
+            app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "users",
+            user_id,
+            conf_id
+        )
+    return jsonify({"ok": True}), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)

@@ -28,3 +28,6 @@ class Config:
     DB_HOST = os.getenv("DB_HOST")
     DB_PORT = os.getenv("DB_PORT")
     DB_NAME = os.getenv("DB_NAME")
+
+    # MONGO ATLAS
+    MONGO_URI = os.getenv("MONGO_URI")
