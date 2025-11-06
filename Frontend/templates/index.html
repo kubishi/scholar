@@ -24,10 +24,14 @@
       <div class="d-flex align-items-center gap-2">
         <div class="text-box mb-2">
           <textarea 
-            class="main_search_box form-control border-dark" 
-            id="searchInput" 
-            name="{{ 'query' if request.args.get('search_type', 'semantic') == 'semantic' else 'ID_query' }}" 
-            placeholder="{{ 'Search academic topics...' if request.args.get('search_type', 'semantic') == 'semantic' else 'Search by conference ID...' }}">{{ (request.args.get('query') if request.args.get('search_type', 'semantic') == 'semantic' else request.args.get('ID_query')) or '' }}</textarea>
+          class="main_search_box form-control border-dark" 
+          id="searchInput"
+          name="query"
+          placeholder="{{ 
+            'Search academic topics...' if request.args.get('search_type','semantic') == 'semantic'
+            else 'Search by conference ID...' if request.args.get('search_type') == 'id'
+            else 'Hybrid: keywords or ID...' 
+          }}">{{ request.args.get('query','') }}</textarea>
           
             <div class="search-controls">
               <!-- Radio buttons -->
@@ -40,8 +44,13 @@
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="search_type" id="ID_Toggle" value="id"
                          {% if request.args.get('search_type') == 'id' %}checked{% endif %}>
-                  <label class="form-check-label" for="ID_Toggle">ID Search</label>
+                  <label class="form-check-label" for="ID_Toggle">Lexical Search</label>
                 </div>
+                  <div class="form-check">
+                  <input class="form-check-input" type="radio" name="search_type" id="Hybrid_Toggle" value="hybrid"
+                        {% if request.args.get('search_type') == 'hybrid' %}checked{% endif %}>
+                  <label class="form-check-label" for="Hybrid_Toggle">Hybrid</label>
+                  </div>
               </div>
             
               <!-- Count + Button side by side -->
@@ -245,13 +254,25 @@
   const form = searchInput.closest('form');
   
   document.querySelectorAll('input[name="search_type"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      searchInput.name = radio.value === 'semantic' ? 'query' : 'ID_query';
-      searchInput.placeholder = radio.value === 'semantic' 
-                                ? 'Search academic topics...' 
-                                : 'Search by conference ID...';
-    });
+  radio.addEventListener('change', (e) => {
+  const mode = e.target.value;
+
+  // Always use the same field name
+  searchInput.name = 'query';
+
+  // Just swap the placeholder + UI
+  if (mode === 'semantic') {
+    searchInput.placeholder = 'Search academic topics...';
+    if (hybridControls) hybridControls.style.display = 'none';
+  } else if (mode === 'hybrid') {
+    searchInput.placeholder = 'Hybrid search: topics, acronyms, locations...';
+    if (hybridControls) hybridControls.style.display = 'flex';
+  } else { // id
+    searchInput.placeholder = 'Search by conference ID...';
+    if (hybridControls) hybridControls.style.display = 'none';
+  }
   });
+});
   
   searchInput.addEventListener('keydown', function(event) {
     if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {

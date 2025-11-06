@@ -17,14 +17,14 @@ from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
 from .services.db_services import db, migrate
 
-
-
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from .services.mongo_atlas_service import (
     count_indexes,
     mongo_vec_query,
-    fetch_by_id
+    fetch_by_id,
+    mongo_hybrid_search_rrf,
+    mongo_lex_query
 )
 from .services.mongo_users import (
     upsert_user,
@@ -162,13 +162,14 @@ def index():
     favorite_ids = MongoClient(app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": session.get("user_id")})["favorites"]
 
     record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
-
+    
+    mode = request.args.get("search_type", "")
     query = request.args.get("query", "")
+    
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
 
-    ID_query = request.args.get("ID_query", "").upper()
     display_sate_span_first = request.args.get("date_span_first")
     display_sate_span_second = request.args.get("date_span_second")
 
@@ -184,22 +185,24 @@ def index():
 
     # Use a single variable throughout
     articles = []
+    
+    if mode == "id":
+        try:
+            # Mongo fetch by id
+            results = mongo_lex_query(
+                app.config["MONGO_URI"],
+                db_name="kubishi-scholar",
+                coll_name="conferences",
+                query=query,
+                top_k=50,
+                index_name="default",
+            )
+            articles = results
+        except Exception as e:
+            print(f"ID fetch error: {e}")
+            articles = []  # do not reference undefined names
 
-    if ID_query:
-        uri = app.config["MONGO_URI"]
-        #print("IDQUERY", ID_query)
-
-        # Mongo fetch by id
-        doc = fetch_by_id(
-            uri,
-            db_name="kubishi-scholar",
-            collection_name="conferences",
-            doc_id=ID_query
-        )
-        if doc:
-            articles = [doc]
-
-    elif query:
+    elif mode == "semantic":
         try:
             # Vector search
             results = mongo_vec_query(
@@ -207,10 +210,11 @@ def index():
                 db_name="kubishi-scholar",
                 coll_name="conferences",
                 query_vec=embed(query),
-                top_k=min(record_count, 50),
+                top_k=50,
                 index_name="vector_index",
                 path="embedding"
             )
+            print(f"Hybrid search returned {len(results)} results.")
             # Step 3: Filter if any filters are set
             if date_span_first and date_span_second or location or ranking_score:
                 try:
@@ -245,13 +249,58 @@ def index():
         except Exception as e:
             print(f"Vector search error: {e}")
             articles = []  # do not reference undefined names
+    elif mode == "hybrid":
+        try:
+            results = mongo_hybrid_search_rrf(
+                query=query,
+                top_k=50,
+                text_index_name="default",
+                vec_index_name="vector_index",
+                vec_path="embedding",
+                rrf_c=60.0,
+                text_weight=1.0,
+                vec_weight=1.0
+            )
+            print(f"Hybrid search returned {len(results)} results.")
+            # Step 3: Filter if any filters are set
+            if date_span_first and date_span_second or location or ranking_score:
+                try:
+                    start_date = (
+                        datetime.strptime(date_span_first, "%m-%d-%Y")
+                        if display_sate_span_first else None
+                    )
+                    end_date = (
+                        datetime.strptime(date_span_second, "%m-%d-%Y")
+                        if display_sate_span_first else None
+                    )
+
+                    filtered_articles = [
+                        a for a in results
+                        if is_match(
+                            a,
+                            start_date=start_date,
+                            end_date=end_date,
+                            location=location,
+                            ranking_source=ranking_source,
+                            ranking_score=ranking_score,
+                        )
+                    ]
+                    articles = filtered_articles
+
+                except Exception as e:
+                    print(f"Filtering error: {e}")
+                    articles = results or []
+            else:
+                articles = results or [] 
+        except Exception as e:
+            print(f"Hybrid search error: {e}")
+            articles = []  # do not reference undefined names
 
     return render_template(
         "index.html",
         articles=articles[:num_results],
         favorite_ids=favorite_ids,
         query=query,
-        ID_query=ID_query,
         num_results=num_results,
         date_span_first=display_sate_span_first,
         date_span_second=display_sate_span_second,
