@@ -17,6 +17,8 @@ def embed(text: str):
     )
     return resp.data[0].embedding
 
+
+
 def pdf_summary(text: str):
     if not text:
         raise ValueError("Input text for summarization cannot be empty.")

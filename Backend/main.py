@@ -88,6 +88,7 @@ def build_docs(rows: pd.DataFrame, embeddings: List[List[float]], model: str) ->
             },
             "h5_index": to_int_or_none(row.get("h5_index")),
             "h5_median": to_int_or_none(row.get("h5_median")),
+            "url": row.get("url"),
             "deadline": row.get("deadline"),
             "notification": row.get("notification"),
             "start": row.get("start"),

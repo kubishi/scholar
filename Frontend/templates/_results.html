@@ -2,22 +2,23 @@
     <h4> Conferences Results: </h4>
     {% if articles %}
       {% for article in articles %}
-          {% if article.metadata.url %}
+
               <div class="mb-4 border border-1 border-dark p-2 text-start bg-white rounded-3">
                   <h5 class="conference-header mb-1">
                       <strong>{{ loop.index }}.</strong>
-                      {{ article.id }}
-                      <a href="{{ article.metadata.url }}">
-                        <span class="full-url">{{ article.metadata.url }}</span>
+                      {{ article._id }}
+
+                      <a href="{{article.url}}" target="_blank"> <!-- add url here -->
+                        <span class="full-url">{{  article.get('title', 'N/A')}}</span> <!-- add url here -->
                         <span class="short-url">Go to Page &#10172;</span>
                       </a>
                   </h5>
                   {% if session_user_name and session_user_name.userinfo %}
-                    {% set is_fav = article.id in favorite_ids %}
+                    {% set is_fav = article._id in favorite_ids %}
                     <button
                       type="button"
                       class="btn btn-sm favorite-btn {{ 'btn-success' if is_fav else 'btn-outline-primary' }}"
-                      data-conference-id="{{ article.id }}"
+                      data-conference-id="{{ article._id }}"
                       data-state="{{ 'saved' if is_fav else 'empty' }}"
                       aria-pressed="{{ 'true' if is_fav else 'false' }}"
                       aria-label="Toggle favorite"
@@ -31,7 +32,7 @@
                   {% endif %}
 
                   {% if session_user_name and session_user_name.userinfo %}
-                    <a href="{{ url_for('conferences.edit_conference', conf_id=article.id) }}"
+                    <a href="{{ url_for('conferences.edit_conference', conf_id=article._id) }}"
                       class="btn btn-warning btn-sm ms-2">
                       Edit
                     </a>
@@ -41,15 +42,14 @@
                     </button>
                   {% endif %}
 
-                
-                  <span class="text-muted me-3">Location: {{ (article.metadata.city, article.metadata.country) | city_country}}</span>
-                  <span class="text-muted me-3">Start: {{ article.metadata.start | format_date }}</span>
-                  <span class="text-muted">End: {{ article.metadata.end | format_date }}</span>
+                  <span class="text-muted me-3">Location: {{ (article.city, article.country) | city_country}}</span>
+                  <span class="text-muted me-3">Start: {{ article.start | format_date }}</span>
+                  <span class="text-muted">End: {{ article.end | format_date }}</span>
 
                   <!-- Calendar buttons -->
                   <div class="mt-2">
                       <a 
-                        href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article.id | urlencode }}&dates={{ article.metadata.start | to_gcal_datetime }}/{{ article.metadata.end | to_gcal_datetime }}&location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}&details={{ article.metadata.url | urlencode }}" 
+                        href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article._id | urlencode }}&dates={{ article.start | to_gcal_datetime }}/{{ article.end | to_gcal_datetime }}&location={{ (article.city ~ ', ' ~ article.country) | urlencode }}&details={{ article.url | urlencode }}" 
                         target="_blank" 
                         class="google-callendar-button btn btn-sm me-2">
                         Add to Google Calendar
@@ -57,13 +57,13 @@
 
                       <a href="https://outlook.office.com/calendar/0/deeplink/compose?
                         allday=false
-                        &body={{ article.metadata.topics | urlencode }}
-                        &enddt={{ article.metadata.end | urlencode }}
-                        &location={{ (article.metadata.city ~ ', ' ~ article.metadata.country) | urlencode }}
+                        &body={{ article.topics | urlencode }}
+                        &enddt={{ article.end | urlencode }}
+                        &location={{ (article.city ~ ', ' ~ article.country) | urlencode }}
                         &path=%2Fcalendar%2Faction%2Fcompose
                         &rru=addevent
-                        &startdt={{ article.metadata.start | urlencode }}
-                        &subject={{ article.id | urlencode }}"
+                        &startdt={{ article.start | urlencode }}
+                        &subject={{ article._id | urlencode }}"
                         target="_blank" class="outlook-button btn btn-sm">
                         Add to Outlook
                       </a>
@@ -71,30 +71,55 @@
                   
                   <!-- Topics are hidden by default -->
                   <p class="mt-1 text-muted" style="font-size: 0.9rem;">
-                      Deadline to submit: {{ article.metadata.deadline | format_date }} <br>
-                      Full Name: {{ article.metadata.get('name', 'N/A') }} <br>
-                      Topics: {{ article.metadata.topics | replace('\n', ', ') }}
+                      Deadline to submit: {{ article.deadline | format_date }} <br>
+                      Topics: {{ article.topics | replace('\n', ', ') }}
                   </p>
   
-                  <p class="text-muted">Match Score: {{ article.score | round(4) }}</p>
-
+                  <p class="text-muted">Match Score: {{ article.score }}</p>
+                
                   <details class="mt-2">
-                      <summary style="cursor: pointer;">Conference Ranking Scores</summary>
-                      <ul class="list-unstyled mt-1 ms-3">
-                          {% set scores = [] %}
-                          {% for key, value in article.metadata.items() %}
-                              {% if key.startswith('CORE') or key.startswith('ERA') or key.startswith('h5') %}
-                                  {% set _ = scores.append((key, value)) %}
-                              {% endif %}
-                          {% endfor %}
+                  <summary style="cursor: pointer;">Ranking &amp; Metrics</summary>
+                  <div class="mt-2">
 
-                          {% for key, value in scores | sort(attribute=0, reverse=true) %}
-                              <li><strong>{{ key }}:</strong> {{ value }}</li>
-                          {% endfor %}
-                      </ul>
-                  </details>
+                    {% set core = article.get('core', {}) %}
+                    {% set keys = ['CORE2023','CORE2021','CORE2020','CORE2018','CORE2017','CORE2014','CORE2013','ERA2010'] %}
+
+                    {# Show CORE/ERA rows if present #}
+                    {% set has_any = false %}
+                    <table class="table table-sm mb-2">
+                      <tbody>
+                        {% for k in keys %}
+                          {% if core.get(k) %}
+                            {% set has_any = true %}
+                            <tr>
+                              <th scope="row" class="fw-semibold">{{ k }}</th>
+                              <td>{{ core[k] }}</td>
+                            </tr>
+                          {% endif %}
+                        {% endfor %}
+                      </tbody>
+                    </table>
+
+                    {# h5 metrics #}
+                    <div class="small">
+                      {% if article.h5_index is not none %}
+                        {% set has_any = true %}
+                        <span class="badge text-bg-secondary me-1">h5-index: {{ article.h5_index }}</span>
+                      {% endif %}
+                      {% if article.h5_median is not none %}
+                        {% set has_any = true %}
+                        <span class="badge text-bg-secondary">h5-median: {{ article.h5_median }}</span>
+                      {% endif %}
+                    </div>
+
+                    {% if not has_any %}
+                      <div class="text-muted small">No ranking data available.</div>
+                    {% endif %}
+                  </div>
+                </details>
               </div>
-          {% endif %}
+              
+
       {% endfor %}
     {% else %}
       {% if ID_query %}
