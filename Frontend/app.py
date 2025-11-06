@@ -26,6 +26,12 @@ from .services.mongo_atlas_service import (
     mongo_hybrid_search_rrf,
     mongo_lex_query
 )
+from .services.mongo_users import (
+    upsert_user,
+    add_favorite,
+    remove_favorite
+)
+
 
 
 # --- Flask App setup ---
@@ -90,14 +96,11 @@ def upload_file():
     return jsonify({"text": summary})
 
 
-# --- Context Processors ---
 @app.context_processor
 def inject_user_model():
-    """Make User model available in templates"""
     return dict(User=User)
 
 
-# --- Authentication Routes ---
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
@@ -110,29 +113,27 @@ def callback():
     session["user"] = token
     user_info = token["userinfo"]
 
-    google_auth_id = user_info['sub']
-    user_name = user_info['name']
-    user_email = user_info['email']
-    # print("PERSON NAME", session['user'])
+    google_auth_id = user_info["sub"]
+    user_name = user_info.get("name", "")
+    user_email = user_info.get("email", "")
 
     session["user_id"] = google_auth_id
 
-    user = User.query.filter_by(google_auth_id=google_auth_id).first()
-    if not user:
-        new_user = User(
-            google_auth_id=google_auth_id,
-            user_name=user_name,
-            user_email=user_email
-        )
-        db.session.add(new_user)
-    else:
-        # Optionally update existing user info
-        user.user_name = user_name
-        user.user_email = user_email
-
-    db.session.commit()
+    # Upsert into Mongo users
+    upsert_user(
+        app.config["MONGO_URI"],
+        "kubishi-scholar",
+        "users",
+        {
+            "_id": google_auth_id,
+            "user_name": user_name,
+            "user_email": user_email,
+            "user_privilege": "user", 
+        }
+    )
 
     return redirect("/")
+
 
 @app.route("/logout")
 def logout():
@@ -157,14 +158,8 @@ def index():
     if redirect_response:
         return redirect_response
 
-    favorite_ids = set()
-    if session.get("user_id"):
-        rows = (
-            db.session.query(Favorite_Conf.fav_conf_id)
-            .filter_by(user_id=session["user_id"])
-            .all()
-        )
-        favorite_ids = {r[0] for r in rows}
+
+    favorite_ids = MongoClient(app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": session.get("user_id")})["favorites"]
 
     record_count = count_indexes(app.config["MONGO_URI"], "kubishi-scholar", "conferences")
     
@@ -322,22 +317,37 @@ def index():
 def save_favorite():
     data = request.get_json(silent=True) or {}
     conf_id = data.get("conference_id") or data.get("conf_id")
-    print(conf_id)
+    
     if not conf_id:
         return jsonify({"ok": False, "error": "missing_conference_id"}), 400
 
     user_id = session["user_id"]
-    fav = Favorite_Conf.query.filter_by(user_id=user_id, fav_conf_id=conf_id).first()
-    if fav:
-        db.session.delete(fav)
-        db.session.commit()
-        status = "removed"
-    else:
-        db.session.add(Favorite_Conf(user_id=user_id, fav_conf_id=conf_id))
-        db.session.commit()
-        status = "added"
+    user_doc = MongoClient(app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": user_id})
 
-    return jsonify({"ok": True, "status": status, "conf_id": conf_id})
+    if user_doc and "favorites" in user_doc and conf_id in user_doc["favorites"]:
+        print(conf_id, "Favorite Removed")
+        remove_favorite(
+            app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "users",
+            user_id,
+            conf_id
+        )
+
+    else:
+        print(conf_id, "Favorite Added")
+        add_favorite(
+            app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "users",
+            user_id,
+            conf_id
+        )
+
+
+
+    return jsonify({"ok": True}), 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
