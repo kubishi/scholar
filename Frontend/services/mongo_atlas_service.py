@@ -101,7 +101,7 @@ def mongo_lex_query(uri, db_name, coll_name, query, top_k=10, index_name="defaul
                 {"$project": {
                     "_id": 1, "title": 1, "acronym": 1, "topics": 1,
                     "city": 1, "country": 1, "deadline": 1, "start": 1, "end": 1,
-                    "h5_index": 1, "h5_median": 1, "notification": 1, "url": 1,
+                    "h5_index": 1, "h5_median": 1, "notification": 1, "url": 1, "core": 1,
                     "updated_at": 1, "score": {"$meta": "searchScore"}
                 }}
             ]
