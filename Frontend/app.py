@@ -300,7 +300,7 @@ def index():
         except Exception as e:
             print(f"Hybrid search error: {e}")
             articles = []  # do not reference undefined names
-
+            
     return render_template(
         "index.html",
         articles=articles[:num_results],

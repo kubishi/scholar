@@ -49,7 +49,7 @@
                   <div class="form-check">
                   <input class="form-check-input" type="radio" name="search_type" id="Hybrid_Toggle" value="hybrid"
                         {% if request.args.get('search_type') == 'hybrid' %}checked{% endif %}>
-                  <label class="form-check-label" for="Hybrid_Toggle">Hybrid</label>
+                  <label class="form-check-label" for="Hybrid_Toggle">Hybrid Search</label>
                   </div>
               </div>
             
@@ -158,128 +158,9 @@
 
 <!--Results-->
 <div class="container">
-    {% if query or ID_query %}
+    {% if query %}
       {% include "_results.html" %}
     {% endif %}
 </div>
 
-
-<script>
-  Dropzone.autoDiscover = false;
-
-  var myDropzone = new Dropzone("#my-awesome-dropzone", {
-      paramName: "file",
-      maxFiles: 1,
-      acceptedFiles: ".pdf",
-      dictDefaultMessage: "Click or drag a PDF of abstract here to upload",
-      addRemoveLinks: true,
-      headers: {
-          "X-CSRFToken": "{{ csrf_token() }}"
-      },
-      init: function() {
-          this.on("success", function(file, response) {
-              console.log("File uploaded:", response);
-              // Put the text into the search bar
-              if(response.text) {
-                  document.getElementById("searchInput").value = response.text;
-              }
-          });
-  
-          this.on("maxfilesexceeded", function(file) {
-              this.removeAllFiles();
-              this.addFile(file);
-          });
-  
-          this.on("addedfile", function(file) {
-              file.previewElement.addEventListener("click", () => {
-                  this.removeFile(file);
-              });
-          });
-      }
-  });
-  </script>
-
-<!-- Script to show topics on click -->
-<script>
-  const sourceSelect = document.getElementById("ranking-source");
-  const scoreContainer = document.getElementById("ranking-score-container");
-
-  sourceSelect.addEventListener("change", function () {
-    const selected = this.value;
-    scoreContainer.innerHTML = "";  // Clear previous content
-
-    if (selected === "") {
-      scoreContainer.style.display = "none";
-      return;
-    }
-
-    scoreContainer.style.display = "block";
-
-    if (selected === "scholar") {
-      // Google Scholar → use text input
-      scoreContainer.innerHTML = `
-        <input type="text" name="ranking_score" class="form-control" placeholder="Enter Scholar Score">
-      `;
-    } else {
-      // CORE or ERA → use dropdown
-      scoreContainer.innerHTML = `
-        <select name="ranking_score" class="form-control">
-          <option value="">Select Ranking Score</option>
-          <option value="A*">A*</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-        </select>
-      `;
-    }
-  });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.search_result .btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const topicEl = this.querySelector('.topic-line');
-                if (topicEl) {
-                    topicEl.style.display = topicEl.style.display === 'none' ? 'block' : 'none';
-                }
-             
-                
-            });
-        });
-    });
-</script>
-
-<!-- Toggle between search modes -->
-<script>
-  const searchInput = document.getElementById('searchInput');
-  const form = searchInput.closest('form');
-  
-  document.querySelectorAll('input[name="search_type"]').forEach(radio => {
-  radio.addEventListener('change', (e) => {
-  const mode = e.target.value;
-
-  // Always use the same field name
-  searchInput.name = 'query';
-
-  // Just swap the placeholder + UI
-  if (mode === 'semantic') {
-    searchInput.placeholder = 'Search academic topics...';
-    if (hybridControls) hybridControls.style.display = 'none';
-  } else if (mode === 'hybrid') {
-    searchInput.placeholder = 'Hybrid search: topics, acronyms, locations...';
-    if (hybridControls) hybridControls.style.display = 'flex';
-  } else { // id
-    searchInput.placeholder = 'Search by conference ID...';
-    if (hybridControls) hybridControls.style.display = 'none';
-  }
-  });
-});
-  
-  searchInput.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
-      event.preventDefault(); // Prevent new line
-      form.submit();          // Submit the form
-      console.log('Enter key pressed, performing custom action!');
-    }
-  });
-  </script>
 {% endblock %}
