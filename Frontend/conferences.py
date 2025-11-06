@@ -136,7 +136,15 @@ def connection_finder():
 def saved_conference():
     logged_in_user_id = session.get("user_id")
 
-    favorite_ids = MongoClient(current_app.config["MONGO_URI"])["kubishi-scholar"]["users"].find_one({"_id": logged_in_user_id})["favorites"]
+    favorite_ids = []
+    user_id = session.get("user_id")
+    if user_id:
+        client = MongoClient(current_app.config["MONGO_URI"])
+        users = client["kubishi-scholar"]["users"]
+        user_doc = users.find_one({"_id": user_id})
+        if user_doc and "favorites" in user_doc:
+            favorite_ids = user_doc["favorites"]
+            
     print("GGGGGG", type(favorite_ids))
 
     articles = []

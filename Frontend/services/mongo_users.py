@@ -2,26 +2,23 @@
 from typing import Optional, Dict, Any
 from pymongo import MongoClient, ReturnDocument
 
-def upsert_user(uri: str, db_name: str, coll_name: str, user_doc: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Upserts (inserts or replaces) a user document by _id.
-    Returns the updated document.
-    """
+def upsert_user(uri: str, db_name: str, coll_name: str, user_doc: Dict[str, Any]):
     if "_id" not in user_doc:
         raise ValueError("user_doc must include an '_id' field.")
 
     client = MongoClient(uri)
     try:
         coll = client[db_name][coll_name]
-        doc = coll.find_one_and_replace(
+        update_fields = {k: v for k, v in user_doc.items() if k != "_id"}
+        coll.update_one(
             {"_id": user_doc["_id"]},
-            user_doc,
-            upsert=True,
-            return_document=ReturnDocument.AFTER
+            {"$set": update_fields},
+            upsert=True
         )
-        return doc
+        return coll.find_one({"_id": user_doc["_id"]})
     finally:
         client.close()
+
 
 def add_favorite(uri: str, db_name: str, coll_name: str, user_id: str, conf_id: str):
     client = MongoClient(uri)
