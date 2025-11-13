@@ -36,22 +36,21 @@ def remove_old_conference(conference, collection):
         print(f"⚠️ Error while checking/removing conference {conference.get('_id')}: {e}")
     return False
 
-def update_conference_url(conference, mongo_client, db):
+def update_conference_url(conference, db):
     conf_name = conference.get("title", "")
     conf_acronym = conference.get("acronym", "")
     print(f"Searching URL for: {conf_name} ({conf_acronym})")
     # Use GPT or BRAVE to find the conference website
-    url = brave_search_conference_website(conf_name, conf_acronym)
+    url = search_conference_website(conf_name, conf_acronym)
     if url:
-        existing_url_norm = (conference.get("url", ""))
-        print(f"Existing URL (normalized): {existing_url_norm}")
+        existing_url = (conference.get("url", ""))
+        print(f"Existing URL: {existing_url}")
         print(f"Found URL: {url}")
-        '''
-        if existing_url_norm and url and existing_url_norm == url:
-            print("✅ Skipping: existing URL matches found URL (after normalization). No insert/update performed.")
-            mongo_client.close()
+
+        if existing_url and url and existing_url == url:
+            print("Skipping: existing URL matches found URL. No insert/update performed.")
             return   
-        '''
+        
         # Fetch page content and extract details
         
         page_content = fetch_page_content(url)
@@ -59,12 +58,11 @@ def update_conference_url(conference, mongo_client, db):
             details = extract_conference_details(page_content)
             print(f"Extracted details: {details}")
             start_time = datetime.fromisoformat(details["start"].replace("Z", "+00:00"))
-            if datetime.now(timezone.utc) > start_time:
+            one_years = timedelta(days=1 * 365)  # approx 3 years
+            if datetime.now(timezone.utc) - start_time > one_years:
                 print("⚠️ Skipping: Conference has already started or passed. No insert/update performed.")
-                mongo_client.close()
                 return
-            try:
-                
+            try:      
                 # Update the conference document
                 # Connect to both collections
                 new_collection = db["conference-updated"]
@@ -80,7 +78,6 @@ def update_conference_url(conference, mongo_client, db):
                 # Insert into the new collection
                 new_collection.insert_one(new_doc)
                 
-
                 print(f"Inserted updated record into 'conferences_updated' with _id {new_doc['_id']}")
                 print("Conference document updated successfully.")
             except Exception as e:
@@ -89,8 +86,6 @@ def update_conference_url(conference, mongo_client, db):
             print("Failed to fetch page content.")
     else:
         print("No URL found.")
-
-    mongo_client.close()
 
 def main():
     # Connect to MongoDB
@@ -101,15 +96,15 @@ def main():
     oldest_cursor = (
     collection.find({"start": {"$ne": None, "$ne": ""}})
     .sort("start", 1)   # ascending order (oldest first)
-    .limit(50)           # take the next one
+    .limit(10)           # take the next one
     )
-    time.sleep(3)  # brief pause to avoid overwhelming the DB
+    time.sleep(3) # to avoid rate limiting
     for conf in oldest_cursor:
-        oldest_conf = conf
         try:
-            remove_old_conference(oldest_conf, collection)
+            update_conference_url(conf, db)
         except Exception as e:
             print("Error processing conference:", e)
+    mongo_client.close()
 
 if __name__ == "__main__":
     main()
