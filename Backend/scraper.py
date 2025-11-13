@@ -7,6 +7,8 @@ import pandas as pd
 import json
 from braveSearch import brave_search_conference_website
 import time
+from datetime import datetime, timezone, timedelta
+from GPTsearchURL import search_conference_website
 from typing import Optional, Dict, Any
 load_dotenv()
 
@@ -69,17 +71,17 @@ def extract_conference_details(page_content: str):
                     "notification": {
                         "type": "string",
                         "format": "date-time",
-                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference in ISO 8601 format"
+                        "description": "Notification of acceptance. The date when communication sent to an author or presenter informing them that their submitted paper or proposal has been accepted for presentation at the conference in YYYY-MM-DD"
                     },
                     "start": {
                         "type": "string",
                         "format": "date-time",
-                        "description": "Date of welcome reception and/or first day of conference in ISO 8601 format."
+                        "description": "Date of welcome reception and/or first day of conference in YYYY-MM-DD."
                     },
                     "end": {
                         "type": "string",
                         "format": "date-time",
-                        "description": "The date of the last day of the conference in ISO 8601 format."
+                        "description": "The date of the last day of the conference in YYYY-MM-DD."
                     },
                     "city": {
                         "type": "string",
@@ -223,8 +225,12 @@ def main():
         if page_content:
             extracted_results = extract_conference_details(page_content)
             print(extracted_results)
-            save_openai_to_csv(extracted_results, CITE_URL, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median)
-
+            
+            start_time = datetime.fromisoformat(extracted_results["start"].replace("Z", "+00:00"))
+            now = datetime.now(timezone.utc)
+            three_years = timedelta(days=3 * 365)
+            if now - start_time < three_years:
+                save_openai_to_csv(extracted_results, CITE_URL, core_2023, core_2021, core_2020, core_2018, cor_2017, core_2014, core_2013, era_2010, h5_index, h5_median)
 
 if __name__ == '__main__':
     main()
