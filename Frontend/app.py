@@ -97,13 +97,14 @@ def upload_file():
 def inject_user_model():
     return dict(User=User)
 
-
+# our site to Auth0
 @app.route("/login")
 def login():
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True)
     )
 
+# Auth0 back to our site
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
     token = oauth.auth0.authorize_access_token()
@@ -202,6 +203,7 @@ def index():
                 index_name="default",
             )
             articles = results
+            print(articles, "ARTYY")
         except Exception as e:
             print(f"ID fetch error: {e}")
             articles = []  # do not reference undefined names

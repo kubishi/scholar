@@ -54,8 +54,13 @@ def conf_approval_page():
         conf_id = (request.form.get("conf_id") or "").strip().upper()  # normalize
         action  = request.form.get("action")
 
-        conf = db.session.query(Submitted_Conferences).filter_by(conf_id=conf_id).first()
-        if not conf:
+        existing = fetch_by_id(
+            uri=current_app.config["MONGO_URI"],   # inside fetch_by_id use MongoClient(uri) positionally
+            db_name="kubishi-scholar",
+            collection_name="user_submitted_conf",
+            doc_id=conf_id
+        )
+        if not existing:
             return redirect(url_for("admin.conf_approval_page"))
 
         if action == "compare":

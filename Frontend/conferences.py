@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, redirect, render_template, session, url_for, request, jsonify, current_app
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
@@ -7,40 +7,52 @@ from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
 from .services.openai_service import embed # type: ignore
 from .services.db_services import db # type: ignore
 from .services.mongo_atlas_service import fetch_by_id
+from .services.mongo_users import upsert_user
+from datetime import datetime, timezone, date
 from pymongo import MongoClient
 
 
 bp = Blueprint("conferences", __name__) 
 
+def _to_date(value):
+    if not value:
+        return None
+    if isinstance(value, date):
+        return value
+    try:
+        # assume ISO format YYYY-MM-DD or timestamp string
+        return datetime.fromisoformat(value).date()
+    except (ValueError, TypeError):
+        return None
+
 #edit page
 @bp.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 @login_required
 def edit_conference(conf_id):
-    existing = fetch_by_id(conf_id)
-    if not existing.vectors:
+
+    existing = fetch_by_id(
+        uri=current_app.config["MONGO_URI"],   # inside fetch_by_id use MongoClient(uri) positionally
+        db_name="kubishi-scholar",
+        collection_name="conferences",
+        doc_id=conf_id
+    )
+    if not existing:
         return f"Conference ID {conf_id} not found", 404
 
-    conf_meta = existing.vectors[conf_id].metadata
-
-    def parse_date(date_str):
-        if date_str:
-            try:
-                return datetime.strptime(date_str, "%Y-%m-%d").date()
-            except ValueError:
-                return None
-        return None
-
+    # Pre-Fill with old information
     form = ConferenceForm(
-        conference_id=conf_id,
-        conference_name=conf_meta.get("conference_name"),
-        country=conf_meta.get("country", ""),
-        city=conf_meta.get("city", ""),
-        deadline=parse_date(conf_meta.get("deadline", "")),
-        start=parse_date(conf_meta.get("start", "")),
-        end=parse_date(conf_meta.get("end", "")),
-        topic_list=conf_meta.get("topics", ""),
-        conference_link=conf_meta.get("url", "")
+        conference_id=existing["_id"],
+        conference_name=existing["title"],
+        country=existing["country"],
+        city=existing["city"],
+        deadline=_to_date(existing.get("deadline")),
+        start=_to_date(existing.get("start")),
+        end=_to_date(existing.get("end")),
+        topic_list=existing["topics"],
+        conference_link=existing["url"]
     )
+
+    print(form.conference_id.data)
 
     # Handle form submission
     if request.method == 'POST':
@@ -48,28 +60,41 @@ def edit_conference(conf_id):
         print("Errors:", form.errors)
 
     if form.validate_on_submit():
-        # Create a new "edit submission" record in DB
-        updated_submission = Submitted_Conferences(
-            conf_id=conf_id,
-            submitter_user_name=session['user']['userinfo'].get('name', ''),
-            submitter_id=session['user']['userinfo']['sub'],
-            status='waiting',  # pending approval
-            edit_type='edit',
-            conference_name=form.conference_name.data.strip(),
-            country=form.country.data.strip(),
-            city=form.city.data.strip(),
-            deadline=form.deadline.data,
-            start=form.start.data,
-            end=form.end.data,
-            topics=form.topic_list.data.strip(),
-            url=form.conference_link.data.strip(),
-            time_submitted_at=datetime.now().isoformat()
+        user_info = session.get("user", {}).get("userinfo", {})
+        google_auth_id = user_info.get("sub")
+        user_name = user_info.get("name", "")
+        user_email = user_info.get("email", "")
+
+        if not google_auth_id:
+            flash("Unable to determine user identity for submission.", "danger")
+            return redirect(url_for("index"))
+
+        submission_doc = {
+            "_id": conf_id,
+            "conference_name": form.conference_name.data.strip(),
+            "country": form.country.data.strip(),
+            "city": form.city.data.strip(),
+            "deadline": form.deadline.data.isoformat() if form.deadline.data else None,
+            "start": form.start.data.isoformat() if form.start.data else None,
+            "end": form.end.data.isoformat() if form.end.data else None,
+            "topics": form.topic_list.data.strip(),
+            "url": form.conference_link.data.strip(),
+            "submitter_user_name": user_name,
+            "submitter_user_email": user_email,
+            "submitter_id": google_auth_id,
+            "status": "waiting",
+            "edit_type": "edit",
+            "time_submitted_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        }
+
+        upsert_user(
+            current_app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "user_submitted_conf",
+            submission_doc
         )
 
-        db.session.add(updated_submission)
-        db.session.commit()
-
-        print("Conference edit submitted successfully! Pending approval.", "success")
+        flash("Conference edit submitted successfully! Pending approval.", "success")
         return redirect(url_for("index"))
 
     return render_template("edit_conference.html", form=form, conf_id=conf_id)
@@ -80,27 +105,39 @@ def edit_conference(conf_id):
 def conference_adder():
     form = ConferenceForm()
     if form.validate_on_submit():
-        conference_id = form.conference_id.data.strip().upper()
+        user_info = session.get("user", {}).get("userinfo", {})
+        google_auth_id = user_info.get("sub")
+        user_name = user_info.get("name", "")
+        user_email = user_info.get("email", "")
 
-        new_submission = Submitted_Conferences(
-            conf_id=conference_id,
-            submitter_user_name=session['user']['userinfo'].get('name', ''),
-            submitter_id=session['user']['userinfo']['sub'],
-            status='waiting',
-            edit_type='new',
-            conference_name=form.conference_name.data.strip(),
-            country=form.country.data.strip(),
-            city=form.city.data.strip(),
-            deadline=form.deadline.data,
-            start=form.start.data,
-            end=form.end.data,
-            topics=form.topic_list.data.strip(),
-            url=form.conference_link.data.strip(),
-            time_submitted_at=datetime.now().isoformat()
+        if not google_auth_id:
+            flash("Unable to determine user identity for submission.", "danger")
+            return redirect(url_for("index"))
+
+        submission_doc = {
+            "_id": form.conference_id.data.strip(),
+            "conference_name": form.conference_name.data.strip(),
+            "country": form.country.data.strip(),
+            "city": form.city.data.strip(),
+            "deadline": form.deadline.data.isoformat() if form.deadline.data else None,
+            "start": form.start.data.isoformat() if form.start.data else None,
+            "end": form.end.data.isoformat() if form.end.data else None,
+            "topics": form.topic_list.data.strip(),
+            "url": form.conference_link.data.strip(),
+            "submitter_user_name": user_name,
+            "submitter_user_email": user_email,
+            "submitter_id": google_auth_id,
+            "status": "waiting",
+            "edit_type": "new",
+            "time_submitted_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+        }
+
+        upsert_user(
+            current_app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "user_submitted_conf",
+            submission_doc
         )
-
-        db.session.add(new_submission)
-        db.session.commit()
 
         print("Conference submitted successfully! Pending approval.", "success")
         return redirect(url_for("index"))

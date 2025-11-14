@@ -26,8 +26,8 @@ def add_favorite(uri: str, db_name: str, coll_name: str, user_id: str, conf_id: 
         coll = client[db_name][coll_name]
         result = coll.update_one(
             {"_id": user_id},
-            {"$addToSet": {"favorites": conf_id}},  # creates 'favorites' if missing
-            upsert=True                             # creates user doc if not found
+            {"$addToSet": {"favorites": conf_id}},
+            upsert=True
         )
         return result
     finally:
@@ -38,6 +38,6 @@ def remove_favorite(uri: str, db_name: str, coll_name: str, user_id: str, conf_i
     coll = client[db_name][coll_name]
     return coll.find_one_and_update(
         {"_id": user_id},
-        {"$pull": {"favorites": conf_id}},        # no-op if not present
+        {"$pull": {"favorites": conf_id}},
         return_document=ReturnDocument.AFTER,
     )
