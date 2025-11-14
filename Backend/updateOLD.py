@@ -9,7 +9,9 @@ import time
 from scraper import fetch_page_content, extract_conference_details
 from braveSearch import brave_search_conference_website
 from GPTsearchURL import search_conference_website
-
+from ..Frontend.services.db_services import db # type: ignore
+from ..Frontend.models import User, Favorite_Conf, Submitted_Conferences # type: ignore
+from ..Frontend.forms import ConferenceForm # type: ignore
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -65,21 +67,30 @@ def update_conference_url(conference, db):
             try:      
                 # Update the conference document
                 # Connect to both collections
-                new_collection = db["conference-updated"]
+                form = ConferenceForm()
+                if form.validate_on_submit():
+                    conference_id = (details.get("acronym") or "").strip().upper()
 
-                # Prepare updated document
-                update_fields = {"url": url}
-                update_fields.update(details)
-
-                # Merge fields with existing document
-                new_doc = dict(conference)
-                new_doc.update(update_fields)
-
-                # Insert into the new collection
-                new_collection.insert_one(new_doc)
+                    new_submission = Submitted_Conferences(
+                        conf_id=conference_id,
+                        submitter_user_name="Automated Script",
+                        submitter_id="system",
+                        status='waiting',
+                        edit_type='new',
+                        conference_name=(details.get("title") or "").strip(),
+                        country=(details.get("country") or "").strip(),
+                        city=(details.get("city") or "").strip(),
+                        deadline=details.get("deadline"),
+                        start=details.get("start"),
+                        end=details.get("end"),
+                        topics=(details.get("topics") or "").strip(),
+                        url=(details.get("url") or url).strip(),
+                        time_submitted_at=datetime.now(timezone.utc).isoformat()
+                    )
+                    db.session.add(new_submission)
+                    db.session.commit()
                 
-                print(f"Inserted updated record into 'conferences_updated' with _id {new_doc['_id']}")
-                print("Conference document updated successfully.")
+                print(f"Inserted updated record into 'conferences_updated' with _id: {conference_id}")
             except Exception as e:
                 print("Error updating conference document:", e)
         else:
