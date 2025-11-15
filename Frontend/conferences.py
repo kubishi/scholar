@@ -41,15 +41,15 @@ def edit_conference(conf_id):
 
     # Pre-Fill with old information
     form = ConferenceForm(
-        conference_id=existing["_id"],
-        conference_name=existing["title"],
-        country=existing["country"],
-        city=existing["city"],
-        deadline=_to_date(existing.get("deadline")),
-        start=_to_date(existing.get("start")),
-        end=_to_date(existing.get("end")),
-        topic_list=existing["topics"],
-        conference_link=existing["url"]
+        conference_id = existing.get("_id"),
+        title = existing.get("title", ""),
+        country = existing.get("country", ""),
+        city = existing.get("city", ""),
+        deadline = _to_date(existing.get("deadline", None)),
+        start = _to_date(existing.get("start", None)),
+        end = _to_date(existing.get("end", None)),
+        topic_list = existing.get("topics", []),
+        conference_link = existing.get("url", "")
     )
 
     print(form.conference_id.data)
@@ -161,7 +161,6 @@ def connection_finder():
         )
     
     if searched_user_info:
-        # Log only domains or counts in prod to avoid PII leakage
         current_app.logger.debug("Found %d matching users for connection search.", len(searched_user_info))
     else:
         current_app.logger.debug("No user found for connection search input provided.")
