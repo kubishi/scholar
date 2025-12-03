@@ -2,8 +2,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, current_app
 from datetime import datetime, timezone
 
-from .services.db_services import db
-from .models import Submitted_Conferences
 from .services.openai_service import embed
 from .auth import admin_required
 
@@ -13,31 +11,40 @@ from .services.mongo_atlas_service import mongo_doc_upsert, fetch_by_id
 admin_bp = Blueprint('admin', __name__)
 
 # --- helpers (from your snippet) ---
-def _iso_utc(dt):
-    if not dt:
+def _iso_utc(value):
+    if not value:
         return ""
+    dt = value if not isinstance(value, str) else datetime.fromisoformat(value.replace("Z", "+00:00"))
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     else:
         dt = dt.astimezone(timezone.utc)
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+
 def approved_to_mongo(conf):
-    topic_vector = embed(conf.topics or "")
+    conf_id = (conf.get("conf_id") or conf.get("_id") or "").strip().upper()
+    conference_name = (conf.get("conference_name") or conf.get("title") or "").strip()
+    topics = (conf.get("topics") or "").strip()
+    city = (conf.get("city") or "").strip()
+    country = (conf.get("country") or "").strip()
+
+    embedding_text = " | ".join(filter(None, [conference_name, topics, city, country]))
+    topic_vector = embed(embedding_text or conference_name or topics or "")
+
     doc = {
-        "_id": (conf.conf_id or "").strip().upper(),
+        "_id": conf_id,
         "embedding": topic_vector,
-        "conference_name": (conf.conference_name or "").strip(),
-        "country": (conf.country or "").strip(),
-        "city": (conf.city or "").strip(),
-        "deadline": _iso_utc(conf.deadline),
-        "start": _iso_utc(conf.start),
-        "end": _iso_utc(conf.end),
-        "topics": (conf.topics or "").strip(),
-        "url": (conf.url or "").strip(),
-        "original_contributor_id": conf.submitter_id,
-        "time_approved_at": _iso_utc(conf.time_approved_at),
-        "status": conf.status,
+        "conference_name": conference_name,
+        "country": country,
+        "city": city,
+        "deadline": _iso_utc(conf.get("deadline")),
+        "start": _iso_utc(conf.get("start")),
+        "end": _iso_utc(conf.get("end")),
+        "topics": topics,
+        "url": (conf.get("url") or "").strip(),
+        "original_contributor_id": conf.get("submitter_id"),
+        "time_approved_at": _iso_utc(conf.get("time_approved_at")),
     }
 
     client = MongoClient(current_app.config["MONGO_URI"])
@@ -47,64 +54,84 @@ def approved_to_mongo(conf):
     client.close()
 
 
+def _load_submissions():
+    with MongoClient(current_app.config["MONGO_URI"]) as client:
+        return list(client["kubishi-scholar"]["user_submitted_conf"].find())
+
+
 @admin_bp.route("/conf_approval", methods=["GET", "POST"]) 
 @admin_required
 def conf_approval_page():
     if request.method == "POST":
-        conf_id = (request.form.get("conf_id") or "").strip().upper()  # normalize
+        conf_id = (request.form.get("_id") or "").strip().upper()
         action  = request.form.get("action")
 
-        conf = db.session.query(Submitted_Conferences).filter_by(conf_id=conf_id).first()
-        if not conf:
+        existing = fetch_by_id(
+            uri=current_app.config["MONGO_URI"],
+            db_name="kubishi-scholar",
+            collection_name="user_submitted_conf",
+            doc_id=conf_id
+        )
+        if not existing:
             return redirect(url_for("admin.conf_approval_page"))
 
+        client = MongoClient(current_app.config["MONGO_URI"])
+        submissions_coll = client["kubishi-scholar"]["user_submitted_conf"]
+
         if action == "compare":
-            # fetch previous (Mongo) version by _id
             res = fetch_by_id(
-                uri=current_app.config["MONGO_URI"],   # inside fetch_by_id use MongoClient(uri) positionally
+                uri=current_app.config["MONGO_URI"],
                 db_name="kubishi-scholar",
                 collection_name="conferences",
                 doc_id=conf_id
             )
-            submissions = db.session.query(Submitted_Conferences).all()
+            submissions = _load_submissions()
             return render_template(
                 "conf_approval.html",
                 submissions=submissions,
                 compare_id=conf_id,
-                original_version=res        # <-- pass this to Jinja
+                original_version=res
             )
 
         if action == "approve":
-            conf.status = "approved"
-            conf.time_approved_at = datetime.now(timezone.utc)
-            db.session.commit()
+            existing["status"] = "approved"
+            existing["time_approved_at"] = datetime.now(timezone.utc).isoformat()
+            mongo_doc_upsert(submissions_coll, existing)
         elif action == "unapprove":
-            conf.status = "waiting"
-            conf.time_approved_at = None
-            db.session.commit()
+            existing["status"] = "waiting"
+            existing["time_approved_at"] = None
+            mongo_doc_upsert(submissions_coll, existing)
         elif action == "delete":
-            db.session.delete(conf)
-            db.session.commit()
+            submissions_coll.delete_one({"_id": existing["_id"]})
+
+        client.close()
 
         return redirect(url_for("admin.conf_approval_page"))
 
-    submissions = db.session.query(Submitted_Conferences).all()
+    submissions = _load_submissions()
     return render_template(
         "conf_approval.html",
         submissions=submissions,
         compare_id=None,
-        original_version=None     # optional, keeps template happy
+        original_version=None
     )
 
 
 @admin_bp.route("/submit_all_approved", methods=["POST"])
 @admin_required
 def submit_all_approved():
-    approved = Submitted_Conferences.query.filter_by(status="approved").all()
+    client = MongoClient(current_app.config["MONGO_URI"])
+    collection = client["kubishi-scholar"]["user_submitted_conf"]
+    approved = list(collection.find({"status": "approved"}))
 
     for conf in approved:
-        conf.status = "submitted"
+        conf["status"] = "submitted"
         approved_to_mongo(conf)
-    db.session.commit() 
+        collection.update_one(
+            {"_id": conf["_id"]},
+            {"$set": {"status": "submitted"}}
+        )
+
     print("CHACHING Approved ")
+    client.close()
     return redirect(url_for("admin.conf_approval_page"))
