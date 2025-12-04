@@ -42,7 +42,7 @@ def edit_conference(conf_id):
     # Pre-Fill with old information
     form = ConferenceForm(
         conference_id = existing.get("_id"),
-        title = existing.get("title", ""),
+        title = existing.get("Title", ""),
         country = existing.get("country", ""),
         city = existing.get("city", ""),
         deadline = _to_date(existing.get("deadline", None)),

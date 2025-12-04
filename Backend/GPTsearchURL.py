@@ -31,11 +31,25 @@ def search_conference_website(conf_name: str, conf_acronym: str) -> Optional[str
         web_search_options={
         "search_context_size": 'low',
         },
-        messages=[{
-            "role": "user",
-            "content": f"Find me the {year} conference website for the {conf_name} ({conf_acronym})",
-        }],
-        
+        messages = [
+        {
+        "role": "user",
+        "content": (
+            f"Find the official {year} website for the academic conference.\n\n"
+            f"Name: {conf_name}\n"
+            f"Acronym: {conf_acronym}\n\n"
+            "Rules:\n"
+            "- Return ONLY the canonical homepage URL.\n"
+            "- Prefer official conference domains (e.g., .org, .edu, .ac.uk, official subdomains).\n"
+            "- Avoid third-party aggregators (WikiCFP, ResearchGate, AllConferences).\n"
+            "- Remove all tracking parameters (e.g., ?utm_source).\n"
+            "- If multiple years exist, choose the one for the current year.\n"
+            "- If unsure, choose the most credible official site.\n"
+            "Output ONLY the URL with no explanation."
+            )
+        }
+    ]
+
     )
     response_text = completion.choices[0].message.content
     
@@ -51,4 +65,4 @@ def search_conference_website(conf_name: str, conf_acronym: str) -> Optional[str
             return clean_url
     return None
 
-#print(search_conference_website("International Conference on Machine Learning", "ICML"))
+#print(search_conference_website("ACM Symposium on Eye Tracking Research & Applications", "ETRA"))

@@ -1,4 +1,3 @@
-from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from pymongo.mongo_client import MongoClient
@@ -10,16 +9,12 @@ import time
 from scraper import fetch_page_content, extract_conference_details
 from braveSearch import brave_search_conference_website
 from GPTsearchURL import search_conference_website
-from ..Frontend.services.db_services import db # type: ignore
-from ..Frontend.models import User, Favorite_Conf, Submitted_Conferences # type: ignore
-from ..Frontend.forms import ConferenceForm # type: ignore
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 mongo_uri = os.getenv("MONGO_URI")
 
 
-def update_conference_url(conference, db):
+def update_conference_url(conference):
     conf_name = conference.get("title", "")
     conf_acronym = conference.get("acronym", "")
     print(f"Searching URL for: {conf_name} ({conf_acronym})")
@@ -98,7 +93,7 @@ def main():
     time.sleep(3) # to avoid rate limiting
     for conf in oldest_cursor:
         try:
-            update_conference_url(conf, db)
+            update_conference_url(conf)
         except Exception as e:
             print("Error processing conference:", e)
     mongo_client.close()
