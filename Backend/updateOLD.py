@@ -92,8 +92,8 @@ def main():
 
     oldest_cursor = (
     collection.find({"start": {"$ne": None, "$ne": ""}})
-    .sort("start", 1)   # ascending order (oldest first)
-    .limit(3)           # take the next one
+    .sort("start", 1)   # take the oldest first
+    .limit(3)           # cap it to 3 at a time
     )
     time.sleep(3) # to avoid rate limiting
     for conf in oldest_cursor:
