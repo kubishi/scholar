@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, URL, Optional
 
 class ConferenceForm(FlaskForm):
     conference_id = StringField("Conference ID", validators=[DataRequired()])
-    conference_name = StringField("Conference Name", validators=[DataRequired()])
+    title = StringField("Conference Name", validators=[DataRequired()])
     country = StringField("Country", validators=[Optional()])
     city = StringField("City", validators=[Optional()])
     deadline = DateField("Submission Deadline", validators=[Optional()])

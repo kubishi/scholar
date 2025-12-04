@@ -42,7 +42,7 @@ def edit_conference(conf_id):
     # Pre-Fill with old information
     form = ConferenceForm(
         conference_id = existing.get("_id"),
-        title = existing.get("Title", ""),
+        title = existing.get("title", ""),
         country = existing.get("country", ""),
         city = existing.get("city", ""),
         deadline = _to_date(existing.get("deadline", None)),
@@ -71,7 +71,8 @@ def edit_conference(conf_id):
 
         submission_doc = {
             "_id": conf_id,
-            "conference_name": form.conference_name.data.strip(),
+            "acronym": form.conference_id.data.strip(),
+            "title": form.title.data.strip(),
             "country": form.country.data.strip(),
             "city": form.city.data.strip(),
             "deadline": form.deadline.data.isoformat() if form.deadline.data else None,
@@ -116,7 +117,8 @@ def conference_adder():
 
         submission_doc = {
             "_id": form.conference_id.data.strip(),
-            "conference_name": form.conference_name.data.strip(),
+            "acronym": form.conference_id.data.strip(),
+            "title": form.conference_name.data.strip(),
             "country": form.country.data.strip(),
             "city": form.city.data.strip(),
             "deadline": form.deadline.data.isoformat() if form.deadline.data else None,
