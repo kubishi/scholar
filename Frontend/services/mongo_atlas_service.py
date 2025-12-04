@@ -130,6 +130,19 @@ def fetch_by_id(uri, db_name, collection_name, doc_id):
     finally:
         client.close()
 
+def change_status(uri: str, db_name: str, coll_name: str, user_id: str, curr_status: str):
+    client = MongoClient(uri)
+    try:
+        coll = client[db_name][coll_name]
+        result = coll.update_one(
+            {"_id": user_id},
+            {"set": {"status": curr_status}},
+            upsert=True
+        )
+        return result
+    finally:
+        client.close()
+
 def mongo_doc_upsert(collection, doc):
     """Takes a MongoDB collection and upserts the given doc."""
     

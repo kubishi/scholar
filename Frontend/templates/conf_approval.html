@@ -26,7 +26,7 @@
       <tbody>
         {% for s in submissions %}
         <tr class="{% if s.status == 'approved' %}table-warning{% elif s.status == 'submitted' %}table-success{% endif %}">
-          <td><code>{{ s.conf_id }}</code></td>
+          <td><code>{{ s._id }}</code></td>
           <td>{{ s.submitter_user_name }}</td>
           <td>
             <strong>{{ s.conference_name }}</strong>
@@ -54,7 +54,7 @@
           </td>
           <td>
             <small class="text-muted">
-              {{ s.time_submitted_at.strftime('%m/%d/%y %H:%M') if s.time_submitted_at else '—' }}
+              {{ s.time_submitted_at if s.time_submitted_at else '—' }}
             </small>
           </td>
           <td>
@@ -67,63 +67,70 @@
           <td>
             {% if s.start or s.end %}
             <small>
-              {% if s.start %}{{ s.start.strftime('%m/%d/%y') if s.start else '—' }}{% endif %}
+              {% if s.start %}{{ s.start if s.start else '—' }}{% endif %}
               {% if s.start and s.end %} → {% endif %}
-              {% if s.end %}{{ s.end.strftime('%m/%d/%y') if s.end else '—' }}{% endif %}
+              {% if s.end %}{{ s.end if s.end else '—' }}{% endif %}
             </small>
             {% else %}
             —
             {% endif %}
           </td>
           <td>
+            
             <div class="btn-group-vertical btn-group-sm" role="group">
+              {% if s.status != "submitted" %}  
               <!-- Compare -->
               <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                <input type="hidden" name="_id" value="{{ s._id }}">
                 <input type="hidden" name="current_compare_id" value="{{ compare_id or '' }}">
                 <input type="hidden" name="action" value="compare">
                 <button type="submit" class="btn btn-info btn-sm">
-                  {{ 'Collapse' if compare_id == s.conf_id else 'Compare' }}
+                  {{ 'Collapse' if compare_id == s._id else 'Compare' }}
                 </button>
               </form>
 
-              <!-- Approve / Unapprove -->         
+              <!-- Approve / Unapprove -->   
+                
               <div class="btn-group btn-group-sm" role="group">
                 {% if s.status == 'approved' %}
                 
                 <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <input type="hidden" name="_id" value="{{ s._id }}">
                   <button type="submit" name="action" value="unapprove" class="btn btn-outline-warning btn-sm">Undo</button>
                 </form>
                 {% else %}
                 <form method="POST" action="{{ url_for('admin.conf_approval_page') }}" class="me-1">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <input type="hidden" name="_id" value="{{ s._id }}">
                   <button type="submit" name="action" value="approve" class="btn btn-outline-success btn-sm">Approve</button>
                 </form>
                 {% endif %}
+              {% endif %}
+              
+              
                 
-                <!-- Delete -->
+                <!-- Delete !-->
                 <form method="POST" action="{{ url_for('admin.conf_approval_page') }}">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                  <input type="hidden" name="conf_id" value="{{ s.conf_id }}">
+                  <input type="hidden" name="_id" value="{{ s._id }}">
                   <button type="submit" name="action" value="delete" class="btn btn-outline-danger btn-sm"
                           onclick="return confirm('Delete this submission?')">Delete</button>
                 </form>
               </div>
+            
             </div>
           </td>
         </tr>
-          {% if compare_id == s.conf_id %}
+          {% if compare_id == s._id %}
           <tr>
             <td colspan="9">
               <div class="border rounded p-2 bg-light">
                 <strong>Original (Mongo)</strong>
                 {% if original_version %}
                   <div class="{% if original_version.conference_name != s.conference_name %}bg-warning{% endif %}">
-                    Name: {{ original_version.conference_name or "—" }}
+                    Name: {{ original_version.title or "—" }}
                   </div>
                   <div class="{% if original_version.city != s.city or original_version.country != s.country %}bg-warning{% endif %}">
                     City/Country: {{ original_version.city or "—" }}, {{ original_version.country or "—" }}
