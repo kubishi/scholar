@@ -29,7 +29,7 @@
           <td><code>{{ s._id }}</code></td>
           <td>{{ s.submitter_user_name }}</td>
           <td>
-            <strong>{{ s.conference_name }}</strong>
+            <strong>{{ s.title }}</strong>
             {% if s.url %}
             <br><small><a href="{{ s.url }}" target="_blank" class="text-decoration-none">🔗 site</a></small>
             {% endif %}
@@ -129,7 +129,7 @@
               <div class="border rounded p-2 bg-light">
                 <strong>Original (Mongo)</strong>
                 {% if original_version %}
-                  <div class="{% if original_version.conference_name != s.conference_name %}bg-warning{% endif %}">
+                  <div class="{% if original_version.title != s.title %}bg-warning{% endif %}">
                     Name: {{ original_version.title or "—" }}
                   </div>
                   <div class="{% if original_version.city != s.city or original_version.country != s.country %}bg-warning{% endif %}">
@@ -153,7 +153,7 @@
 
                 <hr class="my-2">
                 <strong>Edited (Submission)</strong>
-                <div>Name: {{ s.conference_name or "—" }}</div>
+                <div>Name: {{ s.title or "—" }}</div>
                 <div>City/Country: {{ s.city or "—" }}, {{ s.country or "—" }}</div>
                 <div>Dates: {{ s.start or "—" }} → {{ s.end or "—" }}</div>
                 <div>Deadline: {{ s.deadline or "—" }}</div>
