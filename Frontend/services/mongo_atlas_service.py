@@ -28,6 +28,9 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
     """
     Strict Atlas Vector Search only. No fallback. Returns docs with score.
     """
+    print(index_name, "INDEX_NAME")
+    print(path, "PATH")
+    print(top_k, "TOP_K")
     client = MongoClient(uri)
     try:
         
@@ -62,6 +65,7 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
                 }
             }
         ]
+        print(pipeline, "PIPELINE")
         results = list(client[db_name][coll_name].aggregate(pipeline))
         print(f"[vec] hits={len(results)}")
         return results

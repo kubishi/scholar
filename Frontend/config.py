@@ -13,11 +13,6 @@ class Config:
     AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
     AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
 
-    # Pinecone
-    PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-    PINECONE_HOST = os.getenv("PINECONE_HOST")
-    PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
-
     # OpenAI
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")

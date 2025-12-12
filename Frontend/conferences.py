@@ -1,14 +1,11 @@
 from flask import Blueprint, flash, redirect, render_template, session, url_for, request, jsonify, current_app
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
-from .models import User, Favorite_Conf, Submitted_Conferences # type: ignore
 from .services.openai_service import embed # type: ignore
-from .services.db_services import db # type: ignore
 from .services.mongo_atlas_service import fetch_by_id
 from .services.mongo_users import upsert_user
-from datetime import datetime, timezone, date
 from pymongo import MongoClient
 
 
@@ -29,7 +26,6 @@ def _to_date(value):
 @bp.route('/edit_conf/<conf_id>', methods=['GET', 'POST'])
 @login_required
 def edit_conference(conf_id):
-
     existing = fetch_by_id(
         uri=current_app.config["MONGO_URI"],   # inside fetch_by_id use MongoClient(uri) positionally
         db_name="kubishi-scholar",
@@ -71,7 +67,7 @@ def edit_conference(conf_id):
 
         submission_doc = {
             "_id": conf_id,
-            "conference_name": form.conference_name.data.strip(),
+            "title": form.conference_name.data.strip(),
             "country": form.country.data.strip(),
             "city": form.city.data.strip(),
             "deadline": form.deadline.data.isoformat() if form.deadline.data else None,
@@ -153,12 +149,16 @@ def connection_finder():
 
     # search for similar emails (starting with what user typed)
     if connection_email_search_result:
-        searched_user_info = (
-            db.session.query(User)
-            .filter(User.user_email.ilike(f"{connection_email_search_result}%"))
-            .limit(5)
-            .all()
-        )
+        client = MongoClient(current_app.config["MONGO_URI"])
+        try:
+            # MongoDB regex search for email prefix (case-insensitive)
+            searched_user_info = list(
+                client["kubishi-scholar"]["users"].find(
+                    {"user_email": {"$regex": f"^{connection_email_search_result}", "$options": "i"}}
+                ).limit(5)
+            )
+        finally:
+            client.close()
     
     if searched_user_info:
         current_app.logger.debug("Found %d matching users for connection search.", len(searched_user_info))
@@ -200,4 +200,17 @@ def saved_conference():
         articles=articles,
         favorite_ids=favorite_ids,
         session_user_name=session.get("user"),
+    )
+
+@bp.route("/about_me")
+@login_required
+def about_me_page():
+
+    userinfo = session["user"]["userinfo"]
+
+    return render_template(
+        "about_me.html",
+        userinfo=userinfo
+
+
     )

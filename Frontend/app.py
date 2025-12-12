@@ -12,10 +12,7 @@ from .conferences import bp as conferences_bp
 from .admin import admin_bp
 from .config import Config 
 from .filters import is_match, redirect_clean_params, city_country_filter, to_gcal_datetime_filter, format_date, convert_date_format
-from .services.openai_service import embed 
-from .models import User, Favorite_Conf
 from .services.openai_service import embed, pdf_summary
-from .services.db_services import db, migrate
 
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -40,16 +37,6 @@ app.register_blueprint(admin_bp)
 app.register_blueprint(conferences_bp)
 
 csrf = CSRFProtect(app)
-
-# ---SQL Database Setup---
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{app.config['DB_USER']}:{app.config['DB_PASSWORD']}"
-    f"@{app.config['DB_HOST']}:{app.config['DB_PORT']}/{app.config['DB_NAME']}"
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-migrate.init_app(app, db)
-
 
 # --- Auth0 Setup ---
 oauth = OAuth(app)
@@ -94,8 +81,23 @@ def upload_file():
 
 
 @app.context_processor
-def inject_user_model():
-    return dict(User=User)
+def inject_admin_status():
+    """Make admin status available to all templates"""
+    is_admin = False
+    if session.get('user_id'):
+        client = MongoClient(app.config["MONGO_URI"])
+        try:
+            user_doc = client["kubishi-scholar"]["users"].find_one({"_id": session['user_id']})
+            if user_doc:
+                role = (user_doc.get("user_privilege") or "").strip().lower()
+                print(role, "ROLE FROM MONGO More Visible")
+                is_admin = (role == "admin")
+                print(f"DEBUG NAVBAR: User {session['user_id']} - role: '{role}', is_admin: {is_admin}")
+            else:
+                print(f"DEBUG NAVBAR: User {session['user_id']} not found in MongoDB")
+        finally:
+            client.close()
+    return dict(is_admin=is_admin)
 
 # our site to Auth0
 @app.route("/login")
@@ -117,18 +119,34 @@ def callback():
 
     session["user_id"] = google_auth_id
 
-    # Upsert into Mongo users
-    upsert_user(
-        app.config["MONGO_URI"],
-        "kubishi-scholar",
-        "users",
-        {
+    # Upsert into Mongo users - preserve existing privilege if user exists
+    client = MongoClient(app.config["MONGO_URI"])
+    try:
+        existing_user = client["kubishi-scholar"]["users"].find_one({"_id": google_auth_id})
+
+        existing_privilege = None
+        if existing_user:
+            existing_privilege = existing_user.get("user_privilege")
+        
+        user_doc = {
             "_id": google_auth_id,
             "user_name": user_name,
             "user_email": user_email,
-            "user_privilege": "user", 
         }
-    )
+        # Always use correctly spelled "user_privilege" field for new and existing users
+        if existing_privilege:
+            user_doc["user_privilege"] = existing_privilege  # Preserve existing, normalize to correct spelling
+        else:
+            user_doc["user_privilege"] = "user"  # New users get "user" with correct spelling
+        
+        upsert_user(
+            app.config["MONGO_URI"],
+            "kubishi-scholar",
+            "users",
+            user_doc
+        )
+    finally:
+        client.close()
 
     return redirect("/")
 
@@ -220,7 +238,7 @@ def index():
                 index_name="vector_index",
                 path="embedding"
             )
-            print(f"Hybrid search returned {len(results)} results.")
+            print(f"Semantic search returned {len(results)} results.")
             # Step 3: Filter if any filters are set
             if date_span_first and date_span_second or location or ranking_score:
                 try:
