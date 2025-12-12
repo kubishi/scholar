@@ -13,7 +13,6 @@ load_dotenv()
 
 mongo_uri = os.getenv("MONGO_URI")
 
-
 def update_conference_url(conference):
     conf_name = conference.get("title", "")
     conf_acronym = conference.get("acronym", "")
