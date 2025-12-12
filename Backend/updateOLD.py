@@ -40,7 +40,7 @@ def update_conference_url(conference):
                 
                 submission_doc = {
                 "_id": conf_id,
-                "title": details.get("Title", ""),
+                "title": details.get("title", ""),
                 "country": details.get("country", ""),
                 "city": details.get("city", ""),
                 "deadline": details.get("deadline", None),
