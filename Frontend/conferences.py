@@ -5,7 +5,7 @@ from .auth import login_required # type: ignore
 from .forms import ConferenceForm # type: ignore
 from .services.openai_service import embed # type: ignore
 from .services.mongo_atlas_service import fetch_by_id
-from .services.mongo_users import upsert_user
+from .services.mongo_users import upsert_user, update_profile
 from pymongo import MongoClient
 
 
@@ -205,12 +205,57 @@ def saved_conference():
 @bp.route("/about_me")
 @login_required
 def about_me_page():
-
     userinfo = session["user"]["userinfo"]
+    
+    # Get current profile data from MongoDB about_me dictionary
+    user_id = session.get("user_id")
+    current_profile = {}
+    if user_id:
+        client = MongoClient(current_app.config["MONGO_URI"])
+        try:
+            user_doc = client["kubishi-scholar"]["users"].find_one({"_id": user_id})
+            if user_doc and "about_me" in user_doc:
+                current_profile = user_doc["about_me"]
+        finally:
+            client.close()
 
     return render_template(
         "about_me.html",
-        userinfo=userinfo
-
-
+        userinfo=userinfo,
+        current_profile=current_profile
     )
+
+# We must make a route for this because it is a POST request.
+# If it wasn't a POST, we could just make it a function.
+@bp.route("/update_profile", methods=["POST"])
+@login_required
+def update_profile_route():
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Unable to determine user identity.", "danger")
+        return redirect(url_for("conferences.about_me_page"))
+    
+    # Get form data for about_me dictionary
+    profile_data = {
+        "phone": request.form.get("phone", "").strip(),
+        "research_interests": request.form.get("research_interests", "").strip(),
+        "birthday": request.form.get("birthday", "").strip(),
+        "website": request.form.get("website", "").strip(),
+        "github": request.form.get("github", "").strip(),
+        "linkedin": request.form.get("linkedin", "").strip(),
+        "orcid": request.form.get("orcid", "").strip()
+    }
+    
+
+    
+    # Update MongoDB
+    update_profile(
+        current_app.config["MONGO_URI"],
+        "kubishi-scholar",
+        "users",
+        user_id,
+        profile_data
+    )
+    
+    flash("Profile updated successfully!", "success")
+    return redirect(url_for("conferences.about_me_page"))

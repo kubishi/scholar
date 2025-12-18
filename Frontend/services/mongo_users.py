@@ -9,6 +9,8 @@ def upsert_user(uri: str, db_name: str, coll_name: str, user_doc: Dict[str, Any]
     client = MongoClient(uri)
     try:
         coll = client[db_name][coll_name]
+        # _id must be added seperatley since _id is immutable in mongodb. 
+        # So if it already exists in the db, it would cause problems
         update_fields = {k: v for k, v in user_doc.items() if k != "_id"}
         coll.update_one(
             {"_id": user_doc["_id"]},
@@ -41,3 +43,27 @@ def remove_favorite(uri: str, db_name: str, coll_name: str, user_id: str, conf_i
         {"$pull": {"favorites": conf_id}},
         return_document=ReturnDocument.AFTER,
     )
+
+
+def update_profile(uri: str, db_name: str, coll_name: str, user_id: str, profile_data: Dict[str, Any]):
+    """Update user profile fields in MongoDB under 'about_me' dictionary"""
+    client = MongoClient(uri)
+    try:
+        coll = client[db_name][coll_name]
+        cleaned_data = {}
+        for k, v in profile_data.items():
+            if isinstance(v, str):
+                if v.strip():
+                    cleaned_data[k] = v.strip()
+            elif v is not None:
+                cleaned_data[k] = v
+
+        result = coll.update_one(
+            {"_id": user_id},
+            {"$set": {"about_me": cleaned_data}},
+            upsert=True
+        )
+        return result
+    finally:
+        client.close()
+    

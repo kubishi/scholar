@@ -117,6 +117,62 @@
                     {% endif %}
                   </div>
                 </details>
+
+                <details class="mt-2">
+                  <summary style="cursor: pointer;">User Rankings!</summary>
+
+                  <div>
+                    <form class="mt-2" method="POST" action="/user_conference_rating">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <input type="hidden" name="conference_id" value="{{ article._id }}">
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">Welcoming</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" name="welcoming_score" min="1" max="10" required>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">Insightful</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" name="insightful_score" min="1" max="10" required>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">Networking</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" name="networking_score" min="1" max="10" required>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">Interactivity</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" name="interactivity_score" min="1" max="10" required>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">High-Caliber Attendees</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" id="caliber_score" name="caliber_score" min="1" max="10" required>
+                        </div>
+                      </div>
+
+                      <div class="row mb-2 align-items-center">
+                        <label class="col-6 col-form-label">Worthwhile</label>
+                        <div class="col-6">
+                          <input type="number" class="form-control" id="worthwhile_score" name="worthwhile_score" min="1" max="10" required>
+                        </div>
+                      </div>
+                      <input type="submit" value="Save your Ratings">
+                    </form>
+
+                  </div>
+                </details>
+
+
               </div>
               
 

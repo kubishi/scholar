@@ -15,46 +15,22 @@
     </div>
 
     <div class="container my-4">
+        <div class="d-flex justify-content-end mb-3">
+            <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#editAboutMeModal"
+            >
+                <i class="bi bi-pencil"></i> Edit Profile
+            </button>
+        </div>
         <div class="row g-4">
             <!-- Contact information box -->
             <div class="col-md-6">
                 <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Contact information</span>
-                            <button
-                            type="button"
-                            class="btn btn-sm btn-outline-secondary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editContactModal"
-                            >
-                            Edit
-                        </button>
-                        <div class="modal fade" id="editContactModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm Input</h1>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form>
-                                        <div class="form-group">
-                                            <label for="primary-address" class="col-form-label">Email Address:</label>
-                                            <input type="text" class="form-control" id="email-address"
-                                            placeholder="{{ userinfo.email or 'Enter Email' }}">
-
-                                            <label for="phone-number" class="col-form-label">Phone:</label>
-                                            <input type="text" class="form-control" id="phone-number" 
-                                            placeholder="{{'Enter Phone Number'}}">
-                                        </div>
-                                        </form>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0 fw-semibold">Contact Information</h5>
                     </div>
                     <div class="card-body small">
                         <div class="mb-3">
@@ -63,7 +39,7 @@
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Phone</div>
-                            <div>310-920-6242</div>
+                            <div>{{ current_profile.get('phone', 'Not set') }}</div>
                         </div>
                     </div>
                 </div>
@@ -72,44 +48,114 @@
             <!-- About me box -->
             <div class="col-md-6">
                 <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">About me</span>
-                        <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0 fw-semibold">About Me</h5>
                     </div>
                     <div class="card-body small">
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Research interests</div>
-                            <div>AI/ML, Blah Blah Blah</div>
+                            <div>{{ current_profile.get('research_interests', 'Not set') }}</div>
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Birthday</div>
-                            <div>Oct 1, 2004 (21 years 2 months ago)</div>
+                            <div>{{ current_profile.get('birthday', 'Not set') }}</div>
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Website</div>
                             <div>
-                                <a href="#" class="link-underline-opacity-0">Awesome Personal Website!!!</a>
+                                {% if current_profile.get('website') %}
+                                    <a href="{{ current_profile.get('website') }}" class="link-underline-opacity-0" target="_blank">{{ current_profile.get('website') }}</a>
+                                {% else %}
+                                    <span class="text-muted">Not set</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Github</div>
                             <div>
-                                <a href="#" class="link-underline-opacity-0">My Github!</a>
+                                {% if current_profile.get('github') %}
+                                    <a href="{{ current_profile.get('github') }}" class="link-underline-opacity-0" target="_blank">{{ current_profile.get('github') }}</a>
+                                {% else %}
+                                    <span class="text-muted">Not set</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">LinkedIn</div>
                             <div>
-                                <a href="#" class="link-underline-opacity-0">Linkedin!</a>
+                                {% if current_profile.get('linkedin') %}
+                                    <a href="{{ current_profile.get('linkedin') }}" class="link-underline-opacity-0" target="_blank">{{ current_profile.get('linkedin') }}</a>
+                                {% else %}
+                                    <span class="text-muted">Not set</span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="mb-1">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">ORCID</div>
                             <div>
-                                <a href="#" class="link-underline-opacity-0">Add ORCID</a>
+                                {% if current_profile.get('orcid') %}
+                                    <a href="https://orcid.org/{{ current_profile.get('orcid') }}" class="link-underline-opacity-0" target="_blank">{{ current_profile.get('orcid') }}</a>
+                                {% else %}
+                                    <span class="text-muted">Not set</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit About Me Modal -->
+    <div class="modal fade" id="editAboutMeModal" tabindex="-1" aria-labelledby="editAboutMeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAboutMeModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('conferences.update_profile_route') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <h6 class="text-muted mb-3">Contact Information</h6>
+                        <div class="mb-4">
+                            <label for="phone-number" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone-number" name="phone"
+                                value="{{ current_profile.get('phone', '') }}" placeholder="Enter Phone Number">
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="text-muted mb-3">About Me</h6>
+                        <div class="mb-3">
+                            <label for="research-interests" class="form-label">Research Interests</label>
+                            <textarea class="form-control" id="research-interests" name="research_interests" rows="3" placeholder="Enter your research interests">{{ current_profile.get('research_interests', '') }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="birthday" class="form-label">Birthday</label>
+                            <input type="date" class="form-control" id="birthday" name="birthday" value="{{ current_profile.get('birthday', '') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="website" class="form-label">Website</label>
+                            <input type="url" class="form-control" id="website" name="website" value="{{ current_profile.get('website', '') }}" placeholder="https://yourwebsite.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="github" class="form-label">GitHub</label>
+                            <input type="url" class="form-control" id="github" name="github" value="{{ current_profile.get('github', '') }}" placeholder="https://github.com/username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="linkedin" class="form-label">LinkedIn</label>
+                            <input type="url" class="form-control" id="linkedin" name="linkedin" value="{{ current_profile.get('linkedin', '') }}" placeholder="https://linkedin.com/in/username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="orcid" class="form-label">ORCID</label>
+                            <input type="text" class="form-control" id="orcid" name="orcid" value="{{ current_profile.get('orcid', '') }}" placeholder="0000-0000-0000-0000">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

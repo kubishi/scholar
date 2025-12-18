@@ -1,5 +1,5 @@
-from flask import Flask, redirect, render_template, session, url_for, request, jsonify
-from datetime import datetime
+from flask import Flask, redirect, render_template, session, url_for, request, jsonify, current_app
+from datetime import datetime, timezone
 import json
 from os import environ as env
 from urllib.parse import quote_plus, urlencode
@@ -26,6 +26,10 @@ from .services.mongo_users import (
     upsert_user,
     add_favorite,
     remove_favorite
+)
+
+from .services.user_ratings_service import (
+    upsert_rating
 )
 
 # --- Flask App setup ---
@@ -368,6 +372,39 @@ def save_favorite():
             conf_id
         )
     return jsonify({"ok": True}), 200
+
+@app.route("/user_conference_rating", methods=["POST"])
+@login_required
+def user_conf_rat():
+    user_id = session.get("user_id")
+    conference_id = request.form.get("conference_id")
+
+    user_ratings = {
+        "welcoming_score" : request.form.get("welcoming_score"),
+        "insightful_score" : request.form.get("insightful_score"),
+        "networking_score" : request.form.get("networking_score"),
+        "interactivity_score" : request.form.get("interactivity_score"),
+        "caliber_score" : request.form.get("caliber_score"),
+        "worthwhile_score" : request.form.get("worthwhile_score")
+    }
+
+    rating_doc = {
+        "_id": f"{user_id}:{conference_id}",
+        "user_id": user_id,
+        "conference_id": conference_id,
+        "user_ratings": user_ratings,
+        "submitted_at": datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+    }
+
+    upsert_rating(
+        uri=current_app.config["MONGO_URI"],
+        db_name="kubishi-scholar",
+        coll_name="user_conf_rating",
+        user_rating_doc=rating_doc
+    )
+
+    return jsonify({"ok": True}), 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(env.get("PORT", 3000)), debug=Config.FLASK_DEBUG)
