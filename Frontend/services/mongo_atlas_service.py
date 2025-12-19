@@ -65,7 +65,6 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
                 }
             }
         ]
-        print(pipeline, "PIPELINE")
         results = list(client[db_name][coll_name].aggregate(pipeline))
         print(f"[vec] hits={len(results)}")
         return results

@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, url_for, request, jsonify, current_app
+from flask import Flask, redirect, flash, render_template, session, url_for, request, jsonify, current_app
 from datetime import datetime, timezone
 import json
 from os import environ as env
@@ -225,9 +225,7 @@ def index():
                 index_name="default",
             )
             articles = results
-            print(articles, "ARTYY")
         except Exception as e:
-            print(f"ID fetch error: {e}")
             articles = []  # do not reference undefined names
 
     elif mode == "semantic":
@@ -323,6 +321,7 @@ def index():
         except Exception as e:
             print(f"Hybrid search error: {e}")
             articles = []  # do not reference undefined names
+
             
     return render_template(
         "index.html",
@@ -403,7 +402,24 @@ def user_conf_rat():
         user_rating_doc=rating_doc
     )
 
-    return jsonify({"ok": True}), 200
+    return redirect(request.referrer)
+
+@app.context_processor
+def inject_user_ratings():
+    """Make user ratings available to all templates for prefilling forms"""
+    ratings_by_conf = {}
+    if session.get('user_id'):
+        client = MongoClient(app.config["MONGO_URI"])
+        try:
+            user_id = session['user_id']
+            ratings_cursor = client["kubishi-scholar"]["user_conf_rating"].find({"user_id": user_id})
+            for rating in ratings_cursor:
+                conf_id = rating.get("conference_id")
+                if conf_id:
+                    ratings_by_conf[conf_id] = rating.get("user_ratings", {})
+        finally:
+            client.close()
+    return dict(user_ratings_by_conf=ratings_by_conf)
 
 
 if __name__ == "__main__":
