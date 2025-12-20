@@ -14,6 +14,14 @@
     </div>
 
     <h5 class="conference_count text_center text_muted">Currently tracking <span class="highlight-count">{{ record_count }}</span> conferences</h5>
+    
+    <!-- Temporary button to update averages -->
+    {% if session.get('user_id') %}
+    <form method="POST" action="{{ url_for('update_averages') }}" class="mt-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="btn btn-info btn-sm">Update Rating Averages</button>
+    </form>
+    {% endif %}
   </div>
 
 

@@ -7,7 +7,7 @@ from .services.openai_service import embed # type: ignore
 from .services.mongo_atlas_service import fetch_by_id
 from .services.mongo_users import upsert_user, update_profile
 from pymongo import MongoClient
-
+from collections import defaultdict
 
 bp = Blueprint("conferences", __name__) 
 

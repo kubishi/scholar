@@ -261,14 +261,3 @@ def mongo_hybrid_search_rrf(
 
     fused_docs = [by_id[_id] for _id in fused_ids if _id in by_id and _passes(by_id[_id])]
     return fused_docs
-
-# ---- Example usage in your Flask route ----
-# results = mongo_hybrid_search_rrf(
-#     query=query,
-#     top_k=50,
-#     text_weight=1.0,   # raise to favor BM25
-#     vec_weight=1.0,    # raise to favor semantic
-#     city=(location or None),
-#     # country="usa",
-#     # start_dt=start_date, end_dt=end_date
-# )

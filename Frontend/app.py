@@ -31,6 +31,7 @@ from .services.mongo_users import (
 from .services.user_ratings_service import (
     upsert_rating
 )
+from .services.average_ratings import ratings_to_average
 
 # --- Flask App setup ---
 app = Flask(__name__)
@@ -421,6 +422,18 @@ def inject_user_ratings():
         finally:
             client.close()
     return dict(user_ratings_by_conf=ratings_by_conf)
+
+
+@app.route("/update_averages", methods=["POST"])
+@login_required
+def update_averages():
+    """Temporary route to update conference rating averages"""
+    try:
+        ratings_to_average(app.config["MONGO_URI"])
+        flash("Average ratings updated successfully!", "success")
+    except Exception as e:
+        flash(f"Error updating averages: {str(e)}", "danger")
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
