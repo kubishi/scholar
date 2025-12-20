@@ -360,7 +360,8 @@ def save_favorite():
             user_id,
             conf_id
         )
-
+        return jsonify({"ok": True, "status": "removed"}), 200
+        
     else:
         print(conf_id, "Favorite Added")
         add_favorite(
@@ -370,7 +371,7 @@ def save_favorite():
             user_id,
             conf_id
         )
-    return jsonify({"ok": True}), 200
+        return jsonify({"ok": True, "status": "added"}), 200
 
 @app.route("/user_conference_rating", methods=["POST"])
 @login_required

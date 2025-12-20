@@ -39,3 +39,6 @@ wtforms==3.2.1
 PyPDF2==3.0.1
 rapidfuzz==3.14.1
 pymongo==4.7.1
+bcrypt==4.3.0
+flask-login==0.6.3
+
