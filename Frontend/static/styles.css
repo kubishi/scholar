@@ -7,24 +7,18 @@ body {
 }
 
 .navbar {
-  background-color: rgba(255, 255, 255, 0.9);
-  /* slightly more opaque */
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* soft subtle shadow */
-  padding: 0.5rem 1rem;
-  /* vertical + horizontal padding */
+  background-color: rgba(255, 255, 255, 0.9); /* slightly more opaque */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* soft subtle shadow */
+  padding: 0.5rem 1rem; /* vertical + horizontal padding */
 }
 
 .navbar-brand img {
   -o-object-fit: contain;
-     object-fit: contain;
-  /* keeps logo proportional */
+     object-fit: contain; /* keeps logo proportional */
 }
 
 .login-button {
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -35,7 +29,6 @@ body {
 
 .logout-button {
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -46,9 +39,7 @@ body {
 
 .kubishi_logo {
   margin-right: 5px;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 
 .brand-text {
@@ -60,52 +51,29 @@ body {
 }
 
 .search_result {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   max-width: 950px;
   margin: 0 auto;
 }
 
-::-webkit-input-placeholder {
-  color: #000;
-  /* black */
-  opacity: 1;
-}
-
-:-ms-input-placeholder {
-  color: #000;
-  /* black */
-  opacity: 1;
-}
-
-::-ms-input-placeholder {
-  color: #000;
-  /* black */
+::-moz-placeholder {
+  color: #000; /* black */
   opacity: 1;
 }
 
 ::placeholder {
-  color: #000;
-  /* black */
+  color: #000; /* black */
   opacity: 1;
 }
 
 .menu_logo {
-  -webkit-transition: -webkit-transform 0.4s ease-out;
-  transition: -webkit-transform 0.4s ease-out;
   transition: transform 0.4s ease-out;
-  transition: transform 0.4s ease-out, -webkit-transform 0.4s ease-out;
   border: 1px solid black;
 }
 
 .menu_logo:hover {
-  -webkit-transform: scale(1.1);
-          transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .title_subtext {
@@ -113,9 +81,7 @@ body {
 }
 
 .main_logo {
-  border: 1px solid black;
-  /* invisible border, keeps space */
-  -webkit-transition: border-color 0.3s ease;
+  border: 1px solid black; /* invisible border, keeps space */
   transition: border-color 0.3s ease;
 }
 
@@ -125,7 +91,7 @@ body {
 
 .conference_count {
   font-size: 15px;
-  color: #7a7676fd;
+  color: rgba(122, 118, 118, 0.9921568627);
 }
 
 .highlight-count {
@@ -133,14 +99,12 @@ body {
 }
 
 .bg-image {
-  position: fixed;
-  /* stays in place while scrolling */
+  position: fixed; /* stays in place while scrolling */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  /* pushes it behind all other content */
+  z-index: -1; /* pushes it behind all other content */
 }
 
 .bg-image img {
@@ -148,8 +112,7 @@ body {
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  -webkit-filter: blur(50px);
-          filter: blur(50px);
+  filter: blur(50px);
   -webkit-user-drag: none;
   user-select: none;
   -moz-user-select: none;
@@ -162,12 +125,8 @@ body {
 }
 
 .navigation-buttons {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  justify-content: space-evenly;
 }
 
 .toggle-advanced-button {
@@ -191,7 +150,6 @@ body {
 .favorite-button {
   background-color: #e19f06;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -203,7 +161,6 @@ body {
 .outlook-button {
   background-color: #2563EB;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -215,7 +172,6 @@ body {
 .google-callendar-button {
   background: #0F9D58;
   color: white;
-  -webkit-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -251,18 +207,12 @@ body {
   background-color: rgba(255, 255, 255, 0.65);
   max-width: 1000px;
   margin: auto;
-  -webkit-box-shadow: 0 0 6px 0.5px lightgrey;
-          box-shadow: 0 0 6px 0.5px lightgrey;
+  box-shadow: 0 0 6px 0.5px lightgrey;
 }
 
 .text-box {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   width: 100%;
   position: relative;
 }
@@ -276,17 +226,10 @@ body {
 }
 
 .search-controls {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -296,17 +239,9 @@ body {
 }
 
 .dropzone-center {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  /* horizontal center */
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  /* vertical center */
+  justify-content: center; /* horizontal center */
+  align-items: center; /* vertical center */
   position: relative;
   text-align: center;
   min-height: 200px;
@@ -325,7 +260,10 @@ body {
   display: none;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 990px) {
+  :root {
+    --small-button-font-size: 7pt;
+  }
   .full-url {
     display: none;
   }
@@ -333,11 +271,16 @@ body {
     display: inline;
   }
   .title_subtext {
-    display: none;
-    /* Hides the text on screens 768px wide or less */
+    display: none; /* Hides the text on screens 768px wide or less */
   }
   .menu_logo {
     display: none;
+  }
+  .search-controls {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
   .conference_count {
     display: none;
@@ -347,16 +290,16 @@ body {
     height: 35px;
   }
   .friend-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
   .toggle-advanced-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
   .saved-conf-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
   .conference-add-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
   .count-box-setter {
     font-size: 14px;
@@ -364,12 +307,8 @@ body {
     width: 90px;
   }
   .navigation-buttons {
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 2fr 2fr;
-        grid-template-columns: 2fr 2fr;
-    /* 2 buttons per row */
+    grid-template-columns: 2fr 2fr; /* 2 buttons per row */
     gap: 12px;
   }
-}
-/*# sourceMappingURL=styles.css.map */
+}/*# sourceMappingURL=styles.css.map */

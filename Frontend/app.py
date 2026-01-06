@@ -178,7 +178,7 @@ def index():
     redirect_response = redirect_clean_params("index")
     if redirect_response:
         return redirect_response
-
+    
 
     favorite_ids = []
     user_id = session.get("user_id")
@@ -197,7 +197,7 @@ def index():
     location = request.args.get("location", "").strip().lower()
     ranking_source = request.args.get("ranking_source", "").strip().lower()
     ranking_score = request.args.get("ranking_score", "").strip().upper()
-
+    
     display_sate_span_first = request.args.get("date_span_first")
     display_sate_span_second = request.args.get("date_span_second")
 
@@ -210,7 +210,7 @@ def index():
         num_results = 10
 
     advanced_open = any([date_span_first, date_span_second, location, ranking_source, ranking_score])
-
+    
     # Use a single variable throughout
     articles = []
     
@@ -253,7 +253,7 @@ def index():
                         datetime.strptime(date_span_second, "%m-%d-%Y")
                         if display_sate_span_first else None
                     )
-
+      
                     filtered_articles = [
                         a for a in results
                         if is_match(
@@ -279,7 +279,7 @@ def index():
     elif mode == "hybrid":
         try:
             results = mongo_hybrid_search_rrf(
-                query=query,
+                           query=query,
                 top_k=50,
                 text_index_name="default",
                 vec_index_name="vector_index",
@@ -323,7 +323,7 @@ def index():
             print(f"Hybrid search error: {e}")
             articles = []  # do not reference undefined names
 
-            
+
     return render_template(
         "index.html",
         articles=articles[:num_results],

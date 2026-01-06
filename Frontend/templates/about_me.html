@@ -8,15 +8,14 @@
     {# Debug line, you can remove this if you do not want to see raw userinfo #}
     {# <div>{{ userinfo }}</div> #}
 
-    <div class="d-flex flex-column align-items-center pt-4 pb-2">
-
-        <img src="{{ userinfo.picture }}" width="100" height="100" alt="" class="main_logo rounded-4" style="border-width: 5px; width: 120px; height: 120px;">
-        <h1>ABOUT ME PAGE</h1>
-        <h3>{{ userinfo.name }}</h3>
-    </div>
-
-    <div class="container my-4">
-        <div class="d-flex justify-content-end mb-3">
+    <div class="container my-5">
+        <!-- Profile Header -->
+        <div class="text-center mb-5">
+            <div class="position-relative d-inline-block mb-3">
+                <img src="{{ userinfo.picture }}" alt="{{ userinfo.name }}" class="profile-picture rounded-circle border border-4 border-white shadow">
+            </div>
+            <h2 class="fw-bold mb-2">{{ userinfo.name }}</h2>
+            <p class="text-muted mb-4">{{ userinfo.email }}</p>
             <button
                 type="button"
                 class="btn btn-primary"

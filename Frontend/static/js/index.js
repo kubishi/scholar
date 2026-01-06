@@ -1,3 +1,4 @@
+Dropzone.autoDiscover = false;
 document.addEventListener('DOMContentLoaded', () => {
   // ---- Helpers ----
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---- Dropzone init ----
   if (window.Dropzone) {
-    Dropzone.autoDiscover = false;
+    
 
     const dzEl = document.getElementById('my-awesome-dropzone');
     if (dzEl) {

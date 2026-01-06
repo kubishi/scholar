@@ -50,6 +50,7 @@ body {
   width: 100%;
 }
 
+
 .search_result {
     display: flex;
     flex-direction: column;
@@ -133,9 +134,9 @@ body {
     color: white;
   }
 
-  .conference-add-button{
+.conference-add-button{
     color: white;
-  }
+}
 
   .conference-add-button:hover{
     background: #A47DCA;
@@ -252,7 +253,11 @@ body {
 
 
 .short-url { display: none; }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 990px) {
+  :root {
+    --small-button-font-size: 7pt;
+  }
+
   .full-url { display: none; }
   .short-url { display: inline; }
 
@@ -263,6 +268,13 @@ body {
     display: none;
   }
 
+  .search-controls {
+    flex-direction: column ;
+    align-items: center ;
+    justify-content: center ;
+    width: 100% ;
+  }
+  
   .conference_count {
     display: none;
   }
@@ -273,18 +285,18 @@ body {
   }
 
   .friend-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
   .toggle-advanced-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
 
   .saved-conf-button {
-    font-size: 7pt;
+    font-size: var(--small-button-font-size);
   }
 
   .conference-add-button {
-    font-size: 7pt
+    font-size: var(--small-button-font-size);
   }
 
   .count-box-setter {
@@ -298,5 +310,12 @@ body {
     grid-template-columns: 2fr 2fr; /* 2 buttons per row */
     gap: 12px;
   }
-
 }
+
+/* About Me Page Styles */
+.profile-picture {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+}
+

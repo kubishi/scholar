@@ -68,11 +68,11 @@
                       type="number" 
                       name="num_results" 
                       placeholder="Count" 
-                      style="max-width: 100px;" 
+                      style="max-width: 200px; flex-shrink: 3;" 
                       min="1"
                       max="100"
                       value="{{ request.args.get('num_results', 10) }}">
-                <button type="submit" class="btn btn-dark">Search</button>
+                <button type="submit" class="search-button-main btn btn-dark border-0 rounded-3" style="width: 300px; flex-shrink: 0;">Search</button>
               </div>
             </div>
         </div>
