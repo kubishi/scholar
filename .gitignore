@@ -183,5 +183,3 @@ confs.py
 sql_connection_test.py
 migrations
 Procfile
-/Frontend/static/img/
-/Frontend/static/styles.css.map/
