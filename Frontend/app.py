@@ -337,7 +337,8 @@ def index():
         advanced_open=advanced_open,
         location=location,
         ranking_source=ranking_source,
-        pretty=json.dumps(session.get("user"), indent=4) if session.get("user") else None
+        pretty=json.dumps(session.get("user"), indent=4) if session.get("user") else None,
+        show_match_score = True,
     )
 
 @app.route("/favorite", methods=["POST"])

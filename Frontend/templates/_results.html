@@ -75,7 +75,9 @@
                       Topics: {{ article.topics | replace('\n', ', ') }}
                   </p>
   
-                  <p class="text-muted">Match Score: {{ article.score }}</p>
+                  {% if show_match_score %}
+                    <p class="text-muted">Match Score: {{ article.score }}</p>
+                  {% endif %}
                 
                   <details class="mt-2">
                   <summary style="cursor: pointer;">Ranking &amp; Metrics</summary>

@@ -11,7 +11,6 @@ def ratings_to_average(uri):
     ratings_coll = db["user_conf_rating"]
 
     ratings = list(ratings_coll.find({}))
-
     
     ratings_per_conference = defaultdict(list)
     for rating in ratings: 

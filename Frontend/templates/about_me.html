@@ -12,7 +12,13 @@
         <!-- Profile Header -->
         <div class="text-center mb-5">
             <div class="position-relative d-inline-block mb-3">
-                <img src="{{ userinfo.picture }}" alt="{{ userinfo.name }}" class="profile-picture rounded-circle border border-4 border-white shadow">
+                {% if userinfo.picture %}
+                    <img src="{{ userinfo.picture }}" alt="{{ userinfo.name }}" class="profile-picture rounded-circle border border-4 border-white shadow">
+                {% else %}
+                    <div class="profile-picture rounded-circle border border-4 border-white shadow bg-secondary d-flex align-items-center justify-content-center">
+                        <span class="text-white">{{ userinfo.name[0] if userinfo.name else '?' }}</span>
+                    </div>
+                {% endif %}
             </div>
             <h2 class="fw-bold mb-2">{{ userinfo.name }}</h2>
             <p class="text-muted mb-4">{{ userinfo.email }}</p>
@@ -59,6 +65,10 @@
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Birthday</div>
                             <div>{{ current_profile.get('birthday', 'Not set') }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">University</div>
+                            <div>{{ current_profile.get('university', 'Not set') }}</div>
                         </div>
                         <div class="mb-3">
                             <div class="text-muted text-uppercase fw-semibold" style="font-size: 0.75rem;">Website</div>
@@ -134,6 +144,10 @@
                         <div class="mb-3">
                             <label for="birthday" class="form-label">Birthday</label>
                             <input type="date" class="form-control" id="birthday" name="birthday" value="{{ current_profile.get('birthday', '') }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="university" class="form-label">University</label>
+                            <input type="text" class="form-control" id="university" name="university" value="{{ current_profile.get('university', '') }}">
                         </div>
                         <div class="mb-3">
                             <label for="website" class="form-label">Website</label>

@@ -43,7 +43,7 @@
           
             <div class="search-controls">
               <!-- Radio buttons -->
-              <div class="d-flex gap-2 align-items-center mb-2">
+              <div class="d-flex gap-2 align-items-center mb-0">
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="search_type" id="Semantic-Toggle" value="semantic"
                          {% if request.args.get('search_type', 'semantic') == 'semantic' %}checked{% endif %}>

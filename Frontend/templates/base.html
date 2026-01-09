@@ -15,10 +15,15 @@
     <title>acasearch2</title>
     <script defer src="{{ url_for('static', filename='js/favorites.js') }}"></script>
     <script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
-
-    
+    <script defer src="{{ url_for('static', filename='js/loading-spinner.js') }}"></script>
+    <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 </head>
 <body> 
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner-overlay" style="display: flex; opacity: 1;">
+        <img src="{{ url_for('static', filename='img/loading_wheel.gif') }}" alt="Loading..." />
+    </div>
+
     {% include '_navbar.html' %}
     {% block body%}
 

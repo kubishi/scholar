@@ -200,6 +200,7 @@ def saved_conference():
         articles=articles,
         favorite_ids=favorite_ids,
         session_user_name=session.get("user"),
+        show_match_score = False,
     )
 
 @bp.route("/about_me")
@@ -240,6 +241,7 @@ def update_profile_route():
         "phone": request.form.get("phone", "").strip(),
         "research_interests": request.form.get("research_interests", "").strip(),
         "birthday": request.form.get("birthday", "").strip(),
+        "university": request.form.get("university", "").strip(),
         "website": request.form.get("website", "").strip(),
         "github": request.form.get("github", "").strip(),
         "linkedin": request.form.get("linkedin", "").strip(),
