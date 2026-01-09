@@ -312,6 +312,14 @@ body {
     gap: 12px;
   }
 }
+/* About Me Page Styles */
+.profile-picture {
+  width: 140px;
+  height: 140px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .loading-spinner-overlay {
   position: fixed;
   top: 0;
@@ -324,4 +332,4 @@ body {
   align-items: center;
   z-index: 9999;
   transition: opacity 0.3s ease;
-}
+}/*# sourceMappingURL=styles.css.map */

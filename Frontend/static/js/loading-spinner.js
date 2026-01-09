@@ -5,7 +5,7 @@ window.addEventListener('load', function() {
         spinner.style.opacity = '0';
         setTimeout(function() {
             spinner.style.display = 'none';
-        }, 300); // Match transition duration
+        }, 300);
     }
 });
 
