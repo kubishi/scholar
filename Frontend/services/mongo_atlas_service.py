@@ -28,9 +28,6 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
     """
     Strict Atlas Vector Search only. No fallback. Returns docs with score.
     """
-    print(index_name, "INDEX_NAME")
-    print(path, "PATH")
-    print(top_k, "TOP_K")
     client = MongoClient(uri)
     try:
         
@@ -59,9 +56,11 @@ def mongo_vec_query(uri, db_name, coll_name, query_vec, top_k=10,
                     "start": 1,
                     "title": 1,
                     "topics": 1,
-                    "score": {"$meta": "vectorSearchScore"},
+                    "score": {"$round": [{"$meta": "vectorSearchScore"}, 2]},
                     "updated_at": 1,
-                    "url": 1
+                    "url": 1,
+                    "average_rating": 1,
+
                 }
             }
         ]
@@ -105,7 +104,7 @@ def mongo_lex_query(uri, db_name, coll_name, query, top_k=10, index_name="defaul
                     "_id": 1, "title": 1, "acronym": 1, "topics": 1,
                     "city": 1, "country": 1, "deadline": 1, "start": 1, "end": 1,
                     "h5_index": 1, "h5_median": 1, "notification": 1, "url": 1, "core": 1,
-                    "updated_at": 1, "score": {"$meta": "searchScore"}
+                    "updated_at": 1, "score": {"$round" : [{"$meta": "searchScore"}, 2]}, "average_rating": 1
                 }}
             ]
             return list(coll.aggregate(pipeline))

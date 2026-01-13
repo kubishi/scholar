@@ -20,7 +20,7 @@ def ratings_to_average(uri):
   
     conf_coll = db["conferences"]
     for conference_id, average_rating in ratings_per_conference.items():
-        conf_avg = sum(average_rating) / len(average_rating)
+        conf_avg = round(sum(average_rating) / len(average_rating), 2)
         conf_coll.update_one(
             { "_id" : conference_id },
             { "$set" : { "average_rating": conf_avg } }

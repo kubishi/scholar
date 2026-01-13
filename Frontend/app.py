@@ -341,6 +341,7 @@ def index():
         show_match_score = True,
     )
 
+# Save to mongodb
 @app.route("/favorite", methods=["POST"])
 @login_required
 def save_favorite():

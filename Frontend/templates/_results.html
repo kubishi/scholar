@@ -2,52 +2,63 @@
     <h4> Conferences Results: </h4>
     {% if articles %}
       {% for article in articles %}
-
               <div class="mb-4 border border-1 border-dark p-2 text-start bg-white rounded-3">
-                  <h5 class="conference-header mb-1">
+                  <h5 class="conference-header mb-1 d-flex justify-content-between">
+                    <div>
                       <strong>{{ loop.index }}.</strong>
+
                       {{ article._id }}
 
                       <a href="{{article.url}}" target="_blank"> <!-- add url here -->
                         <span class="full-url">{{  article.get('title', 'N/A')}}</span> <!-- add url here -->
                         <span class="short-url">Go to Page &#10172;</span>
                       </a>
+                    </div>
+
+                    {% if show_match_score %}
+                      <span class="text-muted">Match Score: {{ article.score }}</span>
+                    {% endif %}
                   </h5>
-                  {% if session_user_name and session_user_name.userinfo %}
-                    {% set is_fav = article._id in favorite_ids %}
-                    <button
-                      type="button"
-                      class="btn btn-sm favorite-btn {{ 'btn-success' if is_fav else 'btn-outline-primary' }}"
-                      data-conference-id="{{ article._id }}"
-                      data-state="{{ 'saved' if is_fav else 'empty' }}"
-                      aria-pressed="{{ 'true' if is_fav else 'false' }}"
-                      aria-label="Toggle favorite"
-                    >
-                      {{ '✓ Saved!' if is_fav else '☆ Favorite' }}
-                    </button>
-                  {% else %}
-                    <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
-                      🔒 Favorite
-                    </button>
-                  {% endif %}
 
-                  {% if session_user_name and session_user_name.userinfo %}
-                    <a href="{{ url_for('conferences.edit_conference', conf_id=article._id) }}"
-                      class="btn btn-warning btn-sm ms-2">
-                      Edit
-                    </a>
-                  {% else %}
-                    <button class="btn btn-outline-secondary flex-fill" disabled title="Login to edit a conference">
-                      🔒 Edit
-                    </button>
-                  {% endif %}
+                  <div class="mt-2">
+                    {% if session_user_name and session_user_name.userinfo %}
+                      {% set is_fav = article._id in favorite_ids %}
+                      <button
+                        type="button"
+                        class="btn btn-sm favorite-btn {{ 'btn-success' if is_fav else 'btn-outline-primary' }}"
+                        data-conference-id="{{ article._id }}"
+                        data-state="{{ 'saved' if is_fav else 'empty' }}"
+                        aria-pressed="{{ 'true' if is_fav else 'false' }}"
+                        aria-label="Toggle favorite"
+                      >
+                        {{ '✓ Saved!' if is_fav else '☆ Favorite' }}
+                      </button>
+                    {% else %}
+                      <button class="btn btn-outline-secondary flex-fill" disabled title="Login to favorite a conference">
+                        🔒 Favorite
+                      </button>
+                    {% endif %}
 
-                  <span class="text-muted me-3">Location: {{ (article.city, article.country) | city_country}}</span>
-                  <span class="text-muted me-3">Start: {{ article.start | format_date }}</span>
-                  <span class="text-muted">End: {{ article.end | format_date }}</span>
+                    {% if session_user_name and session_user_name.userinfo %}
+                      <a href="{{ url_for('conferences.edit_conference', conf_id=article._id) }}"
+                        class="btn btn-warning btn-sm ms-2">
+                        Edit
+                      </a>
+                    {% else %}
+                      <button class="btn btn-outline-secondary flex-fill" disabled title="Login to edit a conference">
+                        🔒 Edit
+                      </button>
+                    {% endif %}
+                  </div>
+
+                  <div class="mt-1">
+                    <span class="text-muted me-3">Location: {{ (article.city, article.country) | city_country}}</span>
+                    <span class="text-muted me-3">Start: {{ article.start | format_date }}</span>
+                    <span class="text-muted">End: {{ article.end | format_date }}</span>
+                  </div>
 
                   <!-- Calendar buttons -->
-                  <div class="mt-2">
+                  <div class="mt-1.5">
                       <a 
                         href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ article._id | urlencode }}&dates={{ article.start | to_gcal_datetime }}/{{ article.end | to_gcal_datetime }}&location={{ (article.city ~ ', ' ~ article.country) | urlencode }}&details={{ article.url | urlencode }}" 
                         target="_blank" 
@@ -70,13 +81,16 @@
                     </div>
                   
                   <!-- Topics are hidden by default -->
-                  <p class="mt-1 text-muted" style="font-size: 0.9rem;">
+                  <p class="mt-1 mb-0 text-muted" style="font-size: 0.9rem;">
                       Deadline to submit: {{ article.deadline | format_date }} <br>
                       Topics: {{ article.topics | replace('\n', ', ') }}
                   </p>
-  
-                  {% if show_match_score %}
-                    <p class="text-muted">Match Score: {{ article.score }}</p>
+
+                  {% if article.average_rating %}
+                    <p class="d-inline-flex align-items-center mt-0 mb-0 h6">
+                      <span class="me-1">Quality Score:</span>
+                      <span>{{ article.average_rating }}</span>
+                    </p>
                   {% endif %}
                 
                   <details class="mt-2">
