@@ -1,0 +1,23 @@
+{
+  "name": "kubishi-scholar",
+  "version": "2.0.0",
+  "description": "Academic conference search platform - Cloudflare Pages/Workers version",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev frontend/public --d1=DB --compatibility-date=2024-01-01",
+    "deploy": "wrangler pages deploy frontend/public --project-name=kubishi-scholar",
+    "db:migrate": "wrangler d1 execute kubishi-scholar-db --file=schema/d1-schema.sql",
+    "migrate:mongo": "npx tsx scripts/migrate-mongo-to-d1.ts",
+    "migrate:vectors": "npx tsx scripts/migrate-vectors.ts"
+  },
+  "dependencies": {
+    "jose": "^5.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.24.0",
+    "tsx": "^4.7.0",
+    "mongodb": "^6.3.0"
+  }
+}

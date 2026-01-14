@@ -1,0 +1,7 @@
+version: '3'
+services:
+  homepage: 
+    image: jaredraycoleman/kubishi-scholar:latest
+    build: .
+    ports:
+      - "5000:80"

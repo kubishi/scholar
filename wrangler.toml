@@ -1,0 +1,27 @@
+name = "kubishi-scholar"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "frontend/public"
+
+# D1 Database binding
+# Run: wrangler d1 create kubishi-scholar-db
+# Then update the database_id below
+[[d1_databases]]
+binding = "DB"
+database_name = "kubishi-scholar-db"
+database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
+
+# Vectorize binding
+# Run: wrangler vectorize create kubishi-conferences --dimensions 1536 --metric cosine
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "kubishi-conferences"
+
+# Environment variables (non-secret)
+[vars]
+ENVIRONMENT = "production"
+
+# Secrets (set via wrangler secret put <NAME>):
+# - AUTH0_DOMAIN
+# - AUTH0_CLIENT_ID
+# - AUTH0_AUDIENCE
+# - OPENAI_API_KEY
