@@ -9,7 +9,7 @@ window.userFavorites = [];
  */
 async function initAuth() {
   try {
-    auth0Client = await createAuth0Client({
+    auth0Client = await auth0.createAuth0Client({
       domain: window.AUTH0_CONFIG.domain,
       clientId: window.AUTH0_CONFIG.clientId,
       authorizationParams: {

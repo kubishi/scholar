@@ -182,8 +182,9 @@ export const onRequestGet: PagesFunction = async (context) => {
     });
   } catch (error) {
     console.error('Search error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return Response.json(
-      { ok: false, error: 'Search failed' },
+      { ok: false, error: `Search failed: ${errorMessage}` },
       { status: 500 }
     );
   }

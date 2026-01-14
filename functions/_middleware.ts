@@ -17,12 +17,17 @@ export const onRequest: PagesFunction = async (context) => {
   const { request, env, next, data } = context;
   const url = new URL(request.url);
 
-  // Allow public paths without authentication
+  // Only apply auth middleware to /api/ routes
+  if (!url.pathname.startsWith('/api/')) {
+    return next();
+  }
+
+  // Allow public API paths without authentication
   if (isPublicPath(url, request.method)) {
     return next();
   }
 
-  // For protected paths, verify JWT token
+  // For protected API paths, verify JWT token
   const token = extractBearerToken(request);
   if (!token) {
     return unauthorizedResponse('Missing authorization token');

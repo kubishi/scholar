@@ -16,12 +16,12 @@ database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
 binding = "VECTORIZE_INDEX"
 index_name = "kubishi-conferences"
 
-# Environment variables (non-secret)
+# Environment variables
 [vars]
 ENVIRONMENT = "production"
+AUTH0_DOMAIN = "kubishi.us.auth0.com"
+AUTH0_CLIENT_ID = "zMN0aag54DJ6Bp4O9qVm89uLLNcgZ1A7"
+AUTH0_AUDIENCE = "https://api.scholar.kubishi.com"
 
-# Secrets (set via wrangler secret put <NAME>):
-# - AUTH0_DOMAIN
-# - AUTH0_CLIENT_ID
-# - AUTH0_AUDIENCE
-# - OPENAI_API_KEY
+# Secrets - set via: npx wrangler pages secret put OPENAI_API_KEY --project-name=kubishi-scholar
+# OPENAI_API_KEY is injected at runtime from Cloudflare dashboard/secrets
