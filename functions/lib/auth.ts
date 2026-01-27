@@ -42,13 +42,55 @@ export async function verifyToken(
 }
 
 /**
+ * Fetch user info from Auth0 /userinfo endpoint
+ */
+export async function fetchUserInfo(
+  token: string,
+  env: Env
+): Promise<{ name?: string; email?: string; nickname?: string } | null> {
+  try {
+    const response = await fetch(`https://${env.AUTH0_DOMAIN}/userinfo`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    console.log('Make it obvioously clear that the response is:', await response.json(), 'end of response');
+    
+    if (!response.ok) return null;
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch user info:', error);
+    return null;
+  }
+}
+
+/**
  * Extract user info from JWT payload
  */
-export function extractUser(payload: JWTPayload): AuthUser {
+export async function extractUser(
+  payload: JWTPayload,
+  token: string,
+  env: Env
+): Promise<AuthUser> {
+  // Try to get from payload first
+  let name = payload.name as string | undefined;
+  let email = payload.email as string | undefined;
+
+  const nameIsEmail = name && name.includes('@');
+
+  // If not in payload, fetch from Auth0
+  if (!name || !email || nameIsEmail) {
+    const userInfo = await fetchUserInfo(token, env);
+    name = userInfo?.nickname ?? userInfo?.name ?? name; 
+    email = userInfo?.email ?? email;
+  }
+  
   return {
     id: payload.sub as string,
-    email: payload.email as string | undefined,
-    name: payload.name as string | undefined,
+    email,
+    name,
   };
 }
 

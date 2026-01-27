@@ -42,6 +42,7 @@ async function handleSearch(event) {
   if (resultsContainer) resultsContainer.innerHTML = '';
 
   try {
+    // Importat line: Refers to the search.ts file in the functions folder
     const response = await fetch(`${window.API_BASE}/api/search?${params}`);
     const data = await response.json();
 

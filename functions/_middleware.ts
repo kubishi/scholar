@@ -1,4 +1,5 @@
 // Authentication middleware for Cloudflare Pages Functions
+// Entry point for all API requests
 
 import type { Env, AuthUser, AuthContext } from './lib/types';
 import {
@@ -13,6 +14,7 @@ type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
 
+// onRequest comes from the Pages Functions API in the Cloudflare dashboard
 export const onRequest: PagesFunction = async (context) => {
   const { request, env, next, data } = context;
   const url = new URL(request.url);
@@ -39,7 +41,7 @@ export const onRequest: PagesFunction = async (context) => {
   }
 
   // Attach user info to context data for downstream handlers
-  data.user = extractUser(payload);
+  data.user = await extractUser(payload, token, env); 
 
   return next();
 };

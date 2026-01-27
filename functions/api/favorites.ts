@@ -23,6 +23,7 @@ export const onRequestPost: PagesFunction = async (context) => {
   }
 
   try {
+    // assume the JSON matches the FavoriteRequest shape
     const body = await request.json<FavoriteRequest>();
     const conferenceId = body.conference_id;
 

@@ -6,6 +6,9 @@ type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
 
+// Typescript interface for that defines the shape of the JSON
+// body sent by the frontend. In this case it is the data from the 
+// form in the add-conference.html page.
 interface SubmitRequest {
   conference_id: string;
   conference_name: string;

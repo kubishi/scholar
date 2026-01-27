@@ -58,6 +58,10 @@ CREATE TABLE IF NOT EXISTS user_favorites (
 
 CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
 
+CREATE TABLE IF NOT EXISTS user_conf_rating (
+    
+)
+
 -- User-submitted conferences (pending approval)
 CREATE TABLE IF NOT EXISTS submitted_conferences (
     id TEXT PRIMARY KEY,                    -- Conference acronym/ID
@@ -95,20 +99,23 @@ CREATE VIRTUAL TABLE IF NOT EXISTS conferences_fts USING fts5(
     content_rowid='rowid'
 );
 
--- Triggers to keep FTS index in sync with conferences table
+-- Triggers to keep FTS index in sync with conferences table. In other words: sync normal db with fts table.
+-- After Insert
 CREATE TRIGGER IF NOT EXISTS conferences_ai AFTER INSERT ON conferences BEGIN
     INSERT INTO conferences_fts(rowid, id, title, acronym, topics, city, country)
     VALUES (new.rowid, new.id, new.title, new.acronym, new.topics, new.city, new.country);
 END;
 
+-- After Delete
 CREATE TRIGGER IF NOT EXISTS conferences_ad AFTER DELETE ON conferences BEGIN
     INSERT INTO conferences_fts(conferences_fts, rowid, id, title, acronym, topics, city, country)
     VALUES ('delete', old.rowid, old.id, old.title, old.acronym, old.topics, old.city, old.country);
 END;
 
+-- After Update
 CREATE TRIGGER IF NOT EXISTS conferences_au AFTER UPDATE ON conferences BEGIN
     INSERT INTO conferences_fts(conferences_fts, rowid, id, title, acronym, topics, city, country)
-    VALUES ('delete', old.rowid, old.id, old.title, old.acronym, old.topics, old.city, old.country);
+    VALUES ('delete', old.rowid, old.id, old.title, old.acronym, old.topics, old.city, old.country); --remove by rowid only
     INSERT INTO conferences_fts(rowid, id, title, acronym, topics, city, country)
     VALUES (new.rowid, new.id, new.title, new.acronym, new.topics, new.city, new.country);
 END;

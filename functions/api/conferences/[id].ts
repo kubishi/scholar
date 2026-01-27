@@ -6,10 +6,11 @@ import { getConferenceById } from '../../lib/db';
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
-
+  
 export const onRequestGet: PagesFunction = async (context) => {
   const { env, params } = context;
-  const id = params.id as string;
+  const rawId = params.id as string;
+  const id = decodeURIComponent(Array.isArray(rawId) ? rawId[0]: rawId)
 
   if (!id) {
     return Response.json(
@@ -20,7 +21,6 @@ export const onRequestGet: PagesFunction = async (context) => {
 
   try {
     const conference = await getConferenceById(env.DB, id);
-
     if (!conference) {
       return Response.json(
         { ok: false, error: 'Conference not found' },

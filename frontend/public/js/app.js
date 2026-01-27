@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 async function loadConferenceCount() {
   try {
+    // Importat line: Refers to the conferences/count.ts file in the functions folder
     const response = await fetch(`${window.API_BASE}/api/conferences/count`);
     const data = await response.json();
 

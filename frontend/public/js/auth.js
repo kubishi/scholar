@@ -33,6 +33,7 @@ async function initAuth() {
     // Check if user is authenticated
     const isAuthenticated = await auth0Client.isAuthenticated();
 
+    // This code is to get the JWT token from Auth0 and then use it to fetch the user data from our API
     if (isAuthenticated) {
       // Fetch user data from our API
       const token = await auth0Client.getTokenSilently();

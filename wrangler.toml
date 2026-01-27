@@ -10,7 +10,8 @@ binding = "DB"
 database_name = "kubishi-scholar-db"
 database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
 
-# Vectorize binding
+
+# Vectorize binding: stores vectors (vestor db)
 # Run: wrangler vectorize create kubishi-conferences --dimensions 1536 --metric cosine
 [[vectorize]]
 binding = "VECTORIZE_INDEX"
