@@ -54,8 +54,8 @@ export async function fetchUserInfo(
         'Authorization': `Bearer ${token}`,
       },
     });
-
-    console.log('Make it obvioously clear that the response is:', await response.json(), 'end of response');
+    // response.json() can only be called once
+    // console.log('Make it obvioously clear that the response is:', await response.json(), 'end of response');
     
     if (!response.ok) return null;
     
@@ -80,9 +80,11 @@ export async function extractUser(
 
   const nameIsEmail = name && name.includes('@');
 
+
   // If not in payload, fetch from Auth0
   if (!name || !email || nameIsEmail) {
     const userInfo = await fetchUserInfo(token, env);
+    console.log(userInfo, "CRINGEEEEEEEEEEEEEEE")
     name = userInfo?.nickname ?? userInfo?.name ?? name; 
     email = userInfo?.email ?? email;
   }
