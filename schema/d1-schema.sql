@@ -46,6 +46,16 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS user_conf_rating (
+    user_id TEXT NOT NULL,
+    conference_id TEXT NOT NULL,
+    ratings TEXT NOT NULL, -- JSON array of ratings, e.g. [welcoming_score: 5, insightful_score: 4, networking_score: 5, interactivity_score: 4, overall_score: 4.5, caliber_score: 5, worthwhile_score: 4.5]
+    updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, conference_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
+);
+
 -- User favorites (junction table)
 CREATE TABLE IF NOT EXISTS user_favorites (
     user_id TEXT NOT NULL,
@@ -58,9 +68,8 @@ CREATE TABLE IF NOT EXISTS user_favorites (
 
 CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
 
-CREATE TABLE IF NOT EXISTS user_conf_rating (
-    
-)
+
+
 
 -- User-submitted conferences (pending approval)
 CREATE TABLE IF NOT EXISTS submitted_conferences (

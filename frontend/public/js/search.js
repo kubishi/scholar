@@ -41,13 +41,15 @@ async function handleSearch(event) {
   if (spinner) spinner.style.display = 'block';
   if (resultsContainer) resultsContainer.innerHTML = '';
 
+  // In javascript, fetch is a GET request!!!
   try {
     // Importat line: Refers to the search.ts file in the functions folder
     const response = await fetch(`${window.API_BASE}/api/search?${params}`);
     const data = await response.json();
 
     if (data.results) {
-      renderResults(data.results);
+      const userRatings = await getUserRatings(data.results.map(result => result.id));
+      renderResults(data.results, userRatings);
     } else {
       resultsContainer.innerHTML = '<p class="text-muted text-center">No results found.</p>';
     }
@@ -62,7 +64,7 @@ async function handleSearch(event) {
 /**
  * Render search results
  */
-function renderResults(results) {
+function renderResults(results, userRatings={}) {
   const container = document.getElementById('results-container');
 
   if (!results || results.length === 0) {
@@ -72,17 +74,20 @@ function renderResults(results) {
 
   container.innerHTML = `
     <h4 class="mb-3">Conference Results (${results.length})</h4>
-    ${results.map((conf, index) => renderConferenceCard(conf, index + 1)).join('')}
+    ${results.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id])).join('')}
   `;
 
   // Attach favorite button handlers
   attachFavoriteHandlers();
+  // When this form is submitted, the handleUserRatingsSubmit function will be called in the ratings.js file
+  attachRatingsHandlers();
+
 }
 
 /**
  * Render a single conference card
  */
-function renderConferenceCard(conf, index) {
+function renderConferenceCard(conf, index, ratings={}) {
   const isFavorite = window.userFavorites?.includes(conf.id);
   const isLoggedIn = !!window.currentUser;
 
@@ -91,6 +96,7 @@ function renderConferenceCard(conf, index) {
 
   // Format location
   const location = [conf.city, conf.country].filter(Boolean).join(', ') || 'N/A';
+
 
   return `
     <div class="result-card mb-3">
@@ -150,8 +156,43 @@ function renderConferenceCard(conf, index) {
       </p>
 
       <details>
-        <summary class="small">Rankings & Metrics</summary>
+        <summary class="small">Rankings & Metrics &#9776;</summary>
         <div class="mt-2">${rankingsHtml}</div>
+      </details>
+      <details>
+        <summary class="small">User Ratings &#9734;</summary>
+        <!-- data-conference-id is used to identify the conference in the form -->
+        <form id="user-ratings-form" class="user-ratings-form" data-conference-id="${conf.id}">
+          <div class="field">
+            <label for="fname">Welcoming Score:</label>
+            <input type="number" id="welcoming-score" name="welcoming-score" min="1" max="10" placeholder="1-10" value="${ratings.welcoming ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Insightful Score:</label>
+            <input type="number" id="insightful-score" name="insightful-score" min="1" max="10" placeholder="1-10" value="${ratings.insightful ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Networking Score:</label>
+            <input type="number" id="networking-score" name="networking-score" min="1" max="10" placeholder="1-10" value="${ratings.networking ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Interactivity Score:</label>
+            <input type="number" id="interactivity-score" name="interactivity-score" min="1" max="10" placeholder="1-10" value="${ratings.interactivity ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Overall Score:</label>
+            <input type="number" id="overall-score" name="overall-score" min="1" max="10" placeholder="1-10" value="${ratings.overall ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Caliber Score:</label>
+            <input type="number" id="caliber-score" name="caliber-score" min="1" max="10" placeholder="1-10" value="${ratings.caliber ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Worthwhile Score:</label>
+            <input type="number" id="worthwhile-score" name="worthwhile-score" min="1" max="10" placeholder="1-10" value="${ratings.worthwhile ?? ''}">
+          </div>
+          <button id="submit-ratings-btn" class="submit-ratings-btn btn" type="submit">Submit Ratings</button>
+        </form> 
       </details>
     </div>
   `;

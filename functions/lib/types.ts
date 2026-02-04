@@ -137,3 +137,13 @@ export interface FavoriteResponse {
   ok: boolean;
   status: 'added' | 'removed';
 }
+
+export interface UserRatingOptions {
+  welcoming: number;
+  insightful: number;
+  networking: number;
+  interactivity: number;
+  overall: number;
+  caliber: number;
+  worthwhile: number;
+}
