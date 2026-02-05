@@ -1,4 +1,6 @@
 name = "kubishi-scholar"
+main = "update_OLD.py"
+compatibility_flags = ["python_workers"] # <--- Add this
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "frontend/public"
 
@@ -9,7 +11,6 @@ pages_build_output_dir = "frontend/public"
 binding = "DB"
 database_name = "kubishi-scholar-db"
 database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
-
 
 # Vectorize binding: stores vectors (vestor db)
 # Run: wrangler vectorize create kubishi-conferences --dimensions 1536 --metric cosine
