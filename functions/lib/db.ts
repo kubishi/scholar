@@ -1,6 +1,6 @@
 // D1 Database utilities
 
-import type { Env, Conference, User, SubmittedConference } from './types';
+import type { Env, Conference, User, SubmittedConference, UserRatingOptions, UserProfile} from './types';
 
 /**
  * Parse rankings string from GROUP_CONCAT into an object
@@ -29,6 +29,7 @@ export async function getConferenceCount(db: D1Database): Promise<number> {
  * Get conference by ID with rankings
  */
 export async function getConferenceById(db: D1Database, id: string): Promise<Conference | null> {
+  console.log(id, "FAAR OUT")
   const result = await db.prepare(`
     SELECT c.*, GROUP_CONCAT(cr.ranking_source || ':' || cr.ranking_value) as rankings
     FROM conferences c
@@ -101,6 +102,8 @@ export async function lexicalSearch(
 /**
  * Upsert user record
  */
+
+// Use COALESCE because name and email are optionals
 export async function upsertUser(
   db: D1Database,
   id: string,
@@ -291,4 +294,72 @@ export async function upsertRanking(
     VALUES (?, ?, ?)
     ON CONFLICT(conference_id, ranking_source) DO UPDATE SET ranking_value = ?
   `).bind(conferenceId, source, value, value).run();
+}
+
+
+export async function upsert_user_conf_rating(
+  db: D1Database,
+  user_id: string, 
+  conference_id: string,
+  ratings: UserRatingOptions,
+): Promise<void> {
+
+  const ratingJson = JSON.stringify(ratings);
+
+  await db.prepare(`
+      INSERT INTO user_conf_rating (user_id, conference_id, ratings, updated_at)
+      VALUES(?, ?, ?, datetime('now'))
+      ON CONFLICT(user_id, conference_id) DO UPDATE SET
+        ratings = excluded.ratings,
+        updated_at = datetime('now')
+    `).bind(user_id, conference_id, ratingJson).run()
+}
+
+export async function get_user_conf_rating(
+  db: D1Database,
+  user_id: string,
+  conference_ids: string[]
+): Promise<UserRatingOptions | Record<string, UserRatingOptions>> {
+
+  const ratingsByConfrence: Record<string, UserRatingOptions> = {};
+  
+  for (const conference_id of conference_ids) {
+    const result = await db.prepare(`
+      SELECT ratings FROM user_conf_rating WHERE user_id = ? AND conference_id = ?
+    `).bind(user_id, conference_id).first<{ ratings: string }>();
+    if (result?.ratings) {
+      ratingsByConfrence[conference_id] = JSON.parse(result.ratings);
+    }
+  }
+  return ratingsByConfrence;
+}
+
+export async function upsert_user_profile(
+  db: D1Database,
+  user_id: string,
+  user_info: UserProfile
+): Promise<void> {
+  const profileJson = JSON.stringify(user_info);
+
+  await db.prepare(`
+      INSERT INTO user_profile (user_id, user_profile, updated_at)
+      VALUES(?,?, datetime("now"))
+      ON CONFLICT(user_id) DO UPDATE SET
+        -- excluded is a temp storage that keeps the valeus not entered in the conflict and adds them here.
+        user_profile = excluded.user_profile,
+        updated_at = datetime("now")
+    `).bind(user_id, profileJson).run()
+}
+
+export async function get_user_profile(
+  db: D1Database,
+  user_id: string
+): Promise<UserProfile | null> {
+  const result = await db.prepare(`
+    SELECT user_profile FROM user_profile WHERE user_id = ?
+  `).bind(user_id).first<{ user_profile: string }>();
+  if (result?.user_profile) {
+    return JSON.parse(result.user_profile);
+  }
+  return null;
 }

@@ -21,6 +21,16 @@ body {
   object-fit: contain;
 }
 
+#user-greeting {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+#user-greeting:hover {
+  padding: 0px 4px;
+  background-color: black;
+  color: white;
+}
+
 /* Login/Logout buttons */
 .login-button,
 .logout-button {
@@ -196,13 +206,23 @@ body {
 /* Google Calendar button - Green */
 .google-calendar-button {
   background: #0F9D58;
-  color: white;
   transition: background-color 0.3s ease;
 }
 
 .google-calendar-button:hover {
-  background: #0c7a44;
   color: white;
+  background: #0c7a44;
+}
+
+.submit-ratings-btn {
+  background: #e82e1e;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.submit-ratings-btn:hover {
+  color: white;
+  background: #d62516;
 }
 
 /* Find Friends button - Pink hover */
@@ -230,6 +250,7 @@ body {
   background: #3e50df;
   color: white;
 }
+
 
 .conference-review-button:hover {
   background: #2a3db8;
@@ -361,4 +382,43 @@ details summary:hover {
 
 .table-sm td {
   color: #666;
+}
+
+#user-ratings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Increase the size of the label box */
+/* This pushs the boxes over */
+#user-ratings-form .field label {
+  min-width: 140px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+#user-ratings-form .field input {
+  width: 70px;
+  flex-shrink: 0;
+  font-size:14px;
+}
+
+::placeholder{
+  color: #6c757d;
+}
+
+#edit-about-me-btn {
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+#edit-about-me-btn:hover {
+  background-color: #144091;
+  color: white;
 }

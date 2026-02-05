@@ -13,11 +13,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchForm.addEventListener('submit', handleSearch);
   }
 
-  // Set up ranking source change handler
-  const rankingSource = document.getElementById('ranking-source');
-  if (rankingSource) {
-    rankingSource.addEventListener('change', handleRankingSourceChange);
-  }
 
   // Set up search type change handler for placeholder updates
   document.querySelectorAll('input[name="search_type"]').forEach((radio) => {

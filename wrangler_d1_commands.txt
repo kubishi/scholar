@@ -1,0 +1,60 @@
+# ============================================
+# D1 Database Commands for Local Development
+# ============================================
+
+run the whole thing with: wrangler pages dev
+
+# View all conferences
+wrangler d1 execute DB --local --command="SELECT id, title, city, country FROM conferences ORDER BY id"
+
+# Count total conferences
+wrangler d1 execute DB --local --command="SELECT COUNT(*) as total FROM conferences"
+
+# View a specific conference
+wrangler d1 execute DB --local --command="SELECT * FROM conferences WHERE id = 'ICML'"
+
+# View conferences in Germany
+wrangler d1 execute DB --local --command="SELECT id, title, city, country FROM conferences WHERE country = 'Germany'"
+
+# View conferences with upcoming deadlines
+wrangler d1 execute DB --local --command="SELECT id, title, deadline FROM conferences WHERE deadline > datetime('now') ORDER BY deadline LIMIT 10"
+
+# View all conference details (formatted)
+wrangler d1 execute DB --local --command="SELECT id, title, acronym, city, country, deadline, start_date, end_date, topics FROM conferences LIMIT 5"
+
+# ============================================
+# INSERT Commands - Add Test Conferences
+# ============================================
+
+# ICML - Machine Learning Conference
+wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('ICML', 'International Conference on Machine Learning', 'ICML', 'Vienna', 'Austria', '2025-01-31T23:59:59Z', '2025-07-21T09:00:00Z', '2025-07-27T18:00:00Z', 'machine learning\nAI\nneural networks\ndeep learning', 'https://icml.cc', 85, 92)"
+
+# ECCV - Computer Vision Conference (Germany)
+wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('ECCV2026', 'European Conference on Computer Vision', 'ECCV', 'Berlin', 'Germany', '2026-02-28T23:59:59Z', '2026-09-08T09:00:00Z', '2026-09-12T18:00:00Z', 'computer vision\nimage recognition\nmachine learning\ndeep learning', 'https://eccv2026.eu', 78, 88)"
+
+# NeurIPS - Neural Information Processing Systems
+wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('BASSI 2004', 'Best Test Case', 'NeurIPS', 'Stokholm', 'Sweden', '2025-05-15T23:59:59Z', '2025-12-08T09:00:00Z', '2025-12-14T18:00:00Z', 'neural networks\ndeep learning\nAI\nmachine learning', 'https://neurips.cc', 95, 105)"
+
+# ============================================
+# DELETE Commands - Clean Up Test Data
+# ============================================
+
+# Delete a specific conference
+wrangler d1 execute DB --local --command="DELETE FROM conferences WHERE id = 'ICML'"
+
+# Delete all test conferences (be careful!)
+# wrangler d1 execute DB --local --command="DELETE FROM conferences"
+
+# ============================================
+# UPDATE Commands - Modify Existing Data
+# ============================================
+
+# Update a conference's deadline
+wrangler d1 execute DB --local --command="UPDATE conferences SET deadline = '2025-02-15T23:59:59Z' WHERE id = 'ICML'"
+
+# ============================================
+# Tips:
+# - Remove '--local' to run against production database
+# - Always test with --local first!
+# - Use SELECT before DELETE/UPDATE to verify
+# ============================================
