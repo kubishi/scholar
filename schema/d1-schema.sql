@@ -69,7 +69,13 @@ CREATE TABLE IF NOT EXISTS user_favorites (
 CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
 
 
-
+CREATE TABLE IF NOT EXISTS user_profile (
+    user_id TEXT NOT NULL,
+    user_profile TEXT NOT NULL, -- JSON object of user profile
+    updated_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- User-submitted conferences (pending approval)
 CREATE TABLE IF NOT EXISTS submitted_conferences (

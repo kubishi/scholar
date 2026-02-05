@@ -147,3 +147,16 @@ export interface UserRatingOptions {
   caliber: number;
   worthwhile: number;
 }
+
+export interface UserProfile {
+  given_name: string;
+  phone: string;
+  email: string;
+  birthday: string;
+  university: string;
+  interests: string;
+  website: string;
+  github: string;
+  linkedin: string;
+  orcid: string;
+}

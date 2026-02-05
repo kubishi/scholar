@@ -1,6 +1,6 @@
 // D1 Database utilities
 
-import type { Env, Conference, User, SubmittedConference, UserRatingOptions } from './types';
+import type { Env, Conference, User, SubmittedConference, UserRatingOptions, UserProfile} from './types';
 
 /**
  * Parse rankings string from GROUP_CONCAT into an object
@@ -296,6 +296,7 @@ export async function upsertRanking(
   `).bind(conferenceId, source, value, value).run();
 }
 
+
 export async function upsert_user_conf_rating(
   db: D1Database,
   user_id: string, 
@@ -333,3 +334,32 @@ export async function get_user_conf_rating(
   return ratingsByConfrence;
 }
 
+export async function upsert_user_profile(
+  db: D1Database,
+  user_id: string,
+  user_info: UserProfile
+): Promise<void> {
+  const profileJson = JSON.stringify(user_info);
+
+  await db.prepare(`
+      INSERT INTO user_profile (user_id, user_profile, updated_at)
+      VALUES(?,?, datetime("now"))
+      ON CONFLICT(user_id) DO UPDATE SET
+        -- excluded is a temp storage that keeps the valeus not entered in the conflict and adds them here.
+        user_profile = excluded.user_profile,
+        updated_at = datetime("now")
+    `).bind(user_id, profileJson).run()
+}
+
+export async function get_user_profile(
+  db: D1Database,
+  user_id: string
+): Promise<UserProfile | null> {
+  const result = await db.prepare(`
+    SELECT user_profile FROM user_profile WHERE user_id = ?
+  `).bind(user_id).first<{ user_profile: string }>();
+  if (result?.user_profile) {
+    return JSON.parse(result.user_profile);
+  }
+  return null;
+}
