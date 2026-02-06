@@ -1,5 +1,5 @@
 import type { Env, AuthContext, UserRatingOptions } from '../lib/types';
-import { upsert_user_conf_rating, get_user_conf_rating } from '../lib/db';
+import { upsert_user_conf_rating, get_user_conf_rating, get_avg_user_overall_rating } from '../lib/db';
 
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
@@ -54,6 +54,7 @@ export const onRequestGet: PagesFunction = async (context) => {
   const conferenceIds = conferenceIdsParam.split(',').map(id => id.trim()).filter(Boolean);
 
   const ratings = await get_user_conf_rating(env.DB, user.id, conferenceIds);
+  const avg_scores = await get_avg_user_overall_rating(env.DB, conferenceIds)
 
-  return Response.json({ ok: true, ratings });
+  return Response.json({ ok: true, ratings, avg_scores });
 }

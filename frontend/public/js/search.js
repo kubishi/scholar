@@ -48,8 +48,8 @@ async function handleSearch(event) {
     const data = await response.json();
 
     if (data.results) {
-      const userRatings = await getUserRatings(data.results.map(result => result.id));
-      renderResults(data.results, userRatings);
+      const {ratings, averages } = await getUserRatings(data.results.map(result => result.id));
+      renderResults(data.results, ratings, averages);
     } else {
       resultsContainer.innerHTML = '<p class="text-muted text-center">No results found.</p>';
     }
@@ -64,7 +64,7 @@ async function handleSearch(event) {
 /**
  * Render search results
  */
-function renderResults(results, userRatings={}) {
+function renderResults(results, userRatings={}, averages={}) {
   const container = document.getElementById('results-container');
 
   if (!results || results.length === 0) {
@@ -74,7 +74,7 @@ function renderResults(results, userRatings={}) {
 
   container.innerHTML = `
     <h4 class="mb-3">Conference Results (${results.length})</h4>
-    ${results.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id])).join('')}
+    ${results.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id], averages[conf.id])).join('')}
   `;
 
   // Attach favorite button handlers
@@ -87,7 +87,7 @@ function renderResults(results, userRatings={}) {
 /**
  * Render a single conference card
  */
-function renderConferenceCard(conf, index, ratings={}) {
+function renderConferenceCard(conf, index, ratings={}, average=null) {
   const isFavorite = window.userFavorites?.includes(conf.id);
   const isLoggedIn = !!window.currentUser;
 
@@ -100,18 +100,17 @@ function renderConferenceCard(conf, index, ratings={}) {
 
   return `
     <div class="result-card mb-3">
-      <div class="d-flex justify-content-between align-items-start mb-2">
-        <div>
-          <h5 class="mb-1">
-            <strong>${index}.</strong> ${conf.id}
-            ${conf.url ? `
-              <a href="${conf.url}" target="_blank" rel="noopener noreferrer" class="ms-2">
-                <span class="full-url">${conf.title || conf.id}</span>
-                <span class="short-url">Go to Page ➪</span>
-              </a>
-            ` : `<span class="ms-2 text-muted">${conf.title || conf.id}</span>`}
-          </h5>
-        </div>
+      <div class="conference-top-line d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">
+          <strong>${index}.</strong> ${conf.id}
+          ${conf.url ? `
+            <a href="${conf.url}" target="_blank" rel="noopener noreferrer" class="ms-2">
+              <span class="full-url">${conf.title || conf.id}</span>
+              <span class="short-url">Go to Page ➪</span>
+            </a>
+          ` : `<span class="ms-2 text-muted">${conf.title || conf.id}</span>`}
+        </h5>
+        <span class="conference-avg text-muted">${average}</span>
       </div>
 
       <div class="d-flex gap-2 mb-2">
@@ -180,16 +179,16 @@ function renderConferenceCard(conf, index, ratings={}) {
             <input type="number" id="interactivity-score" name="interactivity-score" min="1" max="10" placeholder="1-10" value="${ratings.interactivity ?? ''}">
           </div>
           <div class="field">
-            <label for="fname">Overall Score:</label>
-            <input type="number" id="overall-score" name="overall-score" min="1" max="10" placeholder="1-10" value="${ratings.overall ?? ''}">
-          </div>
-          <div class="field">
             <label for="fname">Caliber Score:</label>
             <input type="number" id="caliber-score" name="caliber-score" min="1" max="10" placeholder="1-10" value="${ratings.caliber ?? ''}">
           </div>
           <div class="field">
             <label for="fname">Worthwhile Score:</label>
             <input type="number" id="worthwhile-score" name="worthwhile-score" min="1" max="10" placeholder="1-10" value="${ratings.worthwhile ?? ''}">
+          </div>
+          <div class="field">
+            <label for="fname">Overall Score:</label>
+            <input type="number" id="overall-score" name="overall-score" min="1" max="10" placeholder="1-10" value="${ratings.overall ?? ''}">
           </div>
           <button id="submit-ratings-btn" class="submit-ratings-btn btn" type="submit">Submit Ratings</button>
         </form> 

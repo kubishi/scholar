@@ -296,7 +296,7 @@ export async function upsertRanking(
   `).bind(conferenceId, source, value, value).run();
 }
 
-
+//User rating Functions------------------------------------------------------
 export async function upsert_user_conf_rating(
   db: D1Database,
   user_id: string, 
@@ -334,6 +334,7 @@ export async function get_user_conf_rating(
   return ratingsByConfrence;
 }
 
+//User profile Functions------------------------------------------------------
 export async function upsert_user_profile(
   db: D1Database,
   user_id: string,
@@ -362,4 +363,21 @@ export async function get_user_profile(
     return JSON.parse(result.user_profile);
   }
   return null;
+}
+
+//Average user rating Functions------------------------------------------------------
+export async function get_avg_user_overall_rating(
+  db: D1Database,
+  conference_ids: string[]
+): Promise<Record<string, number>> {
+  const avg_per_conf: Record<string, number> = {};
+  for (const conference_id of conference_ids) {
+    const row = await db.prepare(`
+      SELECT AVG(json_extract(ratings, '$.overall')) AS average_overall
+      FROM user_conf_rating
+      WHERE conference_id = ?
+    `).bind(conference_id).first<{ average_overall: number | null }>();
+    avg_per_conf[conference_id] = row?.average_overall ?? 0;
+  }
+  return avg_per_conf;
 }

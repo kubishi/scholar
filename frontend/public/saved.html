@@ -100,7 +100,8 @@
                 );
 
                 const validConferences = conferences.filter(c => c !== null);
-                renderResults(validConferences);
+                const {ratings, averages } = await getUserRatings(validConferences.map(c => c.id));
+                renderResults(validConferences, ratings, averages);
             } catch (error) {
                 console.error('Failed to load saved conferences:', error);
                 resultsContainer.innerHTML = '<p class="text-danger">Failed to load saved conferences.</p>';
