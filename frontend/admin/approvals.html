@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Conference Approvals - Kubishi Scholar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/img/logo_bg.png" type="image/png">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/img/logo_bg.png" alt="Kubishi" height="40" class="menu_logo rounded-2 me-2">
+                <span class="title_subtext">Kubishi Scholar</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <span id="admin-link"></span>
+                <span id="user-greeting" class="me-3"><strong>Welcome!</strong></span>
+                <button id="login-btn" class="login-button btn btn-sm btn-dark">Login</button>
+                <button id="logout-btn" class="logout-button btn btn-sm btn-dark" style="display: none;">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Image -->
+    <picture class="bg-image">
+        <img src="/img/background3.jpg" alt="" class="w-full h-screen object-cover">
+    </picture>
+
+    <div class="container py-4">
+        <div class="search-box p-4 rounded-4">
+            <h2 class="mb-4">Conference Approvals</h2>
+            <p class="text-muted mb-4">Review and approve user-submitted conferences.</p>
+
+            <div class="d-flex gap-2 mb-4">
+                <a href="/" class="btn btn-outline-dark">&larr; Back to Search</a>
+                <button id="publish-all-btn" class="btn btn-success" style="display: none;">
+                    Publish All Approved
+                </button>
+            </div>
+
+            <!-- Access denied message -->
+            <div id="access-denied" class="alert alert-danger" style="display: none;">
+                <strong>Access Denied</strong> - You must be an admin to view this page.
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center py-4">
+                <div class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Submissions List -->
+            <div id="submissions-container" style="display: none;"></div>
+
+            <!-- Status messages -->
+            <div id="status-message" class="alert" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let submissions = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initAuth();
+
+            const loading = document.getElementById('loading');
+            const accessDenied = document.getElementById('access-denied');
+            const container = document.getElementById('submissions-container');
+            const publishAllBtn = document.getElementById('publish-all-btn');
+            const statusMessage = document.getElementById('status-message');
+
+            if (!window.currentUser || window.currentUser.privilege !== 'admin') {
+                loading.style.display = 'none';
+                accessDenied.style.display = 'block';
+                return;
+            }
+
+            await loadSubmissions();
+
+            // Publish all button
+            publishAllBtn.addEventListener('click', async () => {
+                if (!confirm('Publish all approved conferences?')) return;
+
+                publishAllBtn.disabled = true;
+                publishAllBtn.textContent = 'Publishing...';
+
+                try {
+                    const token = await getAuthToken();
+                    const response = await fetch('/api/admin/submit-all', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                    });
+
+                    const result = await response.json();
+
+                    if (result.ok) {
+                        showStatus(`Published ${result.count} conference(s)`, 'success');
+                        await loadSubmissions();
+                    } else {
+                        showStatus(result.error || 'Failed to publish', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Publish error:', error);
+                    showStatus('An error occurred', 'danger');
+                } finally {
+                    publishAllBtn.disabled = false;
+                    publishAllBtn.textContent = 'Publish All Approved';
+                }
+            });
+        });
+
+        async function loadSubmissions() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('submissions-container');
+            const publishAllBtn = document.getElementById('publish-all-btn');
+
+            loading.style.display = 'block';
+            container.style.display = 'none';
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch('/api/admin/submissions', {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+
+                const data = await response.json();
+
+                if (!data.ok) {
+                    showStatus(data.error || 'Failed to load submissions', 'danger');
+                    loading.style.display = 'none';
+                    return;
+                }
+
+                submissions = data.submissions || [];
+                renderSubmissions();
+
+                const hasApproved = submissions.some(s => s.status === 'approved');
+                publishAllBtn.style.display = hasApproved ? 'inline-block' : 'none';
+            } catch (error) {
+                console.error('Load error:', error);
+                showStatus('Failed to load submissions', 'danger');
+            } finally {
+                loading.style.display = 'none';
+                container.style.display = 'block';
+            }
+        }
+
+        function renderSubmissions() {
+            const container = document.getElementById('submissions-container');
+
+            if (submissions.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">No pending submissions.</p>';
+                return;
+            }
+
+            container.innerHTML = submissions.map(sub => `
+                <div class="card mb-3" id="submission-${sub.id}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${sub.id}</strong>
+                            <span class="badge ${sub.status === 'approved' ? 'bg-success' : 'bg-warning'} ms-2">
+                                ${sub.status}
+                            </span>
+                            <span class="badge ${sub.edit_type === 'new' ? 'bg-primary' : 'bg-secondary'} ms-1">
+                                ${sub.edit_type}
+                            </span>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            ${sub.status === 'waiting' ? `
+                                <button class="btn btn-success" onclick="approveSubmission('${sub.id}')">Approve</button>
+                            ` : ''}
+                            <button class="btn btn-danger" onclick="rejectSubmission('${sub.id}')">Reject</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5>${sub.conference_name}</h5>
+                        <p class="text-muted mb-2">
+                            <strong>Location:</strong> ${sub.city || 'N/A'}, ${sub.country || 'N/A'}<br>
+                            <strong>Deadline:</strong> ${formatDate(sub.deadline)}<br>
+                            <strong>Dates:</strong> ${formatDate(sub.start_date)} - ${formatDate(sub.end_date)}<br>
+                            <strong>URL:</strong> ${sub.url ? `<a href="${sub.url}" target="_blank">${sub.url}</a>` : 'N/A'}
+                        </p>
+                        <p><strong>Topics:</strong><br>${(sub.topics || '').replace(/\n/g, ', ')}</p>
+                        <hr>
+                        <p class="small text-muted mb-0">
+                            Submitted by: ${sub.submitter_name} (${sub.submitter_email})<br>
+                            Submitted: ${formatDate(sub.submitted_at)}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function approveSubmission(id) {
+            try {
+                const token = await getAuthToken();
+                const response = await fetch(`/api/admin/approve/${encodeURIComponent(id)}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+
+                const result = await response.json();
+
+                if (result.ok) {
+                    showStatus(`Approved: ${id}`, 'success');
+                    await loadSubmissions();
+                } else {
+                    showStatus(result.error || 'Failed to approve', 'danger');
+                }
+            } catch (error) {
+                console.error('Approve error:', error);
+                showStatus('An error occurred', 'danger');
+            }
+        }
+
+        async function rejectSubmission(id) {
+            if (!confirm(`Reject and delete submission "${id}"?`)) return;
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch(`/api/admin/reject/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+
+                const result = await response.json();
+
+                if (result.ok) {
+                    showStatus(`Rejected: ${id}`, 'success');
+                    await loadSubmissions();
+                } else {
+                    showStatus(result.error || 'Failed to reject', 'danger');
+                }
+            } catch (error) {
+                console.error('Reject error:', error);
+                showStatus('An error occurred', 'danger');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            try {
+                return new Date(dateStr).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                });
+            } catch {
+                return dateStr;
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.className = `alert alert-${type}`;
+            statusMessage.textContent = message;
+            statusMessage.style.display = 'block';
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

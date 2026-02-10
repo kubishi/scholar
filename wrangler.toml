@@ -1,5 +1,4 @@
 name = "kubishi-scholar"
-main = "update_OLD.py"
 compatibility_flags = ["python_workers"] # <--- Add this
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "frontend/public"

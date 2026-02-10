@@ -27,7 +27,7 @@ wrangler d1 execute DB --local --command="SELECT id, title, acronym, city, count
 # ============================================
 
 # ICML - Machine Learning Conference
-wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('ICML', 'International Conference on Machine Learning', 'ICML', 'Vienna', 'Austria', '2025-01-31T23:59:59Z', '2025-07-21T09:00:00Z', '2025-07-27T18:00:00Z', 'machine learning\nAI\nneural networks\ndeep learning', 'https://icml.cc', 85, 92)"
+wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('LALE', 'International Conference on Machine Learning', 'LALE', 'Vienna', 'Austria', '2025-01-31T23:59:59Z', '2025-07-21T09:00:00Z', '2025-07-27T18:00:00Z', 'machine learning\nAI\nneural networks\ndeep learning', 'https://icml.cc', 85, 92)"
 
 # ECCV - Computer Vision Conference (Germany)
 wrangler d1 execute DB --local --command="INSERT INTO conferences (id, title, acronym, city, country, deadline, start_date, end_date, topics, url, h5_index, h5_median) VALUES ('ECCV2026', 'European Conference on Computer Vision', 'ECCV', 'Berlin', 'Germany', '2026-02-28T23:59:59Z', '2026-09-08T09:00:00Z', '2026-09-12T18:00:00Z', 'computer vision\nimage recognition\nmachine learning\ndeep learning', 'https://eccv2026.eu', 78, 88)"

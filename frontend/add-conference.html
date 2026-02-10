@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Conference - Kubishi Scholar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/img/logo_bg.png" type="image/png">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/img/logo_bg.png" alt="Kubishi" height="40" class="menu_logo rounded-2 me-2">
+                <span class="title_subtext">Kubishi Scholar</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <span id="admin-link"></span>
+                <span id="user-greeting" class="me-3"><strong>Welcome!</strong></span>
+                <button id="login-btn" class="login-button btn btn-sm btn-dark">Login</button>
+                <button id="logout-btn" class="logout-button btn btn-sm btn-dark" style="display: none;">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Background Image -->
+    <picture class="bg-image">
+        <img src="/img/background3.jpg" alt="" class="w-full h-screen object-cover">
+    </picture>
+
+    <div class="container py-4">
+        <div class="search-box p-4 rounded-4" style="max-width: 700px; margin: 0 auto;">
+            <h2 class="mb-4">Submit a New Conference</h2>
+            <p class="text-muted mb-4">Add a conference to our database. Submissions will be reviewed before publishing.</p>
+
+            <div class="mb-3">
+                <a href="/" class="btn btn-outline-dark">&larr; Back to Search</a>
+            </div>
+
+            <!-- Not logged in message -->
+            <div id="login-required" class="text-center py-4" style="display: none;">
+                <p class="text-muted">Please log in to submit a conference.</p>
+                <button id="login-prompt-btn" class="btn btn-dark">Login</button>
+            </div>
+
+            <!-- Submission Form -->
+            <form id="conference-form" style="display: none;">
+                <div class="mb-3">
+                    <label for="conference_id" class="form-label">Conference ID (Acronym) *</label>
+                    <input type="text" class="form-control" id="conference_id" placeholder="e.g., WSDM" required>
+                    <div class="form-text">The short acronym for the conference</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="conference_name" class="form-label">Conference Full Name *</label>
+                    <input type="text" class="form-control" id="conference_name" placeholder="e.g., Web Search and Data Mining" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="e.g., San Francisco">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" placeholder="e.g., USA">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="deadline" class="form-label">Submission Deadline</label>
+                        <input type="date" class="form-control" id="deadline">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="start" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="end" class="form-label">End Date</label>
+                        <input type="date" class="form-control" id="end">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="topics" class="form-label">Topics</label>
+                    <textarea class="form-control" id="topics" rows="4" placeholder="Enter topics, one per line"></textarea>
+                    <div class="form-text">List the main topics covered by this conference</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="url" class="form-label">Conference Website URL</label>
+                    <input type="url" class="form-control" id="url" placeholder="https://...">
+                </div>
+
+                <div class="d-flex gap-2">
+                    <!-- In javascript, submit is a POST request!!! -->
+                    <button type="submit" class="btn btn-dark">Submit for Review</button>
+                    <button type="reset" class="btn btn-outline-secondary">Clear</button>
+                </div>
+            </form>
+
+            <!-- Success message -->
+            <div id="success-message" class="alert alert-success" style="display: none;">
+                <strong>Success!</strong> Your conference submission has been received and will be reviewed by an admin.
+                <a href="/" class="alert-link">Return to search</a>
+            </div>
+
+            <!-- Error message -->
+            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initAuth();
+
+            const loginRequired = document.getElementById('login-required');
+            const form = document.getElementById('conference-form');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+
+            if (!window.currentUser) {
+                loginRequired.style.display = 'block';
+                document.getElementById('login-prompt-btn').addEventListener('click', () => login());
+                return;
+            }
+
+            form.style.display = 'block';
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorMessage.style.display = 'none';
+
+                const data = {
+                    conference_id: document.getElementById('conference_id').value.trim(),
+                    conference_name: document.getElementById('conference_name').value.trim(),
+                    city: document.getElementById('city').value.trim() || undefined,
+                    country: document.getElementById('country').value.trim() || undefined,
+                    deadline: document.getElementById('deadline').value || undefined,
+                    start: document.getElementById('start').value || undefined,
+                    end: document.getElementById('end').value || undefined,
+                    topics: document.getElementById('topics').value.trim() || undefined,
+                    url: document.getElementById('url').value.trim() || undefined,
+                    edit_type: 'new',
+                };
+
+                try {
+                    const token = await getAuthToken();
+                    const response = await fetch('/api/conferences/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (result.ok) {
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+                    } else {
+                        errorMessage.textContent = result.error || 'Submission failed';
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    errorMessage.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
