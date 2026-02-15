@@ -1,0 +1,7 @@
+[project]
+name = "scholar-search-worker"
+version = "0.1.0"
+dependencies = [
+    "beautifulsoup4",
+    "openai",
+]

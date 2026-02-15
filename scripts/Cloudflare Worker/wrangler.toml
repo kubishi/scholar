@@ -1,0 +1,15 @@
+name = "scholar-search-worker"
+main = "src/update_OLD.py"
+compatibility_date = "2024-04-01"
+compatibility_flags = ["python_workers"]
+account_id = "16db8d28dda1ad1b23b2d83cb2fef94b"
+
+# D1 Database Binding
+[[d1_databases]]
+binding = "DB"
+database_name = "kubishi-scholar-db"
+database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
+
+# Cron Schedule (e.g., Every day at midnight UTC)
+[triggers]
+crons = ["0 0 * * *"]
