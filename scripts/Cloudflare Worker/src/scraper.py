@@ -1,7 +1,7 @@
 from js import fetch, Headers
+
 from bs4 import BeautifulSoup
 import json
-from openai import OpenAI
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any
 
@@ -35,6 +35,7 @@ async def fetch_page_content(url: str, max_retries: int = 3) -> Optional[str]:
 
 # Uses OpenAI to find specific info from the webpage and prompts AI to analyze data
 async def extract_conference_details(page_content: str, api_key: str):    
+    from openai import OpenAI
     openai_client = OpenAI(api_key=api_key)
     tools = [{
         "type": "function",

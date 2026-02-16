@@ -3,7 +3,7 @@ import json
 
 # Assuming these are your local helper modules
 from scraper import fetch_page_content, extract_conference_details
-from GPTsearchURL import search_conference_website
+from GPTsearchURL import brave_search_conference_website
 
 class Default(WorkerEntrypoint):
     # 1. THE AUTOMATION ENTRY POINT
@@ -16,14 +16,14 @@ class Default(WorkerEntrypoint):
     # Allows you to trigger the update by visiting the Worker's URL
     async def fetch(self, request):
         await self.perform_updates()
-        return Response.new("Update process completed successfully.")
+        return Response("Update process completed successfully.")
 
     # 3. THE CORE LOGIC
     async def perform_updates(self):
         # Fetch the 3 oldest conferences that need updating
         # Use .to_py() to convert the JavaScript result into a Python list
         res = await self.env.DB.prepare(
-            "SELECT id, title, acronym, url FROM conferences WHERE start IS NOT NULL ORDER BY start ASC LIMIT 3"
+            "SELECT id, title, acronym, url FROM conferences WHERE start_date IS NOT NULL ORDER BY start_date ASC LIMIT 3"
         ).all()
         
         conferences = res.results.to_py()
@@ -50,7 +50,7 @@ class Default(WorkerEntrypoint):
                     # Update D1 Database
                     # We use an UPSERT (INSERT ... ON CONFLICT) for SQLite
                     sql = """
-                    INSERT INTO user_submitted_conf (
+                    INSERT INTO submitted_conf (
                         id, conference_name, city, country, deadline, 
                         start_date, end_date, topics, url, submitter_id, 
                         submitter_name, submitter_email, edit_type, status, submitted_at
