@@ -78,12 +78,12 @@ class Default(WorkerEntrypoint):
                     
                     await self.env.DB.prepare(sql).bind(
                         conf["id"],                                 # id
-                        details.get("title", conf["title"]),        # conference_name
+                        details.get("Title", conf["title"]),        # conference_name
                         details.get("city"),                        # city
                         details.get("country"),                     # country
                         details.get("deadline"),                    # deadline
-                        details.get("start_date"),                  # start_date
-                        details.get("end_date"),                    # end_date
+                        details.get("start"),                       # start_date
+                        details.get("end"),                         # end_date
                         json.dumps(details.get("topics", [])),      # topics (stored as JSON string)
                         url,                                        # url
                         "system-bot",                               # submitter_id
