@@ -8,7 +8,7 @@ from GPTsearchURL import brave_search_conference_website
 class Default(WorkerEntrypoint):
     # 1. THE AUTOMATION ENTRY POINT
     # This method is triggered by the Cron schedule defined in wrangler.toml
-    async def scheduled(self, event):
+    async def scheduled(self, event, env, ctx):
         print(f"Cron triggered at: {event.scheduledTime}")
         await self.perform_updates()
 
@@ -23,7 +23,11 @@ class Default(WorkerEntrypoint):
         # Fetch the 3 oldest conferences that need updating
         # Use .to_py() to convert the JavaScript result into a Python list
         res = await self.env.DB.prepare(
-            "SELECT id, title, acronym, url FROM conferences WHERE start_date IS NOT NULL ORDER BY start_date ASC LIMIT 3"
+        "SELECT id, title, acronym, url, start_date "
+        "FROM conferences "
+        "WHERE start_date < DATE('now') "
+        "ORDER BY start_date DESC "
+        "LIMIT 10"
         ).all()
         
         conferences = res.results.to_py()
