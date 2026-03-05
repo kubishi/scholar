@@ -1,5 +1,4 @@
 // Search Module
-
 /**
  * Handle search form submission
  */
@@ -251,7 +250,7 @@ function formatDate(dateStr) {
       day: 'numeric',
       year: 'numeric',
     });
-  } catch {
+  } catch(_) {
     return dateStr;
   }
 }

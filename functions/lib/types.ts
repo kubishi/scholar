@@ -2,11 +2,14 @@
 export interface Env {
   DB: D1Database;
   VECTORIZE_INDEX: VectorizeIndex;
+  PAPERS_VECTORIZE_INDEX: VectorizeIndex;
   AUTH0_DOMAIN: string;
   AUTH0_CLIENT_ID: string;
   AUTH0_AUDIENCE: string;
   OPENAI_API_KEY: string;
   ENVIRONMENT: string;
+  GOOGLE_SCHOLAR_API_KEY?: string;
+  SEMANTIC_SCHOLAR_API_KEY?: string;
 }
 
 // User from JWT token
@@ -90,7 +93,7 @@ export interface SubmittedConference {
   approved_at?: string;
 }
 
-// Vector metadata stored in Vectorize
+// Vector metadata stored in Vectorize (conferences index)
 export interface ConferenceVectorMetadata {
   id: string;
   title: string;
@@ -100,6 +103,14 @@ export interface ConferenceVectorMetadata {
   deadline?: string;
   start_date?: string;
   end_date?: string;
+}
+
+/** Metadata for paper vectors; vector id = paper_id (links to user_papers.paper_id) */
+export interface PaperVectorMetadata {
+  paper_id: string;
+  user_id: string;
+  title?: string;
+  summary?: string;
 }
 
 // Search parameters
@@ -159,4 +170,11 @@ export interface UserProfile {
   github: string;
   linkedin: string;
   orcid: string;
+}
+
+export interface UserPaper {
+  user_id: string;
+  paper_id: string;
+  paper_summary: string;
+  created_at?: string;
 }

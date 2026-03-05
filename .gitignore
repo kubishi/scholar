@@ -27,8 +27,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-Frontend/bin
-
+frontend/bin
+.dev.vars
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -125,9 +125,6 @@ __pypackages__/
 
 *.DS_Store
 
-*.venu-workers/
-*python_modules/
-*uv.lock
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid

@@ -102,8 +102,51 @@ body {
 }
 
 /* Search box */
-.search-box {
-  background-color: rgba(255, 255, 255, 0.65);
+ .file-adder-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 0 6px 0.5px lightgrey;
+}
+
+.google-scholar-box {
+  background-color: #fff;
+  max-width: 440px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.google-scholar-modal-logo, .semantic-scholar-modal-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.google-scholar-input, .semantic-scholar-input {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.google-scholar-input:focus {
+  border-color: #000;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.google-scholar-input::placeholder {
+  color: #6c757d;
+}
+
+
+.search-box-my-files {
+  background-color: rgba(255, 255, 255);
   max-width: 1000px;
   margin: auto;
   box-shadow: 0 0 6px 0.5px lightgrey;
@@ -123,8 +166,11 @@ body {
 .text-box textarea {
   resize: none;
   height: 10vh;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   min-height: 40px;
-  max-height: 100px;
+  max-height: 500px;
   margin-bottom: 0.5rem;
 }
 
@@ -167,6 +213,27 @@ body {
 .toggle-advanced-button:hover {
   background: #78C4EB;
   color: white;
+}
+
+/* Advanced Search: PDF drop zone to fill search from paper */
+.search-pdf-dropzone {
+  border: 2px dashed #adb5bd;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.search-pdf-dropzone:hover,
+.search-pdf-dropzone.search-pdf-dragover {
+  border-color: #78C4EB;
+  background: rgba(120, 196, 235, 0.08);
+}
+.search-pdf-label {
+  font-weight: 500;
+}
+.search-pdf-hint {
+  font-size: 0.8rem;
 }
 
 /* Add Conference button - Purple hover */
@@ -374,7 +441,7 @@ body {
 /* Details/Summary for rankings */
 details summary {
   cursor: pointer;
-  color: #666;
+  color: #667;
 }
 
 details summary:hover {
@@ -433,4 +500,119 @@ details summary:hover {
 #edit-about-me-btn:hover {
   background-color: #144091;
   color: white;
+}
+
+/* Full-screen overlay: covers viewport and centers content */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Inner card for both file-adder and edit-profile modals (search-box style) */
+.modal-content-box,
+.modal .file-adder-box,
+.modal .google-scholar-box,
+.modal .semantic-scholar-box {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+#edit-about-me-modal .modal-content-box {
+  max-width: 520px;
+}
+
+.edit-about-me-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit-about-me-form label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.edit-about-me-form input,
+.edit-about-me-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.edit-about-me-form input:focus,
+.edit-about-me-form textarea:focus {
+  border-color: #0d6efd;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+}
+
+.edit-about-me-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+#user_papers {
+  padding: 10px;
+}
+
+#user_papers::file-selector-button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 12px;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+#connect-google-scholar-btn, #connect-semantic-scholar-btn {
+  background-color: #000;
+  border-color: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#connect-google-scholar-btn:hover {
+  background-color: #FF746C;
+  border-color: #FF746C;
+  color: #fff;
+}
+
+#connect-semantic-scholar-btn:hover {
+  background-color: #78C4EB;
+  border-color: #78C4EB;
+  color: #fff;
+}
+
+#open-file-adder-btn {
+  background-color: #000;
+  border-color: #000;
+  color: #fff;
+}
+#open-file-adder-btn:hover {
+  background-color: #A47DCA;
+  border-color: #A47DCA;
+  color: #fff;
 }

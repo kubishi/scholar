@@ -53,7 +53,7 @@
                             class="main_search_box form-control border-dark"
                             id="searchInput"
                             name="query"
-                            placeholder="Search academic topics..."></textarea>
+                            placeholder="Search academic topics..." style="resize: both;"></textarea>
 
                         <div class="search-controls">
                             <!-- Search Type Radio Buttons -->
@@ -146,6 +146,16 @@
                                 </select>
                                 <div id="ranking-score-container" class="mt-2" style="display: none;"></div>
                             </div>
+
+                            <!-- PDF: fill search from paper -->
+                            <div class="col-12">
+                                <label>Search from PDF:</label>
+                                <div id="search-pdf-dropzone" class="search-pdf-dropzone">
+                                    <input type="file" id="search-pdf-input" accept=".pdf" class="d-none" aria-label="Choose PDF">
+                                    <p class="search-pdf-label mb-0">Drag and drop a PDF here, or click to choose</p>
+                                    <p class="search-pdf-hint small text-muted mb-0 mt-1">First 300 characters will be used as the search query.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,6 +177,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/favorites.js"></script>

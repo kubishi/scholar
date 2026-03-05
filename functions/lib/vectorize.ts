@@ -71,3 +71,25 @@ export async function upsertVectors(
 export async function deleteVectors(env: Env, ids: string[]): Promise<void> {
   await env.VECTORIZE_INDEX.deleteByIds(ids);
 }
+
+export async function upsertUserPapersVector(
+  env: Env,
+  userId: string,
+  vector: number[],
+  paper_title: string
+): Promise<void> {
+  const paperId = `${userId}-${paper_title}`;
+
+  await env.PAPERS_VECTORIZE_INDEX.upsert([{
+    id: paperId,
+    values: vector,
+    metadata: {
+      user_id: userId,
+      title: paper_title,
+    },
+  }]);
+
+}
+
+
+

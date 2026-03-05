@@ -1,6 +1,6 @@
 // D1 Database utilities
 
-import type { Env, Conference, User, SubmittedConference, UserRatingOptions, UserProfile} from './types';
+import type { Env, Conference, User, SubmittedConference, UserRatingOptions, UserProfile, UserPaper} from './types';
 
 /**
  * Parse rankings string from GROUP_CONCAT into an object
@@ -380,4 +380,29 @@ export async function get_avg_user_overall_rating(
     avg_per_conf[conference_id] = row?.average_overall ?? 0;
   }
   return avg_per_conf;
+}
+
+export async function upsert_user_papers(
+  db: D1Database,
+  user_id: string,
+  paper_id: string,
+  paper_summary: string
+): Promise<void> {
+  await db.prepare(`
+    INSERT INTO user_papers (user_id, paper_id, paper_summary, created_at)
+    VALUES (?, ?, ?, datetime('now'))
+    ON CONFLICT(user_id, paper_id) DO UPDATE SET
+      paper_summary = excluded.paper_summary,
+      created_at = datetime('now')
+  `).bind(user_id, paper_id, paper_summary).run()
+}
+
+export async function get_user_papers(
+  db: D1Database,
+  user_id: string
+): Promise<UserPaper[]> {
+  const result = await db.prepare(`
+    SELECT * FROM user_papers WHERE user_id = ?
+  `).bind(user_id).all<UserPaper>();
+  return result.results;
 }

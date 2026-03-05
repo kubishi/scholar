@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const editBtn = document.getElementById('edit-about-me-btn');
   const modal = document.getElementById('edit-about-me-modal');
+  const cancelEditBtn = document.getElementById('cancel-about-me-btn');
   if (editBtn && modal) {
     editBtn.addEventListener('click', async () => {
       if (window.currentUser) {
@@ -24,12 +25,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (profile) populateEditForm(profile);
       }
       const isHidden = modal.style.display === 'none' || modal.style.display === '';
-      modal.style.display = isHidden ? 'block' : 'none';
+      modal.style.display = isHidden ? 'flex' : 'none';
     });
   }
+  if (cancelEditBtn && modal) {
+    cancelEditBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+  }
+  const userFilesPlaceholder = document.getElementById('user-files-placeholder');
+  if (userFilesPlaceholder) {
+    renderUserFilesPlaceholder(userFilesPlaceholder);
+  }
+
 
   const form = document.getElementById('edit-about-me-form');
-  if (form) form.addEventListener('submit', handleEditAboutMeSubmit);
+  if (form) {
+    form.addEventListener('submit', handleEditAboutMeSubmit);
+  }
 });
 
 async function handleEditAboutMeSubmit(e) {
@@ -62,6 +75,8 @@ async function handleEditAboutMeSubmit(e) {
       alert(data.ok ? 'Profile info saved.' : (data.error || 'Failed.'));
       if (data.ok) {
         renderProfileDisplay(body);
+        const modal = document.getElementById('edit-about-me-modal');
+        if (modal) modal.style.display = 'none';
       } else {
         alert(data.error || 'Failed.');
       }

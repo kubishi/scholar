@@ -19,7 +19,7 @@ export const onRequestPost: PagesFunction = async (context) => {
     const body = await request.json() as UserProfile;
 
 
-    upsert_user_profile(env.DB, user.id, body);
+    await upsert_user_profile(env.DB, user.id, body);
     console.log("upserted user page to db")
     return Response.json({ ok: true });
 }

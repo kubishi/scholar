@@ -11,7 +11,8 @@
     "migrate:vectors": "npx tsx scripts/migrate-vectors.ts"
   },
   "dependencies": {
-    "jose": "^5.2.0"
+    "jose": "^5.2.0",
+    "serpapi": "^2.2.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",

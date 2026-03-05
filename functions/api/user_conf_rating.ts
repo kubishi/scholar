@@ -24,7 +24,7 @@ export const onRequestPost: PagesFunction = async (context) => {
     const { conference_id, ...bodyWithoutConferenceId } = body;
 
 
-    upsert_user_conf_rating(env.DB, user.id, conferenceId, bodyWithoutConferenceId);
+    await upsert_user_conf_rating(env.DB, user.id, conferenceId, bodyWithoutConferenceId);
 
     console.log(typeof(body), body);
     return Response.json({ ok: true });

@@ -11,11 +11,17 @@ binding = "DB"
 database_name = "kubishi-scholar-db"
 database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
 
-# Vectorize binding: stores vectors (vestor db)
+# Vectorize binding: conference embeddings
 # Run: wrangler vectorize create kubishi-conferences --dimensions 1536 --metric cosine
 [[vectorize]]
 binding = "VECTORIZE_INDEX"
 index_name = "kubishi-conferences"
+
+# Vectorize binding: user paper embeddings (id = paper_id, links to user_papers.paper_id)
+# Run: wrangler vectorize create kubishi-papers --dimensions 1536 --metric cosine
+[[vectorize]]
+binding = "PAPERS_VECTORIZE_INDEX"
+index_name = "kubishi-papers"
 
 # Environment variables
 [vars]

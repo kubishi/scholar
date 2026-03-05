@@ -62,22 +62,22 @@ async function handleUserRatingsSubmit(e) {
     } finally {
       if (btn) btn.disabled = false;
     }
-  }
-  
+}
 
-  async function getUserRatings(conferenceIds) {
-    if (!conferenceIds?.length || !window.currentUser) return { ratings: {}, averages: {} };
-    try{
-      const token = await getAuthToken();
-      const res = await fetch(`${window.API_BASE || ''}/api/user_conf_rating?conference_ids=${conferenceIds.join(',')}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      const data = await res.json();
-      return data.ok
-        ? { ratings: data.ratings ?? {}, averages: data.avg_scores ?? {} }
-        : { ratings: {}, averages: {} };
-    } catch (err) {
-      console.error(err);
-      return { ratings: {}, averages: {} };
-    }
-    }
+async function getUserRatings(conferenceIds) {
+  if (!conferenceIds?.length || !window.currentUser) return { ratings: {}, averages: {} };
+  try {
+    const token = await getAuthToken();
+    const res = await fetch(`${window.API_BASE || ''}/api/user_conf_rating?conference_ids=${conferenceIds.join(',')}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    return data.ok
+      ? { ratings: data.ratings ?? {}, averages: data.avg_scores ?? {} }
+      : { ratings: {}, averages: {} };
+  } catch (err) {
+    console.error(err);
+    return { ratings: {}, averages: {} };
+  }
+}
+

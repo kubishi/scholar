@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" href="/img/logo_bg.png" type="image/png">
 </head>
-<body>
+<body class="page-about">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container-fluid">
@@ -50,6 +50,14 @@
                         <div id="email"></div>
                     </div>
                 </div>
+                <button class="btn btn-primary m-2 align-middle" id="connect-google-scholar-btn">
+                    <img class="rounded-circle me-1" src="/img/google_scholar_logo.png" alt="Google Scholar" style="width: 20px; height: 20px;">
+                    Connect to Google Scholar
+                </button>
+                <button class="btn btn-primary m-2 align-middle" id="connect-semantic-scholar-btn">
+                    <img class="rounded-circle me-1" src="/img/semantic_scholar_logo.png" alt="Semantic Scholar" style="width: 20px; height: 20px;">
+                    Connect to Semantic Scholar
+                </button>
             </div>
         </div>
 
@@ -99,13 +107,64 @@
                 </div>
             </div>
         </div>
+        <div class="container py-4">
+            <div class="search-box-my-files p-4 rounded-4">
+                <h2 class="mb-4">Your Files</h2>
+                <p class="text-muted mb-4">Files you've uploaded to the system.</p>
+                <div id="user-files-placeholder"></div>
+                <button class="btn btn-primary" id="open-file-adder-btn">Add a File</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add a File modal (outside container so fixed overlay covers full viewport) -->
+<div class="modal" id="file-adder-modal" style="display: none;">
+    <div class="file-adder-box p-4 rounded-4">
+        <h2 class="mb-4">Add a File</h2>
+        <input type="file" id="user_papers" name="user_papers" accept=".pdf"/>
+        <button class="btn btn-primary padding-10 w-100 mb-1" id="save-file-adder-btn">Save</button>
+        <button class="btn btn-danger padding-10 w-100" id="cancel-file-adder-btn">Close</button>
+    </div>
+</div>
+
+<div class="modal" id="google-scholar-modal" style="display: none;">
+    <div class="google-scholar-box p-4 rounded-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <img src="/img/google_scholar_logo.png" alt="Google Scholar" class="google-scholar-modal-logo" />
+            <h2 class="mb-0">Add Google Scholar Profile</h2>
+        </div>
+        <p class="text-muted small mb-3">Paste your Google Scholar Author ID (from your profile URL) to link your profile.</p>
+        <label for="google-scholar-author-id" class="form-label fw-semibold">Author ID</label>
+        <input type="text" id="google-scholar-author-id" name="google-scholar-author-id" class="google-scholar-input" placeholder="e.g. kukA0LcAAAAJ" aria-label="Google Scholar Author ID">
+        <div class="d-flex gap-2 mt-4 w-100">
+            <button class="btn btn-primary flex-grow-1" id="save-google-scholar-btn">Save</button>
+            <button class="btn btn-danger flex-grow-1" id="cancel-google-scholar-btn">Close</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="semantic-scholar-modal" style="display: none;">
+    <div class="semantic-scholar-box p-4 rounded-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <img src="/img/semantic_scholar_logo.png" alt="Semantic Scholar" class="semantic-scholar-modal-logo" />
+            <h2 class="mb-0">Add Semantic Scholar Profile</h2>
+        </div>
+        <p class="text-muted small mb-3">Paste your Semantic Scholar Author ID (from your profile URL) to link your profile.</p>
+        <label for="semantic-scholar-author-id" class="form-label fw-semibold">Author ID</label>
+        <input type="text" id="semantic-scholar-author-id" name="semantic-scholar-author-id" class="semantic-scholar-input" placeholder="e.g. 1751762" aria-label="Semantic Scholar Author ID">
+        <div class="d-flex gap-2 mt-4 w-100">
+            <button class="btn btn-primary padding-10 w-100 mb-1" id="save-semantic-scholar-btn">Save</button>
+            <button class="btn btn-danger padding-10 w-100" id="cancel-semantic-scholar-btn">Close</button>
+        </div>
     </div>
 </div>
 
 <!-- Edit About Me Form -->
-<div id="edit-about-me-modal" style="display: none;">
-    <h2>Edit Profile</h2>
-    <form id="edit-about-me-form" class="edit-about-me-form">
+<div class="modal" id="edit-about-me-modal" style="display: none;">
+    <div class="modal-content-box p-4 rounded-4">
+        <h2 class="mb-4">Edit Profile</h2>
+        <form id="edit-about-me-form" class="edit-about-me-form">
         <div>
             <label for="user-name">Name</label>
             <input type="text" id="user-name" name="user-name" placeholder="Enter Name">
@@ -156,16 +215,21 @@
             <input type="text" id="orcid" name="orcid" placeholder="Enter ORCID">
         </div>
 
-        <div>
-            <button id="save-about-me-btn" type="submit">Save Changes</button>
-            <button id="cancel-about-me-btn" type="button">Cancel</button>
+        <div class="d-flex gap-2 mt-3">
+            <button id="save-about-me-btn" class="btn btn-primary" type="submit">Save Changes</button>
+            <button id="cancel-about-me-btn" class="btn btn-outline-secondary" type="button">Cancel</button>
         </div>
     </form>
+    </div>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/auth.js"></script>
+    <script src="/js/user_files.js?v=2"></script>
     <script src="/js/about.js"></script>
+    <script src="/js/scholar_connections/google_scholar.js"></script>
+    <script src="/js/scholar_connections/semantic_scholar.js"></script>
 </body>
 </html>

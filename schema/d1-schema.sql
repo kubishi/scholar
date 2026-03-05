@@ -56,6 +56,15 @@ CREATE TABLE IF NOT EXISTS user_conf_rating (
     FOREIGN KEY (conference_id) REFERENCES conferences(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS user_papers (
+    user_id TEXT NOT NULL,
+    paper_id TEXT NOT NULL,
+    paper_summary TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, paper_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- User favorites (junction table)
 CREATE TABLE IF NOT EXISTS user_favorites (
     user_id TEXT NOT NULL,

@@ -30,7 +30,74 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
+
+  // PDF drop zone: extract first 300 chars and fill search box
+  initSearchPdfDropzone();
 });
+
+const SEARCH_PDF_MAX_CHARS = 300;
+
+async function parsePdfFirstx(file) {
+  if (typeof pdfjsLib === 'undefined') return '';
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let text = '';
+  for (let i = 1; i <= pdf.numPages && text.length < SEARCH_PDF_MAX_CHARS; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    text += content.items.map((item) => item.str).join(' ') + '\n';
+  }
+  return text.slice(0, SEARCH_PDF_MAX_CHARS).trim();
+}
+
+function initSearchPdfDropzone() {
+  const dropzone = document.getElementById('search-pdf-dropzone');
+  const fileInput = document.getElementById('search-pdf-input');
+  const searchInput = document.getElementById('searchInput');
+  if (!dropzone || !fileInput || !searchInput) return;
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  function fillSearchFromFile(file) {
+    if (!file || file.type !== 'application/pdf') return;
+    const label = dropzone.querySelector('.search-pdf-label');
+    if (label) label.textContent = 'Extracting text…';
+    parsePdfFirstx(file).then((text) => {
+      searchInput.value = text;
+      if (label) label.textContent = 'Drag and drop a PDF or Word document here, or click to choose';
+      fileInput.value = '';
+    }).catch(() => {
+      if (label) label.textContent = 'Drag and drop a PDF or Word document here, or click to choose';
+      alert('Could not read PDF/Word document.');
+      fileInput.value = '';
+    });
+  }
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (file) fillSearchFromFile(file);
+  });
+
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.add('search-pdf-dragover');
+  });
+  dropzone.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.remove('search-pdf-dragover');
+  });
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.remove('search-pdf-dragover');
+    const file = e.dataTransfer?.files?.[0];
+    if (file) fillSearchFromFile(file);
+  });
+}
 
 /**
  * Load and display conference count
