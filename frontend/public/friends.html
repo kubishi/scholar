@@ -47,14 +47,14 @@
 
             <!-- Search Form -->
             <div id="search-section" style="display: none;">
-                <form id="search-form" class="mb-4">
+                <form id="search-form" class="mb-4" novalidate>
                     <div class="input-group">
-                        <input type="email" class="form-control" id="email-search" placeholder="Enter email address" required>
-                        <button type="submit" class="btn btn-dark">Search</button>
+                        <input type="text" class="form-control" id="friends-search-input" placeholder="Search by name or email" autocomplete="off">
+                        <button type="submit" id="friends-search-btn" class="btn btn-dark">Search</button>
                     </div>
                 </form>
 
-                <!-- Results -->
+                <!-- Results (click a user to open their profile) -->
                 <div id="results-container"></div>
             </div>
         </div>
@@ -64,40 +64,6 @@
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script src="/js/config.js"></script>
     <script src="/js/auth.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initAuth();
-
-            const loginRequired = document.getElementById('login-required');
-            const searchSection = document.getElementById('search-section');
-            const resultsContainer = document.getElementById('results-container');
-
-            if (!window.currentUser) {
-                loginRequired.style.display = 'block';
-                document.getElementById('login-prompt-btn').addEventListener('click', () => login());
-                return;
-            }
-
-            searchSection.style.display = 'block';
-
-            document.getElementById('search-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email-search').value.trim();
-
-                if (!email) return;
-
-                resultsContainer.innerHTML = '<p class="text-muted">Searching...</p>';
-
-                // Note: This would need a backend endpoint to search users by email
-                // For now, show a placeholder message
-                resultsContainer.innerHTML = `
-                    <div class="alert alert-info">
-                        <p><strong>Feature Coming Soon</strong></p>
-                        <p>User search functionality is being implemented. Check back later!</p>
-                    </div>
-                `;
-            });
-        });
-    </script>
+    <script src="/js/friends.js"></script>
 </body>
 </html>

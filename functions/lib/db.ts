@@ -335,21 +335,54 @@ export async function get_user_conf_rating(
 }
 
 //User profile Functions------------------------------------------------------
+function slugify(name: string): string {
+  if (!name || typeof name !== 'string') return '';
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || '';
+}
+
+export async function ensureUniqueSlug(
+  db: D1Database,
+  baseSlug: string,
+  excludeUserId: string
+): Promise<string> {
+  if (!baseSlug) return '';
+  let slug = baseSlug;
+  let n = 1;
+  while (true) {
+    const row = await db.prepare(
+      'SELECT user_id FROM user_profile WHERE slug = ? AND user_id != ?'
+    ).bind(slug, excludeUserId).first<{ user_id: string }>();
+    if (!row) return slug;
+    slug = `${baseSlug}-${++n}`;
+  }
+}
+
 export async function upsert_user_profile(
   db: D1Database,
   user_id: string,
   user_info: UserProfile
-): Promise<void> {
-  const profileJson = JSON.stringify(user_info);
+): Promise<{ slug: string }> {
+  const name = user_info.name ?? user_info.given_name ?? '';
+  const baseSlug = slugify(name) || `user-${user_id.slice(-8)}`;
+  const slug = await ensureUniqueSlug(db, baseSlug, user_id);
+  const profileJson = JSON.stringify({ ...user_info, slug });
 
   await db.prepare(`
-      INSERT INTO user_profile (user_id, user_profile, updated_at)
-      VALUES(?,?, datetime("now"))
-      ON CONFLICT(user_id) DO UPDATE SET
-        -- excluded is a temp storage that keeps the valeus not entered in the conflict and adds them here.
-        user_profile = excluded.user_profile,
-        updated_at = datetime("now")
-    `).bind(user_id, profileJson).run()
+    INSERT INTO user_profile (user_id, user_profile, slug, updated_at)
+    VALUES(?, ?, ?, datetime('now'))
+    ON CONFLICT(user_id) DO UPDATE SET
+      user_profile = excluded.user_profile,
+      slug = excluded.slug,
+      updated_at = datetime('now')
+  `).bind(user_id, profileJson, slug || null).run();
+
+  return { slug };
 }
 
 export async function get_user_profile(
@@ -357,12 +390,59 @@ export async function get_user_profile(
   user_id: string
 ): Promise<UserProfile | null> {
   const result = await db.prepare(`
-    SELECT user_profile FROM user_profile WHERE user_id = ?
-  `).bind(user_id).first<{ user_profile: string }>();
+    SELECT user_profile, slug FROM user_profile WHERE user_id = ?
+  `).bind(user_id).first<{ user_profile: string; slug: string | null }>();
   if (result?.user_profile) {
-    return JSON.parse(result.user_profile);
+    const profile = JSON.parse(result.user_profile) as UserProfile;
+    if (result.slug) profile.slug = result.slug;
+    return profile;
   }
   return null;
+}
+
+export async function get_public_profile_by_slug(
+  db: D1Database,
+  slug: string
+): Promise<{ profile: UserProfile; slug: string } | null> {
+  const row = await db.prepare(`
+    SELECT user_profile, slug FROM user_profile WHERE slug = ?
+  `).bind(slug).first<{ user_profile: string; slug: string }>();
+  if (!row?.user_profile) return null;
+  const profile = JSON.parse(row.user_profile) as UserProfile;
+  profile.slug = row.slug;
+  return { profile, slug: row.slug };
+}
+
+/** Search users with a public profile (slug) by name, email, or slug. Uses profile JSON when available. Excludes current user. */
+export async function search_user_profiles(
+  db: D1Database,
+  query: string,
+  excludeUserId: string,
+  limit: number = 20
+): Promise<Array<{ name: string; email: string; slug: string }>> {
+  if (!query || query.trim().length < 2) return [];
+  const q = `%${query.trim()}%`;
+  const rows = await db.prepare(`
+    SELECT
+      COALESCE(NULLIF(trim(json_extract(p.user_profile, '$.name')), ''), u.name) AS name,
+      COALESCE(NULLIF(trim(json_extract(p.user_profile, '$.email')), ''), u.email) AS email,
+      p.slug
+    FROM users u
+    INNER JOIN user_profile p ON u.id = p.user_id
+    WHERE p.slug IS NOT NULL AND p.user_id != ?
+      AND (
+        u.name LIKE ? OR u.email LIKE ? OR p.slug LIKE ?
+        OR json_extract(p.user_profile, '$.name') LIKE ?
+        OR json_extract(p.user_profile, '$.email') LIKE ?
+        OR json_extract(p.user_profile, '$.given_name') LIKE ?
+      )
+    LIMIT ?
+  `).bind(excludeUserId, q, q, q, q, q, q, limit).all<{ name: string | null; email: string | null; slug: string }>();
+  return (rows.results || []).map((r) => ({
+    name: r.name || 'Unknown',
+    email: r.email || '',
+    slug: r.slug,
+  }));
 }
 
 //Average user rating Functions------------------------------------------------------

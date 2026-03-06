@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.currentUser) {
     const profile = await getUserProfile();
     if (profile) {
-      renderProfileDisplay(profile); 
+      renderProfileDisplay(profile);
+      showPublicProfileLink(profile.slug);
     }
   }
   const userGreeting = document.getElementById('user-greeting');
@@ -75,6 +76,7 @@ async function handleEditAboutMeSubmit(e) {
       alert(data.ok ? 'Profile info saved.' : (data.error || 'Failed.'));
       if (data.ok) {
         renderProfileDisplay(body);
+        if (data.slug) showPublicProfileLink(data.slug);
         const modal = document.getElementById('edit-about-me-modal');
         if (modal) modal.style.display = 'none';
       } else {
@@ -95,6 +97,20 @@ async function getUserProfile() {
   });
   const data = await res.json();
   return data.profile;
+}
+
+function showPublicProfileLink(slug) {
+  const wrap = document.getElementById('public-profile-wrap');
+  const link = document.getElementById('public-profile-link');
+  if (!wrap || !link) return;
+  const validSlug = typeof slug === 'string' && slug.trim().length > 0 && slug !== 'undefined';
+  if (validSlug) {
+    link.href = `/profile.html?slug=${encodeURIComponent(slug.trim())}`;
+    link.textContent = 'View my public profile';
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
 }
 
 function renderProfileDisplay(profile) {

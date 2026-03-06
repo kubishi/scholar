@@ -17,11 +17,8 @@ export const onRequestPost: PagesFunction = async (context) => {
     }
 
     const body = await request.json() as UserProfile;
-
-
-    await upsert_user_profile(env.DB, user.id, body);
-    console.log("upserted user page to db")
-    return Response.json({ ok: true });
+    const { slug } = await upsert_user_profile(env.DB, user.id, body);
+    return Response.json({ ok: true, slug });
 }
 
 export const onRequestGet: PagesFunction = async (context) => {

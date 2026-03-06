@@ -81,10 +81,12 @@ CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
 CREATE TABLE IF NOT EXISTS user_profile (
     user_id TEXT NOT NULL,
     user_profile TEXT NOT NULL, -- JSON object of user profile
+    slug TEXT UNIQUE,           -- public profile URL slug (e.g. jared-coleman)
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_profile_slug ON user_profile(slug) WHERE slug IS NOT NULL;
 
 -- User-submitted conferences (pending approval)
 CREATE TABLE IF NOT EXISTS submitted_conferences (

@@ -160,16 +160,18 @@ export interface UserRatingOptions {
 }
 
 export interface UserProfile {
-  given_name: string;
-  phone: string;
-  email: string;
-  birthday: string;
-  university: string;
-  interests: string;
-  website: string;
-  github: string;
-  linkedin: string;
-  orcid: string;
+  name?: string;
+  given_name?: string;
+  phone?: string;
+  email?: string;
+  birthday?: string;
+  university?: string;
+  interests?: string;
+  website?: string;
+  github?: string;
+  linkedin?: string;
+  orcid?: string;
+  slug?: string;
 }
 
 export interface UserPaper {

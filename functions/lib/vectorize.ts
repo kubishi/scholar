@@ -72,6 +72,13 @@ export async function deleteVectors(env: Env, ids: string[]): Promise<void> {
   await env.VECTORIZE_INDEX.deleteByIds(ids);
 }
 
+export async function deletePaperVectors(env: Env, ids: string[]): Promise<void> {
+  await env.PAPERS_VECTORIZE_INDEX.deleteByIds(ids);
+}
+
+/**
+ * Upsert a user's papers vector
+ */
 export async function upsertUserPapersVector(
   env: Env,
   userId: string,

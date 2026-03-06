@@ -153,6 +153,10 @@ export function isPublicPath(url: URL, method: string): boolean {
     if (path.match(/^\/api\/conferences\/[^/]+$/)) {
       return true;
     }
+    // Public profile by slug: /api/profile/public/:slug
+    if (path.match(/^\/api\/profile\/public\/[^/]+$/)) {
+      return true;
+    }
   }
 
   return false;
