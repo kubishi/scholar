@@ -119,13 +119,13 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.google-scholar-modal-logo, .semantic-scholar-modal-logo {
-  width: 48px;
-  height: 48px;
+.google-scholar-modal-logo, .semantic-scholar-modal-logo, .dblp-modal-logo {
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 }
 
-.google-scholar-input, .semantic-scholar-input {
+.google-scholar-input, .semantic-scholar-input, .dblp-input {
   width: 100%;
   padding: 0.65rem 1rem;
   font-size: 1rem;
@@ -134,10 +134,44 @@ body {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.google-scholar-input:focus {
+.google-scholar-input:focus, .semantic-scholar-input:focus, .dblp-input:focus {
   border-color: #000;
   outline: 0;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.dblp-input-wrap {
+  width: 100%;
+}
+.dblp-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 1050;
+}
+.dblp-dropdown.open {
+  display: block;
+}
+.dblp-dropdown-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.95rem;
+}
+.dblp-dropdown-item:last-child {
+  border-bottom: none;
+}
+.dblp-dropdown-item:hover {
+  background: #f8f9fa;
 }
 
 .google-scholar-input::placeholder {
@@ -523,7 +557,8 @@ details summary:hover {
 .modal-content-box,
 .modal .file-adder-box,
 .modal .google-scholar-box,
-.modal .semantic-scholar-box {
+.modal .semantic-scholar-box,
+.modal .dblp-box {
   background-color: #fff;
   border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
@@ -586,7 +621,7 @@ details summary:hover {
   font-weight: 500;
 }
 
-#connect-google-scholar-btn, #connect-semantic-scholar-btn {
+#connect-google-scholar-btn, #connect-semantic-scholar-btn, #connect-dblp-btn {
   background-color: #000;
   border-color: #000;
   color: #fff;
@@ -599,10 +634,17 @@ details summary:hover {
   border-color: #FF746C;
   color: #fff;
 }
+#connect-google-scholar-btn { display: none !important; }
 
 #connect-semantic-scholar-btn:hover {
   background-color: #78C4EB;
   border-color: #78C4EB;
+  color: #fff;
+}
+
+#connect-dblp-btn:hover {
+  background-color: #A47DCA;
+  border-color: #A47DCA;
   color: #fff;
 }
 

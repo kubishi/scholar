@@ -58,8 +58,8 @@
                     <img class="rounded-circle me-1" src="/img/semantic_scholar_logo.png" alt="Semantic Scholar" style="width: 20px; height: 20px;">
                     Connect to Semantic Scholar
                 </button>
-                <button class="btn btn-primary m-2 align-middle" id="connect-dblp-btn"></button>
-                    <img class="rounded-circle me-1" src="/img/dblp_logo.png" alt="DBLP" style="width: 20px; height: 20px;">
+                <button class="btn btn-primary m-2 align-middle" id="connect-dblp-btn">
+                    <img class="rounded-circle me-1" src="/img/dblp.jpg" alt="DBLP" style="width: 20px; height: 20px;">
                     Connect to DBLP
                 </button>
             </div>
@@ -140,10 +140,29 @@
         </div>
         <p class="text-muted small mb-3">Paste your Google Scholar Author ID (from your profile URL) to link your profile.</p>
         <label for="google-scholar-author-id" class="form-label fw-semibold">Author ID</label>
-        <input type="text" id="google-scholar-author-id" name="google-scholar-author-id" class="google-scholar-input" placeholder="e.g. kukA0LcAAAAJ" aria-label="Google Scholar Author ID">
+        <input type="text" id="google-scholar-author-id" name="google-scholar-author-id" class="google-scholar-input" placeholder="e.g. chcRCpcAAAAJ" aria-label="Google Scholar Author ID">
         <div class="d-flex gap-2 mt-4 w-100">
             <button class="btn btn-primary flex-grow-1" id="save-google-scholar-btn">Save</button>
             <button class="btn btn-danger flex-grow-1" id="cancel-google-scholar-btn">Close</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="dblp-modal" style="display: none;">
+    <div class="dblp-box p-4 rounded-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <img src="/img/dblp.jpg" alt="DBLP" class="dblp-modal-logo" />
+            <h2 class="mb-0">Add DBLP Profile</h2>
+        </div>
+        <p class="text-muted small mb-3">Type your name to search; pick a profile from the list.</p>
+        <label for="dblp-name" class="form-label fw-semibold">Name</label>
+        <div class="dblp-input-wrap position-relative">
+          <input type="text" id="dblp-name" name="dblp-name" class="dblp-input form-control" placeholder="e.g. Jared Coleman" aria-label="DBLP Name" autocomplete="off">
+          <div id="dblp-dropdown" class="dblp-dropdown" role="listbox" aria-label="DBLP author results"></div>
+        </div>
+        <div class="d-flex gap-2 mt-4 w-100">
+            <button class="btn btn-primary flex-grow-1" id="save-dblp-btn">Save</button>
+            <button class="btn btn-danger flex-grow-1" id="cancel-dblp-btn">Close</button>   
         </div>
     </div>
 </div>
@@ -156,7 +175,7 @@
         </div>
         <p class="text-muted small mb-3">Paste your Semantic Scholar Author ID (from your profile URL) to link your profile.</p>
         <label for="semantic-scholar-author-id" class="form-label fw-semibold">Author ID</label>
-        <input type="text" id="semantic-scholar-author-id" name="semantic-scholar-author-id" class="semantic-scholar-input" placeholder="e.g. 1751762" aria-label="Semantic Scholar Author ID">
+        <input type="text" id="semantic-scholar-author-id" name="semantic-scholar-author-id" class="semantic-scholar-input" placeholder="e.g. 1779792816" aria-label="Semantic Scholar Author ID">
         <div class="d-flex gap-2 mt-4 w-100">
             <button class="btn btn-primary padding-10 w-100 mb-1" id="save-semantic-scholar-btn">Save</button>
             <button class="btn btn-danger padding-10 w-100" id="cancel-semantic-scholar-btn">Close</button>
@@ -235,5 +254,6 @@
     <script src="/js/about.js"></script>
     <script src="/js/scholar_connections/google_scholar.js"></script>
     <script src="/js/scholar_connections/semantic_scholar.js"></script>
+    <script src="/js/scholar_connections/dblp.js"></script>
 </body>
 </html>

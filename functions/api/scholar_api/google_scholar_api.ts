@@ -28,7 +28,7 @@ export const onRequestGet: PagesFunction = async (context) => {
   const res = await fetch(serpUrl);
   const json = await res.json();
 
-  console.log(json.articles, "CRINGEEEEEEEEEEEEEEE")
+
 
   return Response.json({ ok: true, author: json.author ?? json });
 };
