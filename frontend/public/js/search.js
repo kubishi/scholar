@@ -1,4 +1,45 @@
 // Search Module
+
+// Persist last results and sort preference for client-side re-sorting
+let lastSearchResults = [];
+let lastSearchRatings = {};
+let lastSearchAverages = {};
+let currentSortOrder = 'score';
+
+/**
+ * Sort conference array by score (original order), name, start date, or deadline.
+ * Returns a new array; does not mutate.
+ */
+function sortResults(results, sortBy) {
+  if (!results?.length) return [];
+  if (sortBy === 'score') return [...results];
+
+  const sorted = [...results];
+  if (sortBy === 'name') {
+    sorted.sort((a, b) => (a.title || a.id || '').localeCompare(b.title || b.id || '', undefined, { sensitivity: 'base' }));
+    return sorted;
+  }
+  if (sortBy === 'date') {
+    sorted.sort((a, b) => {
+      const da = a.start_date ? new Date(a.start_date).getTime() : 0;
+      const db = b.start_date ? new Date(b.start_date).getTime() : 0;
+      if (da !== db) return da - db;
+      return (a.id || '').localeCompare(b.id || '');
+    });
+    return sorted;
+  }
+  if (sortBy === 'deadline') {
+    sorted.sort((a, b) => {
+      const da = a.deadline ? new Date(a.deadline).getTime() : 0;
+      const db = b.deadline ? new Date(b.deadline).getTime() : 0;
+      if (da !== db) return da - db;
+      return (a.id || '').localeCompare(b.id || '');
+    });
+    return sorted;
+  }
+  return sorted;
+}
+
 /**
  * Handle search form submission
  */
@@ -47,7 +88,11 @@ async function handleSearch(event) {
     const data = await response.json();
 
     if (data.results) {
-      const {ratings, averages } = await getUserRatings(data.results.map(result => result.id));
+      const { ratings, averages } = await getUserRatings(data.results.map(result => result.id));
+      lastSearchResults = data.results;
+      lastSearchRatings = ratings;
+      lastSearchAverages = averages;
+      currentSortOrder = 'score';
       renderResults(data.results, ratings, averages);
     } else {
       resultsContainer.innerHTML = '<p class="text-muted text-center">No results found.</p>';
@@ -60,10 +105,8 @@ async function handleSearch(event) {
   }
 }
 
-/**
- * Render search results
- */
-function renderResults(results, userRatings={}, averages={}) {
+
+function renderResults(results, userRatings = {}, averages = {}) {
   const container = document.getElementById('results-container');
 
   if (!results || results.length === 0) {
@@ -71,21 +114,38 @@ function renderResults(results, userRatings={}, averages={}) {
     return;
   }
 
+  lastSearchRatings = userRatings;
+  lastSearchAverages = averages;
+  const sorted = sortResults(results, currentSortOrder);
+
   container.innerHTML = `
-    <h4 class="mb-3">Conference Results (${results.length})</h4>
-    ${results.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id], averages[conf.id])).join('')}
+    <h4 class="mb-3">Conference Results (${sorted.length})</h4>
+    <div class="d-flex align-items-center gap-2 mb-3">
+      <label for="results-sort" class="form-label mb-0">Sort by:</label>
+      <select id="results-sort" class="form-select form-select-sm" style="max-width: 200px;" aria-label="Sort results">
+        <option value="score" ${currentSortOrder === 'score' ? 'selected' : ''}>Relevance (score)</option>
+        <option value="name" ${currentSortOrder === 'name' ? 'selected' : ''}>Name (A–Z)</option>
+        <option value="date" ${currentSortOrder === 'date' ? 'selected' : ''}>Start date</option>
+        <option value="deadline" ${currentSortOrder === 'deadline' ? 'selected' : ''}>Deadline</option>
+      </select>
+    </div>
+    ${sorted.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id], averages[conf.id])).join('')}
   `;
 
-  // Attach favorite button handlers
-  attachFavoriteHandlers();
-  // When this form is submitted, the handleUserRatingsSubmit function will be called in the ratings.js file
-  attachRatingsHandlers();
+  const sortSelect = document.getElementById('results-sort');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function () {
+      currentSortOrder = this.value;
+      const reordered = sortResults(lastSearchResults, currentSortOrder);
+      renderResults(reordered, lastSearchRatings, lastSearchAverages);
+    });
+  }
 
+  attachFavoriteHandlers();
+  attachRatingsHandlers();
 }
 
-/**
- * Render a single conference card
- */
+
 function renderConferenceCard(conf, index, ratings={}, average=null) {
   const isFavorite = window.userFavorites?.includes(conf.id);
   const isLoggedIn = !!window.currentUser;
@@ -96,6 +156,7 @@ function renderConferenceCard(conf, index, ratings={}, average=null) {
   // Format location
   const location = [conf.city, conf.country].filter(Boolean).join(', ') || 'N/A';
 
+  const locationDatesLine = '<strong>Location:</strong> ' + location + ' | <strong>Start:</strong> ' + formatDate(conf.start_date) + ' | <strong>End:</strong> ' + formatDate(conf.end_date);
 
   return `
     <div class="result-card mb-3">
@@ -114,30 +175,30 @@ function renderConferenceCard(conf, index, ratings={}, average=null) {
 
       <div class="d-flex gap-2 mb-2">
         ${isLoggedIn ? `
-          <button type="button"
-                  class="btn btn-sm favorite-btn ${isFavorite ? 'btn-success' : 'btn-outline-primary'}"
-                  data-conference-id="${conf.id}"
-                  data-state="${isFavorite ? 'saved' : 'empty'}">
-            ${isFavorite ? '✓ Saved!' : '☆ Favorite'}
-          </button>
-          <a href="/edit-conference.html?id=${encodeURIComponent(conf.id)}" class="btn btn-warning btn-sm">
-            Edit
-          </a>
+          <span class="d-flex gap-2">
+            <button type="button"
+                    class="btn btn-sm favorite-btn ${isFavorite ? 'btn-success' : 'btn-outline-primary'}"
+                    data-conference-id="${conf.id}"
+                    data-state="${isFavorite ? 'saved' : 'empty'}">
+              ${isFavorite ? '✓ Saved!' : '☆ Favorite'}
+            </button>
+            <a href="/edit-conference.html?id=${encodeURIComponent(conf.id)}" class="btn btn-warning btn-sm">
+              Edit
+            </a>
+          </span>
         ` : `
-          <button class="btn btn-outline-secondary btn-sm" disabled title="Login to save">
-            ☆ Favorite
-          </button>
-          <button class="btn btn-outline-secondary btn-sm" disabled title="Login to edit">
-            Edit
-          </button>
+          <span class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" disabled title="Login to save">
+              ☆ Favorite
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" disabled title="Login to edit">
+              Edit
+            </button>
+          </span>
         `}
       </div>
 
-      <p class="text-muted mb-2">
-        <strong>Location:</strong> ${location} |
-        <strong>Start:</strong> ${formatDate(conf.start_date)} |
-        <strong>End:</strong> ${formatDate(conf.end_date)}
-      </p>
+      <p class="text-muted mb-2">${locationDatesLine}</p>
 
       <div class="mb-2">
         <a href="${buildGoogleCalendarUrl(conf)}" target="_blank" class="google-calendar-button btn btn-sm me-1">
@@ -153,45 +214,46 @@ function renderConferenceCard(conf, index, ratings={}, average=null) {
         <strong>Topics:</strong> ${(conf.topics || '').replace(/\n/g, ', ') || 'N/A'}
       </p>
 
-      <details>
-        <summary class="small">Rankings & Metrics &#9776;</summary>
-        <div class="mt-2">${rankingsHtml}</div>
-      </details>
-      <details>
-        <summary class="small">User Ratings &#9734;</summary>
-        <!-- data-conference-id is used to identify the conference in the form -->
-        <form id="user-ratings-form" class="user-ratings-form" data-conference-id="${conf.id}">
-          <div class="field">
-            <label for="fname">Welcoming Score:</label>
-            <input type="number" id="welcoming-score" name="welcoming-score" min="1" max="10" placeholder="1-10" value="${ratings.welcoming ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Insightful Score:</label>
-            <input type="number" id="insightful-score" name="insightful-score" min="1" max="10" placeholder="1-10" value="${ratings.insightful ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Networking Score:</label>
-            <input type="number" id="networking-score" name="networking-score" min="1" max="10" placeholder="1-10" value="${ratings.networking ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Interactivity Score:</label>
-            <input type="number" id="interactivity-score" name="interactivity-score" min="1" max="10" placeholder="1-10" value="${ratings.interactivity ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Caliber Score:</label>
-            <input type="number" id="caliber-score" name="caliber-score" min="1" max="10" placeholder="1-10" value="${ratings.caliber ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Worthwhile Score:</label>
-            <input type="number" id="worthwhile-score" name="worthwhile-score" min="1" max="10" placeholder="1-10" value="${ratings.worthwhile ?? ''}">
-          </div>
-          <div class="field">
-            <label for="fname">Overall Score:</label>
-            <input type="number" id="overall-score" name="overall-score" min="1" max="10" placeholder="1-10" value="${ratings.overall ?? ''}">
-          </div>
-          <button id="submit-ratings-btn" class="submit-ratings-btn btn" type="submit">Submit Ratings</button>
-        </form> 
-      </details>
+      <div>
+        <details>
+          <summary class="small">Rankings &amp; Metrics &#9776;</summary>
+          <div class="mt-2">${rankingsHtml}</div>
+        </details>
+        <details>
+          <summary class="small">User Ratings &#9734;</summary>
+          <form id="user-ratings-form" class="user-ratings-form" data-conference-id="${conf.id}">
+            <div class="field">
+              <label for="welcoming-score">Welcoming Score:</label>
+              <input type="number" id="welcoming-score" name="welcoming-score" min="1" max="10" placeholder="1-10" value="${ratings.welcoming ?? ''}">
+            </div>
+            <div class="field">
+              <label for="insightful-score">Insightful Score:</label>
+              <input type="number" id="insightful-score" name="insightful-score" min="1" max="10" placeholder="1-10" value="${ratings.insightful ?? ''}">
+            </div>
+            <div class="field">
+              <label for="networking-score">Networking Score:</label>
+              <input type="number" id="networking-score" name="networking-score" min="1" max="10" placeholder="1-10" value="${ratings.networking ?? ''}">
+            </div>
+            <div class="field">
+              <label for="interactivity-score">Interactivity Score:</label>
+              <input type="number" id="interactivity-score" name="interactivity-score" min="1" max="10" placeholder="1-10" value="${ratings.interactivity ?? ''}">
+            </div>
+            <div class="field">
+              <label for="caliber-score">Caliber Score:</label>
+              <input type="number" id="caliber-score" name="caliber-score" min="1" max="10" placeholder="1-10" value="${ratings.caliber ?? ''}">
+            </div>
+            <div class="field">
+              <label for="worthwhile-score">Worthwhile Score:</label>
+              <input type="number" id="worthwhile-score" name="worthwhile-score" min="1" max="10" placeholder="1-10" value="${ratings.worthwhile ?? ''}">
+            </div>
+            <div class="field">
+              <label for="overall-score">Overall Score:</label>
+              <input type="number" id="overall-score" name="overall-score" min="1" max="10" placeholder="1-10" value="${ratings.overall ?? ''}">
+            </div>
+            <button id="submit-ratings-btn" class="submit-ratings-btn btn" type="submit">Submit Ratings</button>
+          </form>
+        </details>
+      </div>
     </div>
   `;
 }

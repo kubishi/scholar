@@ -1,4 +1,4 @@
-/* Kubishi Scholar - Cloudflare Edition
+navbar-brand/* Kubishi Scholar - Cloudflare Edition
    Simplified styles preserving original color scheme */
 
 /* Typography */
@@ -237,6 +237,8 @@ body {
 .navigation-buttons {
   display: flex;
   justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 /* Advanced Search button - Sky Blue hover */
@@ -396,22 +398,33 @@ body {
   display: none;
 }
 
+/* Navigation: 2x2 grid on small/medium screens (override Bootstrap d-flex) */
+@media screen and (max-width: 992px) {
+  .navigation-buttons {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .navigation-buttons .btn,
+  .navigation-buttons a.btn {
+    min-width: 0;
+    flex: none;
+    margin: 0;
+  }
+}
+
 /* Responsive design */
 @media screen and (max-width: 768px) {
+  .title_subtext {
+    display: none;
+  }
   .full-url {
     display: none;
   }
 
   .short-url {
     display: inline;
-  }
-
-  .title_subtext {
-    display: none;
-  }
-
-  .menu_logo {
-    display: none;
   }
 
   .conference_count {
@@ -426,7 +439,7 @@ body {
   }
 
   .navigation-buttons {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }

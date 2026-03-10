@@ -35,7 +35,7 @@ if (fileSaveButton && fileAdderModal) {
 //     uploadUserPapers(file);
 // });
 
-const MAX_PDF_TEXT_LENGTH = 3000;
+const MAX_PDF_TEXT_LENGTH = 3500;
 
 async function parsePdfToText(file) {
     const arrayBuffer = await file.arrayBuffer();
@@ -55,7 +55,7 @@ async function parsePdfToText(file) {
 async function uploadUserPapers(file) {
     const text = await parsePdfToText(file);
     const fileName = file.name;
-    // console.log(text, "TESTING the text", fileName);
+    console.log(text, "TESTING the text", fileName);
 
     if (fileSaveButton) fileSaveButton.disabled = true;
     try {

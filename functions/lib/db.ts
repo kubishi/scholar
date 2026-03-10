@@ -70,6 +70,24 @@ export async function getConferencesByIds(
   );
   return ids.map(id => confMap.get(id)).filter((c): c is Conference => c !== undefined);
 }
+/** Return looks like this: [
+  {
+    id: '123',
+    title: 'Conference 1',
+    acronym: 'C1',
+    city: 'New York',
+    country: 'USA'
+    deadline: '2026-01-01',
+    notification: '2026-01-01T00:00:00Z',
+    start_date: '2026-01-01',
+    end_date: '2026-01-01',
+    topics: 'Topic 1, Topic 2',
+    url: 'https://example.com',
+    h5_index: 1,
+    h5_median: 1,
+    updated_at: '2026-01-01',
+  }
+] */
 
 /**
  * Lexical search using FTS5
