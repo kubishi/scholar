@@ -8,13 +8,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       showPublicProfileLink(profile.slug);
     }
   }
-  const userGreeting = document.getElementById('user-greeting');
-  if (userGreeting) {
-    userGreeting.addEventListener('click', () => {
-      console.log('Clicked!');
-      window.location.href = "/about.html";
-    });
-  }
 
   const editBtn = document.getElementById('edit-about-me-btn');
   const modal = document.getElementById('edit-about-me-modal');
