@@ -20,13 +20,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Handle Enter key in search textarea
+  // Handle Enter key in search textarea
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('keydown', (e) => {
+      // Check for Enter without modifiers (Shift/Ctrl)
       if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
-        e.preventDefault();
+        e.preventDefault(); // Stop a new line from being added to textarea
+        
         const form = document.getElementById('search-form');
-        if (form) form.dispatchEvent(new Event('submit'));
+        if (form) {
+          // This is the "Magic" line:
+          if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit(); 
+          } else {
+            // Legacy fallback if you need to support very old browsers
+            form.submit(); 
+          }
+        }
       }
     });
   }
