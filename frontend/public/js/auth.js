@@ -110,7 +110,11 @@ function updateAuthUI() {
     if (loginBtn) loginBtn.style.display = 'none';
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
     if (userGreeting) {
-      userGreeting.innerHTML = `<strong>Welcome, ${window.currentUser.name || 'User'}!</strong>`;
+      userGreeting.classList.add('logged-in');
+      userGreeting.innerHTML = `
+        <a href="/about.html" class="text-decoration-none text-dark" style="cursor: pointer;">
+          <strong>Welcome, ${window.currentUser.name || 'User'}!</strong>
+        </a>`;
     }
 
     // Show auth-required elements, hide no-auth elements
@@ -126,12 +130,14 @@ function updateAuthUI() {
       `;
     }
   } else {
+    userGreeting.classList.remove('logged-in');
     // User is not logged in
     if (loginBtn) loginBtn.style.display = 'inline-block';
     if (logoutBtn) logoutBtn.style.display = 'none';
     if (userGreeting) {
       userGreeting.innerHTML = '<strong>Welcome!</strong>';
     }
+    
 
     // Hide auth-required elements, show no-auth elements
     authRequired.forEach(el => el.style.display = 'none');
