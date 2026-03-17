@@ -11,6 +11,9 @@ let recomendationBtn = null;
 document.addEventListener('DOMContentLoaded', function () {
   recomendationBtn = document.getElementById('recomendation-btn');
   if (recomendationBtn) recomendationBtn.addEventListener('click', onRecomendationClick);
+
+  const rankingSourceSelect = document.getElementById('ranking-source');
+  if (rankingSourceSelect) rankingSourceSelect.addEventListener('change', handleRankingSourceChange);
 });
 /**
  * Sort conference array by score (original order), name, start date, or deadline.
