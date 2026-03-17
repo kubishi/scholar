@@ -39,8 +39,17 @@
                 <a href="/" class="btn btn-dark">&larr; Back to Search</a>
             </div>
 
+            <!-- View toggle -->
+            <div class="d-flex gap-2 mb-3" id="view-toggle" style="display:none;">
+                <button class="btn btn-sm btn-outline-secondary active" id="btn-card-view">Cards</button>
+                <button class="btn btn-sm btn-outline-secondary" id="btn-timeline-view">Timeline</button>
+            </div>
+
             <!-- Results Container -->
             <div id="results-container" class="search_result"></div>
+
+            <!-- Timeline Container -->
+            <div id="timeline-container" style="display:none;"></div>
 
             <!-- Loading Spinner -->
             <div id="loading-spinner" class="text-center py-4" style="display: none;">
@@ -64,6 +73,7 @@
     <script src="/js/ratings.js"></script>
     <script src="/js/favorites.js"></script>
     <script src="/js/search.js"></script>
+    <script src="/js/timeline.js"></script>
     <script>
         // Load saved conferences
         document.addEventListener('DOMContentLoaded', async () => {
@@ -71,7 +81,11 @@
 
             const loginRequired = document.getElementById('login-required');
             const resultsContainer = document.getElementById('results-container');
+            const timelineContainer = document.getElementById('timeline-container');
             const loadingSpinner = document.getElementById('loading-spinner');
+            const viewToggle = document.getElementById('view-toggle');
+            const btnCard = document.getElementById('btn-card-view');
+            const btnTimeline = document.getElementById('btn-timeline-view');
 
             if (!window.currentUser) {
                 loginRequired.style.display = 'block';
@@ -80,6 +94,8 @@
             }
 
             loadingSpinner.style.display = 'block';
+
+            let loadedConferences = [];
 
             try {
                 const favorites = window.userFavorites || [];
@@ -92,22 +108,37 @@
                 // Fetch each conference
                 const conferences = await Promise.all(
                     favorites.map(async (id) => {
-                        console.log(id, "MAKE IT VISIBLE", encodeURIComponent(id))
                         const res = await fetch(`/api/conferences/${encodeURIComponent(id)}`);
                         const data = await res.json();
                         return data.ok ? data.conference : null;
                     })
                 );
 
-                const validConferences = conferences.filter(c => c !== null);
-                const {ratings, averages } = await getUserRatings(validConferences.map(c => c.id));
-                renderResults(validConferences, ratings, averages);
+                loadedConferences = conferences.filter(c => c !== null);
+                const { ratings, averages } = await getUserRatings(loadedConferences.map(c => c.id));
+                renderResults(loadedConferences, ratings, averages);
+                viewToggle.style.display = 'flex';
             } catch (error) {
                 console.error('Failed to load saved conferences:', error);
                 resultsContainer.innerHTML = '<p class="text-danger">Failed to load saved conferences.</p>';
             } finally {
                 loadingSpinner.style.display = 'none';
             }
+
+            btnCard.addEventListener('click', () => {
+                resultsContainer.style.display = '';
+                timelineContainer.style.display = 'none';
+                btnCard.classList.add('active');
+                btnTimeline.classList.remove('active');
+            });
+
+            btnTimeline.addEventListener('click', () => {
+                resultsContainer.style.display = 'none';
+                timelineContainer.style.display = '';
+                btnTimeline.classList.add('active');
+                btnCard.classList.remove('active');
+                renderTimeline(loadedConferences);
+            });
         });
     </script>
 </body>
