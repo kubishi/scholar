@@ -31,6 +31,18 @@ body {
   color: white;
 }
 
+/* Force the link inside to turn white on hover */
+#user-greeting.logged-in:hover a, 
+#user-greeting.logged-in:hover strong {
+  color: white !important;
+}
+
+/* Keep the link dark when NOT hovered */
+#user-greeting a {
+  color: inherit;
+  text-decoration: none;
+}
+
 /* Login/Logout buttons */
 .login-button,
 .logout-button {
