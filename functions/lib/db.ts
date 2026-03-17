@@ -408,11 +408,13 @@ export async function get_user_profile(
   user_id: string
 ): Promise<UserProfile | null> {
   const result = await db.prepare(`
-    SELECT user_profile, slug FROM user_profile WHERE user_id = ?
-  `).bind(user_id).first<{ user_profile: string; slug: string | null }>();
+    SELECT user_profile, dblp_id, semantic_scholar_id, slug FROM user_profile WHERE user_id = ?
+  `).bind(user_id).first<{ user_profile: string; dblp_id: string | null; semantic_scholar_id: string | null; slug: string | null }>();
   if (result?.user_profile) {
     const profile = JSON.parse(result.user_profile) as UserProfile;
     if (result.slug) profile.slug = result.slug;
+    if (result.semantic_scholar_id) profile.semantic_scholar_id = result.semantic_scholar_id;
+    if (result.dblp_id) profile.dblp_id = result.dblp_id;
     return profile;
   }
   return null;
@@ -503,4 +505,27 @@ export async function get_user_papers(
     SELECT * FROM user_papers WHERE user_id = ?
   `).bind(user_id).all<UserPaper>();
   return result.results;
+}
+
+export async function update_dblp_id(db: D1Database, user_id: string, dblp_id: string): Promise<void> {
+  await db.prepare(`UPDATE user_profile SET dblp_id = ?, updated_at = datetime('now') WHERE user_id = ?`)
+    .bind(dblp_id, user_id).run();
+}
+
+export async function update_semantic_scholar_id(db: D1Database, user_id: string, semantic_scholar_id: string): Promise<void> {
+  await db.prepare(`UPDATE user_profile SET semantic_scholar_id = ?, updated_at = datetime('now') WHERE user_id = ?`)
+    .bind(semantic_scholar_id, user_id).run();
+}
+
+export async function get_scholarly_ids(
+  db: D1Database,
+  user_id: string
+): Promise<{ semantic_scholar_id?: string; dblp_id?: string }> {
+  const result = await db.prepare(`
+    SELECT semantic_scholar_id, dblp_id FROM user_profile WHERE user_id = ?
+  `).bind(user_id).first<{ semantic_scholar_id?: string; dblp_id?: string }>();
+  return {
+    semantic_scholar_id: result?.semantic_scholar_id || undefined,
+    dblp_id: result?.dblp_id || undefined,
+  };
 }

@@ -110,3 +110,34 @@ export async function getPdfSummary(text: string, apiKey: string): Promise<strin
   const data = await response.json<ChatResponse>();
   return data.choices[0].message.content.trim();
 }
+
+export async function getRecomendation(user_info: string, conferences: string,apiKey: string): Promise<string> {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: CHAT_MODEL,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant that recommends conferences to users based on their search results and user information. Make sure to recommend conferences in the search results that are relevant to the user information.'
+        },
+        {
+          role: 'user',
+          content: `Explain why the following conferences are relevant to the user information and specifically refrence the parts of their papers and research theyve done to support: User information: ${user_info}\nSearch results: ${conferences}. Coherent and well written but easy to read, make it 3-4 sentances total. 5 if necessary.`
+        }
+      ]
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`OpenAI chat failed: ${error}`);
+  }
+
+  const data = await response.json<ChatResponse>();
+  return data.choices[0].message.content.trim();
+}

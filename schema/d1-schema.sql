@@ -80,8 +80,10 @@ CREATE INDEX IF NOT EXISTS idx_favorites_user ON user_favorites(user_id);
 
 CREATE TABLE IF NOT EXISTS user_profile (
     user_id TEXT NOT NULL,
-    user_profile TEXT NOT NULL, -- JSON object of user profile
+    user_profile TEXT NOT NULL, -- JSON object with profile info (e.g. affiliation, research interests, etc.)
     slug TEXT UNIQUE,           -- public profile URL slug (e.g. jared-coleman)
+    semantic_scholar_id TEXT,
+    dblp_id TEXT, 
     updated_at TEXT DEFAULT (datetime('now')),
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

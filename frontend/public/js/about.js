@@ -135,6 +135,17 @@ function renderProfileDisplay(profile) {
   set('github', profile.github);
   set('linkedin', profile.linkedin);
   set('orcid', profile.orcid);
+  const setConnection = (id, val, href) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (val) {
+      el.innerHTML = href ? `Connected: <a href="${href}" target="_blank" rel="noopener">${val}</a>` : `Connected: ${val}`;
+      el.style.display = 'block';
+    } else { el.style.display = 'none'; }
+  };
+  setConnection('semantic-scholar-id', profile.semantic_scholar_id);
+  setConnection('dblp-id', profile.dblp_id, profile.dblp_id);
+
 }
 
 function populateEditForm(profile) {
@@ -155,3 +166,4 @@ function populateEditForm(profile) {
   set('[name="linkedin"]', profile.linkedin);
   set('[name="orcid"]', profile.orcid);
 }
+

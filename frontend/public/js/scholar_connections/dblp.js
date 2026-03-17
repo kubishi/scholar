@@ -127,14 +127,20 @@ if (saveDBLPButton && dblpNameInput && dblpModal) {
       const data = await res.json();
       console.log("dblp_api_papers", data, "<- data");
       if (data.ok && data.papers) {
-        
-        alert(selectedDblpAuthor ? 'DBLP profile selected.' : 'Search completed.');
+        await fetch(`${window.API_BASE || ''}/api/scholar_api/dblp_api_papers`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dblp_id: selectedDblpAuthor?.url ?? name }),
+        });
+        dblpModal.style.display = 'none';
+        alert(selectedDblpAuthor ? 'DBLP profile connected.' : 'Search completed.');
       }
     } finally {
       saveDBLPButton.disabled = false;
     }
   });
 }
+
 
 
 

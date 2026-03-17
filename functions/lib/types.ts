@@ -172,6 +172,8 @@ export interface UserProfile {
   linkedin?: string;
   orcid?: string;
   slug?: string;
+  semantic_scholar_id?: string;
+  dblp_id?: string;
 }
 
 export interface UserPaper {

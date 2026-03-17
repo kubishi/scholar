@@ -1,4 +1,5 @@
 import type { Env, AuthContext } from '../../lib/types';
+import { update_semantic_scholar_id } from '../../lib/db';
 
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
@@ -28,3 +29,22 @@ export const onRequestGet: PagesFunction = async (context) => {
   console.log(json, "semantic scholar api response")
   return Response.json({ ok: true, author: json.author ?? json });
 };
+
+export const onRequestPost: PagesFunction = async (context) => {
+      const { env, data } = context;
+    const user = data.user;
+  
+    if (!user) {
+      return Response.json(
+        { ok: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const body = await context.request.json<{ semantic_scholar_id: string }>();
+    const { semantic_scholar_id } = body;
+
+    await update_semantic_scholar_id(env.DB, user.id, semantic_scholar_id);
+
+    return Response.json({ ok: true });
+}

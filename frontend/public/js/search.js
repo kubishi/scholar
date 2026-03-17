@@ -4,8 +4,14 @@
 let lastSearchResults = [];
 let lastSearchRatings = {};
 let lastSearchAverages = {};
+let lastRecommendation = null;
 let currentSortOrder = 'score';
+let recomendationBtn = null;
 
+document.addEventListener('DOMContentLoaded', function () {
+  recomendationBtn = document.getElementById('recomendation-btn');
+  if (recomendationBtn) recomendationBtn.addEventListener('click', onRecomendationClick);
+});
 /**
  * Sort conference array by score (original order), name, start date, or deadline.
  * Returns a new array; does not mutate.
@@ -92,6 +98,7 @@ async function handleSearch(event) {
       lastSearchResults = data.results;
       lastSearchRatings = ratings;
       lastSearchAverages = averages;
+      lastRecommendation = null;
       currentSortOrder = 'score';
       renderResults(data.results, ratings, averages);
     } else {
@@ -106,7 +113,7 @@ async function handleSearch(event) {
 }
 
 
-function renderResults(results, userRatings = {}, averages = {}) {
+function renderResults(results, userRatings = {}, averages = {}, recomendation = null) {
   const container = document.getElementById('results-container');
 
   if (!results || results.length === 0) {
@@ -120,6 +127,7 @@ function renderResults(results, userRatings = {}, averages = {}) {
 
   container.innerHTML = `
     <h4 class="mb-3">Conference Results (${sorted.length})</h4>
+    ${recomendation ? `<p class="recommendation-explanation mb-3">${String(recomendation).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>` : ''}
     <div class="d-flex align-items-center gap-2 mb-3">
       <label for="results-sort" class="form-label mb-0">Sort by:</label>
       <select id="results-sort" class="form-select form-select-sm" style="max-width: 200px;" aria-label="Sort results">
@@ -129,6 +137,7 @@ function renderResults(results, userRatings = {}, averages = {}) {
         <option value="deadline" ${currentSortOrder === 'deadline' ? 'selected' : ''}>Deadline</option>
       </select>
     </div>
+
     ${sorted.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id], averages[conf.id])).join('')}
   `;
 
@@ -137,7 +146,7 @@ function renderResults(results, userRatings = {}, averages = {}) {
     sortSelect.addEventListener('change', function () {
       currentSortOrder = this.value;
       const reordered = sortResults(lastSearchResults, currentSortOrder);
-      renderResults(reordered, lastSearchRatings, lastSearchAverages);
+      renderResults(reordered, lastSearchRatings, lastSearchAverages, lastRecommendation);
     });
   }
 
@@ -146,7 +155,7 @@ function renderResults(results, userRatings = {}, averages = {}) {
 }
 
 
-function renderConferenceCard(conf, index, ratings={}, average=null) {
+function renderConferenceCard(conf, index, ratings = {}, average = null, recomendation = null) {
   const isFavorite = window.userFavorites?.includes(conf.id);
   const isLoggedIn = !!window.currentUser;
 
@@ -388,3 +397,22 @@ function handleRankingSourceChange(event) {
     `;
   }
 }
+
+
+async function onRecomendationClick(event) {
+  if (event) event.preventDefault();
+  const token = await getAuthToken();
+  if (!token) return;
+  const response = await fetch(`${window.API_BASE}/api/recomendation-confs`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  const data = await response.json();
+  if (!response.ok || !data.results) return;
+  const { ratings, averages } = await getUserRatings(data.results.map((r) => r.id));
+  lastSearchResults = data.results;
+  lastSearchRatings = ratings;
+  lastSearchAverages = averages;
+  lastRecommendation = data.recomendation || null;
+  currentSortOrder = 'score';
+  renderResults(data.results, ratings, averages, lastRecommendation);
+} 

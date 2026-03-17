@@ -86,29 +86,35 @@
                     </div>
                 </div>
 
-                <!-- Navigation Buttons -->
-                <div class="d-flex gap-2 mb-1 justify-content-evenly navigation-buttons">
-                    <button class="toggle-advanced-button btn btn-dark border-0 rounded-3 flex-fill"
-                            type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
-                            aria-expanded="false" aria-controls="advancedSearch">
-                        &#x2193; Advanced Search
-                    </button>
+                <!-- Navigation Buttons: 2x2 row + Our Recommendations full-width below -->
+                <div class="navigation-buttons-wrapper">
+                    <div class="d-flex gap-2 mb-2 justify-content-evenly navigation-buttons">
+                        <button class="toggle-advanced-button btn btn-dark border-0 rounded-3 flex-fill"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#advancedSearch"
+                                aria-expanded="false" aria-controls="advancedSearch">
+                            &#x2193; Advanced Search
+                        </button>
 
-                    <!-- Logged in buttons -->
-                    <a href="/add-conference.html" id="add-conf-btn" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
-                        + Add Conference
-                    </a>
-                    <a href="/saved.html" id="saved-btn" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
-                        &#9829; View Saved
-                    </a>
-                    <a href="/friends.html" id="friends-btn" class="friend-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
-                        &#x2605; Find Friends
-                    </a>
+                        <!-- Logged in buttons -->
+                        <a href="/add-conference.html" id="add-conf-btn" class="conference-add-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
+                            + Add Conference
+                        </a>
+                        <a href="/saved.html" id="saved-btn" class="saved-conf-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
+                            &#9829; View Saved
+                        </a>
+                        <a href="/friends.html" id="friends-btn" class="friend-button btn btn-dark border-0 rounded-3 flex-fill auth-required" style="display: none;">
+                            &#x2605; Find Friends
+                        </a>
 
-                    <!-- Locked buttons for non-logged in users -->
-                    <button id="add-conf-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>Add Conference</button>
-                    <button id="saved-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>View Saved</button>
-                    <button id="friends-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>Find Friends</button>
+                        <!-- Locked buttons for non-logged in users -->
+                        <button id="add-conf-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>Add Conference</button>
+                        <button id="saved-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>View Saved</button>
+                        <button id="friends-locked" class="btn btn-outline-secondary flex-fill no-auth" disabled>Find Friends</button>
+                    </div>
+                    <div class="navigation-recommendation-row">
+                        <button type="button" id="recomendation-btn" class="recomendation-button btn btn-dark border-0 rounded-3 w-100 auth-required" style="display: none;">Our Recommendations</button>
+                        <button type="button" id="recomendation-locked" class="btn btn-outline-secondary w-100 no-auth" disabled>Our Recommendations</button>
+                    </div>
                 </div>
 
                 <!-- Advanced Search Collapse -->

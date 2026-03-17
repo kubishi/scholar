@@ -32,8 +32,13 @@ if (saveSemanticScholarButton && semanticScholarAuthorIdInput && semanticScholar
         });
         const data = await res.json();
         if (data.ok && data.author) {
-          alert('Semantic Scholar profile connected successfully.');
+          await fetch(`${window.API_BASE || ''}/api/scholar_api/semantic_scholar_api`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ semantic_scholar_id: authorId }),
+          });
           semanticScholarModal.style.display = 'none';
+          alert('Semantic Scholar profile connected successfully.');
         } else {
           alert(data.error || 'Failed to connect Semantic Scholar profile.');
         }
@@ -45,4 +50,3 @@ if (saveSemanticScholarButton && semanticScholarAuthorIdInput && semanticScholar
       }
     });
   }
-  
