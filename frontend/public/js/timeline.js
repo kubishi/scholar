@@ -86,7 +86,7 @@ function renderTimeline(conferences) {
     </div>`;
 
   const noDatesNote = noDates.length > 0
-    ? `<p class="text-muted small mt-2">${noDates.length} conference(s) without dates not shown: ${noDates.map(c => c.id).join(', ')}</p>`
+    ? `<p class="text-muted small mt-2">${noDates.length} conference(s) without dates not shown(old conferences): ${noDates.map(c => c.id).join(', ')}</p>`
     : '';
 
   container.innerHTML = `<div style="overflow-x:auto;padding:1rem 1rem 1rem 0;">${legend}${monthHeader}${rows}${noDatesNote}</div>`;
