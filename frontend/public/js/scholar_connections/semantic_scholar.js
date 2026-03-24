@@ -40,7 +40,7 @@ if (saveSemanticScholarButton && semanticScholarAuthorIdInput && semanticScholar
           semanticScholarModal.style.display = 'none';
           alert('Semantic Scholar profile connected successfully.');
         } else {
-          alert(data.error || 'Failed to connect Semantic Scholar profile.');
+          alert(data.error || 'Failed to connect Semantic Scholar profile. API is not responding.');
         }
       } catch (err) {
         console.error(err);

@@ -1,5 +1,6 @@
 import type { Env, AuthContext } from '../../lib/types';
 import { update_dblp_id } from '../../lib/db';
+import { rebuildUserVector } from '../../lib/buildUserVector';
 
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
@@ -37,6 +38,6 @@ export const onRequestPost: PagesFunction = async (context) => {
     const { dblp_id } = body;
 
     await update_dblp_id(env.DB, user.id, dblp_id);
-
+    await rebuildUserVector(user.id, env);
     return Response.json({ ok: true });
 }

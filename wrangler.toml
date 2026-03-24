@@ -23,6 +23,12 @@ index_name = "kubishi-conferences"
 binding = "PAPERS_VECTORIZE_INDEX"
 index_name = "kubishi-papers"
 
+# Vectorize binding: full user profile embeddings
+# Run: wrangler vectorize create kubishi-user-profiles --dimensions 1536 --metric cosine
+[[vectorize]]
+binding = "FULL_PROFILE_VECTORIZE_INDEX"
+index_name = "kubishi-user-profiles"
+
 # Environment variables
 [vars]
 ENVIRONMENT = "production"

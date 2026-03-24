@@ -273,6 +273,7 @@ body {
   color: white;
 }
 
+
 /* Advanced Search: PDF drop zone to fill search from paper */
 .search-pdf-dropzone {
   border: 2px dashed #adb5bd;
@@ -361,6 +362,7 @@ body {
 
 /* Google Calendar button - Green */
 .google-calendar-button {
+  color: white;
   background: #0F9D58;
   transition: background-color 0.3s ease;
 }

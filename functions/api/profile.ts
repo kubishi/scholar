@@ -1,5 +1,6 @@
 import type { Env, AuthContext, UserProfile } from '../lib/types';
 import { upsert_user_profile, get_user_profile } from '../lib/db';
+import { rebuildUserVector } from '../lib/buildUserVector';
 
 type PagesFunction<E = Env> = (
     context: EventContext<E, string, AuthContext>
@@ -18,6 +19,7 @@ export const onRequestPost: PagesFunction = async (context) => {
 
     const body = await request.json() as UserProfile;
     const { slug } = await upsert_user_profile(env.DB, user.id, body);
+    await rebuildUserVector(user.id, env);
     return Response.json({ ok: true, slug });
 }
 

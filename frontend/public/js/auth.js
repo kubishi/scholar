@@ -104,6 +104,7 @@ function updateAuthUI() {
   // Auth-required elements
   const authRequired = document.querySelectorAll('.auth-required');
   const noAuth = document.querySelectorAll('.no-auth');
+  const ratingDropdown = document.getElementById('rating_dropdown');
 
   if (window.currentUser) {
     // User is logged in
@@ -131,6 +132,7 @@ function updateAuthUI() {
     }
   } else {
     userGreeting.classList.remove('logged-in');
+    ratingDropdown
     // User is not logged in
     if (loginBtn) loginBtn.style.display = 'inline-block';
     if (logoutBtn) logoutBtn.style.display = 'none';

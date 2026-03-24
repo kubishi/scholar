@@ -231,8 +231,9 @@ function renderConferenceCard(conf, index, ratings = {}, average = null, recomen
           <summary class="small">Rankings &amp; Metrics &#9776;</summary>
           <div class="mt-2">${rankingsHtml}</div>
         </details>
+        ${isLoggedIn ? `
         <details>
-          <summary class="small">User Ratings &#9734;</summary>
+          <summary class="rating_dropdown small">User Ratings &#9734;</summary>
           <form id="user-ratings-form" class="user-ratings-form" data-conference-id="${conf.id}">
             <div class="field">
               <label for="welcoming-score">Welcoming Score:</label>
@@ -265,6 +266,7 @@ function renderConferenceCard(conf, index, ratings = {}, average = null, recomen
             <button id="submit-ratings-btn" class="submit-ratings-btn btn" type="submit">Submit Ratings</button>
           </form>
         </details>
+        ` : ''}
       </div>
     </div>
   `;

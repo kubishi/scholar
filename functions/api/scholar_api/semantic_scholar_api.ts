@@ -1,5 +1,6 @@
 import type { Env, AuthContext } from '../../lib/types';
 import { update_semantic_scholar_id } from '../../lib/db';
+import { rebuildUserVector } from '../../lib/buildUserVector';
 
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
@@ -17,9 +18,6 @@ export const onRequestGet: PagesFunction = async (context) => {
   const authorId = url.searchParams.get('author_id') || '1751762';
   const apiKey = env.SEMANTIC_SCHOLAR_API_KEY;
 
-  if (!apiKey) {
-    return Response.json({ ok: false, error: 'Semantic Scholar API key not configured' }, { status: 500 });
-  }
 
   const apiUrl = `https://api.semanticscholar.org/graph/v1/author/${encodeURIComponent(authorId)}?fields=name,url,papers,papers.abstract`;
   const res = await fetch(apiUrl, {
@@ -45,6 +43,6 @@ export const onRequestPost: PagesFunction = async (context) => {
     const { semantic_scholar_id } = body;
 
     await update_semantic_scholar_id(env.DB, user.id, semantic_scholar_id);
-
+    await rebuildUserVector(user.id, env);
     return Response.json({ ok: true });
 }

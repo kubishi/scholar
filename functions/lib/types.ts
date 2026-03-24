@@ -3,6 +3,7 @@ export interface Env {
   DB: D1Database;
   VECTORIZE_INDEX: VectorizeIndex;
   PAPERS_VECTORIZE_INDEX: VectorizeIndex;
+  FULL_PROFILE_VECTORIZE_INDEX: VectorizeIndex;
   AUTH0_DOMAIN: string;
   AUTH0_CLIENT_ID: string;
   AUTH0_AUDIENCE: string;

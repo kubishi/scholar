@@ -98,5 +98,22 @@ export async function upsertUserPapersVector(
 
 }
 
+export async function upsertFullUserProfile(
+  env: Env,
+  userId: string,
+  vector: number[],
+  name: string,
+  email: string
+): Promise<void> {
+  await env.FULL_PROFILE_VECTORIZE_INDEX.upsert([{
+    id: userId,
+    values: vector,
+    metadata: {
+      name,
+      email,
+    },
+  }]);
+}
+
 
 

@@ -2,6 +2,7 @@ import type { Env, AuthContext } from '../../lib/types';
 import { upsert_user_papers, get_user_papers } from '../../lib/db';
 import { getEmbedding } from '../../lib/openai';
 import { upsertUserPapersVector } from '../../lib/vectorize';
+import { rebuildUserVector } from '../../lib/buildUserVector';
 
 
 
@@ -30,7 +31,7 @@ export const onRequestPost: PagesFunction = async (context) => {
     await upsert_user_papers(env.DB, user.id, title, body);
 
     await upsertUserPapersVector(env, user.id, vector, title);
-
+    await rebuildUserVector(user.id, env);
     return Response.json({ ok: true });
 
 }
