@@ -111,7 +111,7 @@ export async function getPdfSummary(text: string, apiKey: string): Promise<strin
   return data.choices[0].message.content.trim();
 }
 
-export async function getRecomendation(user_info: string, conferences: string,apiKey: string): Promise<string> {
+export async function getRecomendation(user_info: string, conferences: string, apiKey: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -123,7 +123,7 @@ export async function getRecomendation(user_info: string, conferences: string,ap
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful assistant that recommends conferences to users based on their search results and user information. Make sure to recommend conferences in the search results that are relevant to the user information.'
+          content: '4-5 sentances maximum in total. At the start talk about user profile and what kinds of things you see in it (1 sentence), in the pdfs they uploaded but mostly their own profiles and their api connection. 1-2 sentances per conference result. You are a helpful assistant that recommends conferences to users based on their search results and user information. Make sure to recommend conferences in the search results that are relevant to the user information.'
         },
         {
           role: 'user',

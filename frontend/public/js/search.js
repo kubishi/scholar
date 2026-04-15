@@ -10,7 +10,10 @@ let recomendationBtn = null;
 
 document.addEventListener('DOMContentLoaded', function () {
   recomendationBtn = document.getElementById('recomendation-btn');
-  if (recomendationBtn) recomendationBtn.addEventListener('click', onRecomendationClick);
+  if (recomendationBtn) {
+    console.log('Attaching recommendation button listener');
+    recomendationBtn.addEventListener('click', onRecomendationClick);
+  }
 
   const rankingSourceSelect = document.getElementById('ranking-source');
   if (rankingSourceSelect) rankingSourceSelect.addEventListener('change', handleRankingSourceChange);
@@ -405,19 +408,31 @@ function handleRankingSourceChange(event) {
 
 
 async function onRecomendationClick(event) {
+  const spinner = document.getElementById('recomendation-spinner');
   if (event) event.preventDefault();
-  const token = await getAuthToken();
-  if (!token) return;
-  const response = await fetch(`${window.API_BASE}/api/recomendation-confs`, {
-    headers: { 'Authorization': `Bearer ${token}` },
-  });
-  const data = await response.json();
-  if (!response.ok || !data.results) return;
-  const { ratings, averages } = await getUserRatings(data.results.map((r) => r.id));
-  lastSearchResults = data.results;
-  lastSearchRatings = ratings;
-  lastSearchAverages = averages;
-  lastRecommendation = data.recomendation || null;
-  currentSortOrder = 'score';
-  renderResults(data.results, ratings, averages, lastRecommendation);
+  console.log('Recommendation button clicked');
+  recomendationBtn.disabled = true;
+  let original_button = recomendationBtn.innerHTML;
+  spinner.style.display = 'block';
+  try{
+
+    const token = await getAuthToken();
+    if (!token) return;
+    const response = await fetch(`${window.API_BASE}/api/recomendation-confs`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await response.json();
+    if (!response.ok || !data.results) return;
+    const { ratings, averages } = await getUserRatings(data.results.map((r) => r.id));
+    lastSearchResults = data.results;
+    lastSearchRatings = ratings;
+    lastSearchAverages = averages;
+    lastRecommendation = data.recomendation || null;
+    currentSortOrder = 'score';
+    renderResults(data.results, ratings, averages, lastRecommendation);
+  } finally {
+    recomendationBtn.disabled = false;
+    recomendationBtn.innerHTML = original_button
+    spinner.style.display = 'none';
+  }
 } 

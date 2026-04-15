@@ -8,6 +8,12 @@ export interface VectorSearchResult {
   metadata?: ConferenceVectorMetadata;
 }
 
+export interface PeopleSearchResult {
+  id: string;
+  score: number;
+  metadata?: { name?: string; email?: string; slug?: string };
+}
+
 /**
  * Search for similar conferences using vector similarity
  */
@@ -28,6 +34,21 @@ export async function vectorSearch(
   }));
 }
 
+export async function vectorSearchPeople(
+  env: Env,
+  queryVector: number[],
+  topK: number = 10
+): Promise<PeopleSearchResult[]> {
+  const results = await env.FULL_PROFILE_VECTORIZE_INDEX.query(queryVector, {
+    topK,
+    returnMetadata: 'all',
+  });
+  return results.matches.map(match => ({
+    id: match.id,
+    score: match.score,
+    metadata: match.metadata as { name?: string; email?: string } | undefined,
+  }));
+}
 /**
  * Upsert a single vector with metadata
  */
@@ -103,15 +124,13 @@ export async function upsertFullUserProfile(
   userId: string,
   vector: number[],
   name: string,
-  email: string
+  email: string,
+  slug: string
 ): Promise<void> {
   await env.FULL_PROFILE_VECTORIZE_INDEX.upsert([{
     id: userId,
     values: vector,
-    metadata: {
-      name,
-      email,
-    },
+    metadata: { name, email, slug },
   }]);
 }
 

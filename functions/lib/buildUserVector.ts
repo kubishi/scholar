@@ -36,7 +36,7 @@ async function fetchDBLPProfile(dblpId: string): Promise<string[]> {
     }
 }
 
-function buildUserBlob(
+export function buildUserBlob(
   profile: UserProfile | null,
   papers: UserPaper[],
   semanticScholarProfile: string[],
@@ -77,7 +77,7 @@ export async function rebuildUserVector(userId: string, env: Env): Promise<void>
         if (userBlob.trim().length < 50) return;
 
         const vector = await getEmbedding(userBlob, env.OPENAI_API_KEY);
-        await upsertFullUserProfile(env, userId, vector, profile?.name ?? '', profile?.email ?? '');
+        await upsertFullUserProfile(env, userId, vector, profile?.name ?? '', profile?.email ?? '', profile?.slug ?? '');
         console.log(`Rebuilt vector for user ${userId}`);
     } catch (err) {
         console.error('rebuildUserVector failed (non-fatal):', err);

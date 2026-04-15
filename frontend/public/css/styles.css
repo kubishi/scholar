@@ -516,6 +516,19 @@ body {
   border-radius: 0.5rem;
 }
 
+.user-recommendation-btn {
+  display: block;
+  margin: 0.5rem auto;
+  width: 100%;
+  
+}
+
+.user-recommendation-btn:hover {
+  background-color: #20C997;
+  color: white;
+  border: 1px solid #20C997;
+}
+
 /* Forms */
 .form-control:focus {
   border-color: #000;

@@ -54,12 +54,11 @@ export async function fetchUserInfo(
         'Authorization': `Bearer ${token}`,
       },
     });
-    // response.json() can only be called once
-    // console.log('Make it obvioously clear that the response is:', await response.json(), 'end of response');
-    
     if (!response.ok) return null;
-    
-    return await response.json();
+
+    const data = await response.json();
+    console.log('userinfo response:', data);
+    return data;
   } catch (error) {
     console.error('Failed to fetch user info:', error);
     return null;

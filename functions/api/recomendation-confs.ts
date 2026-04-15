@@ -1,7 +1,8 @@
-import type { Env, AuthContext, Conference, SearchParams } from '../lib/types';
-import { getEmbedding, getRecomendation } from '../lib/openai';
-import { get_user_papers, getConferencesByIds } from '../lib/db';
+import type { Env, AuthContext } from '../lib/types';
+import { getRecomendation } from '../lib/openai';
+import { get_user_papers, get_user_profile, getConferencesByIds } from '../lib/db';
 import { vectorSearch } from '../lib/vectorize';
+import { buildUserBlob } from '../lib/buildUserVector';
 
 type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
@@ -18,22 +19,29 @@ export const onRequestGet: PagesFunction = async (context) => {
     }
 
     try {
-        const user_papers = await get_user_papers(env.DB, user.id);
+        // const user_papers = await get_user_papers(env.DB, user.id);
 
-        console.log(user_papers, "<- user papers");
-        const combinedText = user_papers
-        .map((p) => p.paper_summary)
-        .filter(Boolean)
-        .join(' ')
-        .slice(0, MAX_CONTEXT_CHARS);
+        // const combinedText = user_papers
+        // .map((p) => p.paper_summary)
+        // .filter(Boolean)
+        // .join(' ')
+        // .slice(0, MAX_CONTEXT_CHARS);
 
-        const queryVector = await getEmbedding(combinedText, env.OPENAI_API_KEY);
+        const profile = await get_user_profile(env.DB, user.id);
+        const papers = await get_user_papers(env.DB, user.id);
+
+        const profileVectors = await env.FULL_PROFILE_VECTORIZE_INDEX.getByIds([user.id]);
+        const queryVector = Array.from(profileVectors[0]?.values ?? []);
+        if (!queryVector) {
+            return Response.json({ ok: false, error: 'No profile vector found. Please complete your profile first.' }, { status: 404 });
+        }
 
         const vecResults = await vectorSearch(env, queryVector, 5);
 
         const conferences = await getConferencesByIds(env.DB, vecResults.map((r) => r.id));
 
-        const recomendation = await getRecomendation(combinedText, JSON.stringify(conferences), env.OPENAI_API_KEY);
+        const userBlob = buildUserBlob(profile, papers, [], []);
+        const recomendation = await getRecomendation(userBlob, JSON.stringify(conferences), env.OPENAI_API_KEY);
 
         return Response.json({
             ok: true,
