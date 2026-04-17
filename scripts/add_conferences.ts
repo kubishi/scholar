@@ -9,8 +9,7 @@
  */
 
 import { execSync } from "child_process";
-import { createReadStream, writeFileSync, unlinkSync } from "fs";
-import { createInterface } from "readline";
+import { readFileSync, writeFileSync, unlinkSync } from "fs";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -39,25 +38,14 @@ function escSql(value: string): string {
   return value.replace(/'/g, "''");
 }
 
-async function parseCsv(filePath: string): Promise<Row[]> {
+function parseCsv(filePath: string): Row[] {
+  const content = readFileSync(filePath, "utf8");
+  const records = parseRecords(content);
   const rows: Row[] = [];
-  const rl = createInterface({
-    input: createReadStream(filePath),
-    crlfDelay: Infinity,
-  });
 
-  let firstLine = true;
-  for await (const rawLine of rl) {
-    if (firstLine) {
-      firstLine = false;
-      continue; // skip header
-    }
-    if (!rawLine.trim()) continue;
-
-    const fields = parseFields(rawLine);
+  for (let i = 1; i < records.length; i++) {
+    const fields = records[i];
     if (fields.length < 2) continue;
-
-    // Columns: Acronym,Title,deadline,notification,start,end,location,topics,city,country,url,ICORE2026
     const [acronym, title, deadline = "", notification = "", start = "", end = "", _location = "", topics = "", city = "", country = "", url = "", ranking = ""] = fields;
     if (!acronym.trim()) continue;
     rows.push({
@@ -70,33 +58,43 @@ async function parseCsv(filePath: string): Promise<Row[]> {
   return rows;
 }
 
-function parseFields(line: string): string[] {
-  const fields: string[] = [];
+function parseRecords(content: string): string[][] {
+  const records: string[][] = [];
+  let fields: string[] = [];
   let current = "";
   let inQuotes = false;
 
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
+  for (let i = 0; i < content.length; i++) {
+    const ch = content[i];
     if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
+      if (inQuotes && content[i + 1] === '"') {
         current += '"';
         i++;
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (ch === "," && !inQuotes) {
+    } else if (ch === ',' && !inQuotes) {
       fields.push(current);
       current = "";
+    } else if ((ch === '\n' || (ch === '\r' && content[i + 1] === '\n')) && !inQuotes) {
+      if (ch === '\r') i++;
+      fields.push(current);
+      current = "";
+      if (fields.some(f => f.trim())) records.push(fields);
+      fields = [];
     } else {
       current += ch;
     }
   }
-  fields.push(current);
-  return fields;
+  if (current || fields.length) {
+    fields.push(current);
+    if (fields.some(f => f.trim())) records.push(fields);
+  }
+  return records;
 }
 
 async function main() {
-  const rows = await parseCsv(CSV_PATH);
+  const rows = parseCsv(CSV_PATH);
   console.log(`Parsed ${rows.length} conferences from ${CSV_PATH}`);
 
   const statements: string[] = [];
