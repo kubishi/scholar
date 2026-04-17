@@ -5,7 +5,7 @@ import { getEmbedding } from './openai';
 import { upsertFullUserProfile } from './vectorize';
 
 
-async function fetchSemanticScholarProfile(authorId: string, env: Env): Promise<string[]> {
+export async function fetchSemanticScholarProfile(authorId: string, env: Env): Promise<string[]> {
     const apiKey = env.SEMANTIC_SCHOLAR_API_KEY;
     try {
         const url = `https://api.semanticscholar.org/graph/v1/author/${encodeURIComponent(authorId)}?fields=name,url,papers,papers.abstract`;
@@ -22,7 +22,7 @@ async function fetchSemanticScholarProfile(authorId: string, env: Env): Promise<
     }
 }
 
-async function fetchDBLPProfile(dblpId: string): Promise<string[]> {
+export async function fetchDBLPProfile(dblpId: string): Promise<string[]> {
     try {
         const url = `https://dblp.org/search/publ/api?q=${encodeURIComponent(dblpId)}&format=json`;
         const res = await fetch(url);

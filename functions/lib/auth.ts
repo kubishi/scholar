@@ -77,16 +77,6 @@ export async function extractUser(
   let name = payload.name as string | undefined;
   let email = payload.email as string | undefined;
 
-  const nameIsEmail = name && name.includes('@');
-
-
-  // If not in payload, fetch from Auth0
-  if (!name || !email || nameIsEmail) {
-    const userInfo = await fetchUserInfo(token, env);
-    name = userInfo?.nickname ?? userInfo?.name ?? name; 
-    email = userInfo?.email ?? email;
-  }
-  
   return {
     id: payload.sub as string,
     email,

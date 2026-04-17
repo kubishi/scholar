@@ -18,7 +18,6 @@ export const onRequestPost: PagesFunction = async (context) => {
     }
 
     const body = await request.json() as UserProfile;
-    console.log("BOOBIE", env.DB, user.id, "spoopy", body)
     const { slug } = await upsert_user_profile(env.DB, user.id, body);
     await rebuildUserVector(user.id, env);
     return Response.json({ ok: true, slug });

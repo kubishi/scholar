@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // PDF drop zone: extract first 300 chars and fill search box
   initSearchPdfDropzone();
+
+  const chatSubmitBtn = document.getElementById('chat-submit-btn');
+  if (chatSubmitBtn) {
+    chatSubmitBtn.addEventListener('click', ragChatSearch);
+  }
+
 });
 
 const SEARCH_PDF_MAX_CHARS = 300;
@@ -144,4 +150,39 @@ function updateSearchPlaceholder() {
   };
 
   searchInput.placeholder = placeholders[searchType] || placeholders.semantic;
+}
+
+async function ragChatSearch(e) {
+  e.preventDefault();
+  user_input = document.getElementById('chatInput').value
+
+  const spinner = document.getElementById('chat-recomendation-spinner');
+  spinner.style.display = 'block';
+
+  if (!user_input) {
+    alert("Please enter something in the Chat box")
+
+  }
+
+  try{
+    const token = await getAuthToken();
+    if (!token) return;
+    const response = await fetch(`${window.API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: user_input }),
+    });
+    const data = await response.json();
+    console.log(data);
+
+    const resultDiv = document.getElementById('chat-result');
+    resultDiv.innerHTML = marked.parse(data.reply ?? '');
+    resultDiv.style.display = 'block';
+
+  } finally {
+    spinner.style.display = 'none';
+  }
+
+
+
 }
