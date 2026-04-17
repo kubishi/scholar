@@ -279,7 +279,7 @@ function renderConferenceCard(conf, index, ratings = {}, average = null, recomen
  * Build rankings HTML
  */
 function buildRankingsHtml(core, h5Index, h5Median) {
-  const rankingKeys = ['CORE2023', 'CORE2021', 'CORE2020', 'CORE2018', 'CORE2017', 'CORE2014', 'CORE2013', 'ERA2010'];
+  const rankingKeys = ['ICORE2026', 'CORE2023', 'CORE2021', 'CORE2020', 'CORE2018', 'CORE2017', 'CORE2014', 'CORE2013', 'ERA2010'];
   let html = '';
   let hasRankings = false;
 
