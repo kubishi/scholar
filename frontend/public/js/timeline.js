@@ -46,8 +46,13 @@ function renderTimeline(conferences) {
     <div style="position:relative; height:24px; margin-left:${LABEL_W}px; border-bottom:2px solid #ccc; margin-bottom:4px;">
       ${months.map((m, i) => {
         const p = ((i + 0.5) / months.length) * 100;
-        const label = m.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-        return `<span style="position:absolute;left:${p}%;transform:translateX(-50%);font-size:0.7rem;color:#666;white-space:nowrap;">${label}</span>`;
+        const tickP = (i / months.length) * 100;
+        const label = m.getMonth() === 0
+          ? m.toLocaleString('en-US', { month: 'short' }) + " '" + String(m.getFullYear()).slice(2)
+          : m.toLocaleString('en-US', { month: 'short' });
+        return `
+          ${i > 0 ? `<span style="position:absolute;left:${tickP}%;top:0;bottom:0;width:1px;background:#ccc;"></span>` : ''}
+          <span style="position:absolute;left:${p}%;transform:translateX(-50%);font-size:0.7rem;color:#666;white-space:nowrap;">${label}</span>`;
       }).join('')}
     </div>`;
 
@@ -60,6 +65,7 @@ function renderTimeline(conferences) {
     ].filter(m => m.date);
 
     const markersHtml = markers.map(m => {
+      if (new Date(m.date) < today) return '';
       const p = pct(m.date);
       if (p === null) return '';
       return `<span class="tl-marker ${m.cls}"
@@ -69,10 +75,16 @@ function renderTimeline(conferences) {
                 data-date="${m.date}"></span>`;
     }).join('');
 
+    const gridlines = months.slice(1).map((_, i) => {
+      const p = ((i + 1) / months.length) * 100;
+      return `<span style="position:absolute;left:${p}%;top:0;bottom:0;width:1px;background:#eee;pointer-events:none;"></span>`;
+    }).join('');
+
     return `
       <div class="tl-row" style="margin-left:${LABEL_W}px;">
         <span class="tl-label" style="left:-${LABEL_W}px;width:${LABEL_W}px;" title="${c.id}">${c.id}</span>
         <div class="tl-bar"></div>
+        ${gridlines}
         ${markersHtml}
       </div>`;
   }).join('');
