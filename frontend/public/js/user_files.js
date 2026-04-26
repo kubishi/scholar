@@ -27,6 +27,12 @@ if (fileSaveButton && fileAdderModal) {
   });
 }
 
+document.addEventListener('click', (e) => {
+  if (e.target.matches('[data-paper-id]')) {
+    const paperId = e.target.dataset.paperId;
+    deleteFile(paperId);
+  }
+});
 
 
 // userPapersInput.addEventListener('change', () => {
@@ -95,9 +101,12 @@ function renderUserPaper(paper) {
     const title = paper.paper_id || 'Untitled';
     const date = paper.created_at ? new Date(paper.created_at).toLocaleDateString() : '';
     return `
-      <div class="border rounded p-3 mb-2">
-        <div class="fw-semibold">${escapeHtml(title)}</div>
-        <div class="small text-muted">Added ${date}</div>
+      <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-semibold">${escapeHtml(title)}</div>
+          <div class="small text-muted">Added ${date}</div>
+        </div>
+        <button class="btn btn-sm btn-danger" data-paper-id="${escapeHtml(title)}">Delete</button>
       </div>
     `;
   }
@@ -128,6 +137,11 @@ async function renderUserFilesPlaceholder(container) {
       container.innerHTML = '<p class="text-danger">Failed to load files.</p>';
     }
   }
+
+
+function deleteFile(paper_id) {
+  console.log(paper_id)
+}
 
 
   
