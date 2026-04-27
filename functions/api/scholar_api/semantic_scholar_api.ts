@@ -21,9 +21,9 @@ export const onRequestGet: PagesFunction = async (context) => {
 
   const apiUrl = `https://api.semanticscholar.org/graph/v1/author/${encodeURIComponent(authorId)}?fields=name,url,papers,papers.abstract`;
   const res = await fetch(apiUrl, {
-    headers: { 'x-api-key': apiKey },
+    headers: { 'x-api-key': apiKey! },
   });
-  const json = await res.json();
+  const json = await res.json<{ author?: unknown } & Record<string, unknown>>();
   console.log(json, "semantic scholar api response")
   return Response.json({ ok: true, author: json.author ?? json });
 };

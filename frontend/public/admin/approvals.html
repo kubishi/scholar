@@ -60,6 +60,16 @@
             <!-- Status messages -->
             <div id="status-message" class="alert" style="display: none;"></div>
         </div>
+
+        <!-- Danger Zone -->
+        <div class="search-box p-4 rounded-4 mt-4 border border-danger" id="danger-zone" style="display:none;">
+            <h5 class="text-danger mb-3">Delete Published Conference</h5>
+            <p class="text-muted small">Removes the conference from D1 and Vectorize. Irreversible.</p>
+            <div class="d-flex gap-2">
+                <input type="text" id="delete-conf-id" class="form-control" placeholder="Conference ID (e.g. NEURIPS)" style="max-width: 300px;">
+                <button class="btn btn-danger" onclick="deletePublishedConference()">Delete</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
@@ -83,6 +93,8 @@
                 accessDenied.style.display = 'block';
                 return;
             }
+
+            document.getElementById('danger-zone').style.display = 'block';
 
             await loadSubmissions();
 
@@ -254,6 +266,30 @@
                 });
             } catch {
                 return dateStr;
+            }
+        }
+
+        async function deletePublishedConference() {
+            const id = document.getElementById('delete-conf-id').value.trim();
+            if (!id) return;
+            if (!confirm(`Permanently delete conference "${id}" from D1 and Vectorize?`)) return;
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch(`/api/conferences/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showStatus(`Deleted: ${id}`, 'success');
+                    document.getElementById('delete-conf-id').value = '';
+                } else {
+                    showStatus(result.error || 'Failed to delete', 'danger');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showStatus('An error occurred', 'danger');
             }
         }
 

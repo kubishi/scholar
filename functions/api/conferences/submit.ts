@@ -36,7 +36,7 @@ export const onRequestPost: PagesFunction = async (context) => {
   try {
     const body = await request.json<SubmitRequest>();
 
-    const conferenceId = body.conference_id?.trim().toUpperCase();
+    const conferenceId = body.conference_id?.trim();
     if (!conferenceId || !body.conference_name) {
       return Response.json(
         { ok: false, error: 'Missing required fields: conference_id and conference_name' },

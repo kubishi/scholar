@@ -10,6 +10,8 @@ type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
 
+
+
 export const onRequestPost: PagesFunction = async (context) => {
   const { env, data } = context;
   const user = data.user;
@@ -46,17 +48,23 @@ export const onRequestPost: PagesFunction = async (context) => {
 
     for (const submission of approved.results) {
       try {
-        // Generate embedding text
-        const embeddingText = [
-          submission.conference_name,
-          submission.topics,
-          submission.city,
-          submission.country,
-        ]
+        const papers = await getSemanticScholarPapers(submission.id, submission.conference_name, env);
+        const paperSnippets = papers
+          .map(p => p.abstract ?? p.title)
           .filter(Boolean)
-          .join(' | ');
+          .slice(0, 10)
+          .join(' ');
 
-        // Generate embedding
+        const embeddingText = [
+          `${submission.conference_name} is a research conference.`,
+          submission.topics ? `Key research areas include: ${submission.topics}.` : '',
+          paperSnippets ? `Recent accepted work: ${paperSnippets}` : '',
+          submission.city || submission.country
+            ? `Location: ${[submission.city, submission.country].filter(Boolean).join(', ')}.`
+            : '',
+        ].filter(Boolean).join(' ');
+        console.log(`[${submission.id}] ${papers.length} papers used:`, papers.map(p => p.title));
+        console.log(`[${submission.id}] first 5 abstracts:`, papers.slice(0, 5).map(p => p.abstract));
         const vector = await getEmbedding(embeddingText, env.OPENAI_API_KEY);
 
         // Upsert to conferences table
@@ -83,6 +91,7 @@ export const onRequestPost: PagesFunction = async (context) => {
           deadline: submission.deadline ?? undefined,
           start_date: submission.start_date ?? undefined,
           end_date: submission.end_date ?? undefined,
+          enriched_paper_count: papers.length,
         };
         await upsertVector(env, submission.id, vector, metadata);
 
@@ -110,3 +119,41 @@ export const onRequestPost: PagesFunction = async (context) => {
     );
   }
 };
+
+// Fetch the pepers submitted to semantic scholar of this conference
+export async function getSemanticScholarPapers(acronym: string, conferenceName: string, env: Env) {
+  // Try: acronym + full name
+  const queries = [acronym, conferenceName].filter(Boolean);
+  const seen = new Set<string>();
+  const allPapers: Array<{ title?: string; abstract?: string; venue?: string }> = [];
+
+  for (const query of queries) {
+    const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(query)}&fields=title,abstract,venue&limit=30`;
+    
+    const res = await fetch(url, {
+      headers: { 'x-api-key': env.SEMANTIC_SCHOLAR_API_KEY! }
+    });
+
+    if (!res.ok) {
+      console.warn(`Semantic Scholar query failed for "${query}": ${res.status}`);
+      continue;
+    }
+
+    const data = await res.json<{ data?: Array<{ paperId?: string; title?: string; abstract?: string; venue?: string }> }>();
+    
+    for (const p of data.data ?? []) {
+      if (!p.paperId || seen.has(p.paperId)) continue;
+      const venue = p.venue?.toLowerCase() ?? '';
+      if (
+        venue.includes(acronym.toLowerCase()) ||
+        venue.includes(conferenceName.toLowerCase())
+      ) {
+        seen.add(p.paperId);
+        allPapers.push(p);
+      }
+    }
+  }
+
+  console.log(`[${acronym}] Found ${allPapers.length} matching papers`);
+  return allPapers;
+}

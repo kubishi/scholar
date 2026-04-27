@@ -41,3 +41,5 @@ export const onRequestPost: PagesFunction = async (context) => {
     await rebuildUserVector(user.id, env);
     return Response.json({ ok: true });
 }
+
+

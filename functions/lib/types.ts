@@ -104,6 +104,7 @@ export interface ConferenceVectorMetadata {
   deadline?: string;
   start_date?: string;
   end_date?: string;
+  enriched_paper_count?: number;
 }
 
 /** Metadata for paper vectors; vector id = paper_id (links to user_papers.paper_id) */

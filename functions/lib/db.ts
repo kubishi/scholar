@@ -245,6 +245,13 @@ export async function deleteSubmission(db: D1Database, id: string): Promise<void
 }
 
 /**
+ * Delete a published conference from D1 (cascade handles rankings/favorites/ratings)
+ */
+export async function deleteConference(db: D1Database, id: string): Promise<void> {
+  await db.prepare('DELETE FROM conferences WHERE id = ?').bind(id).run();
+}
+
+/**
  * Insert or update conference
  */
 export async function upsertConference(
