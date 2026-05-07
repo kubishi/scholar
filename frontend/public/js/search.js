@@ -6,13 +6,13 @@ let lastSearchRatings = {};
 let lastSearchAverages = {};
 let lastRecommendation = null;
 let currentSortOrder = 'score';
-let recomendationBtn = null;
+let recommendationBtn = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-  recomendationBtn = document.getElementById('recomendation-btn');
-  if (recomendationBtn) {
+  recommendationBtn = document.getElementById('recommendation-btn');
+  if (recommendationBtn) {
     console.log('Attaching recommendation button listener');
-    recomendationBtn.addEventListener('click', onRecomendationClick);
+    recommendationBtn.addEventListener('click', onRecommendationClick);
   }
 
   const rankingSourceSelect = document.getElementById('ranking-source');
@@ -119,7 +119,7 @@ async function handleSearch(event) {
 }
 
 
-function renderResults(results, userRatings = {}, averages = {}, recomendation = null) {
+function renderResults(results, userRatings = {}, averages = {}, recommendation = null) {
   const container = document.getElementById('results-container');
 
   if (!results || results.length === 0) {
@@ -133,7 +133,7 @@ function renderResults(results, userRatings = {}, averages = {}, recomendation =
 
   container.innerHTML = `
     <h4 class="mb-3">Conference Results (${sorted.length})</h4>
-    ${recomendation ? `<p class="recommendation-explanation mb-3">${String(recomendation).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>` : ''}
+    ${recommendation ? `<p class="recommendation-explanation mb-3">${String(recommendation).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>` : ''}
     <div class="d-flex align-items-center gap-2 mb-3">
       <label for="results-sort" class="form-label mb-0">Sort by:</label>
       <select id="results-sort" class="form-select form-select-sm" style="max-width: 200px;" aria-label="Sort results">
@@ -161,7 +161,7 @@ function renderResults(results, userRatings = {}, averages = {}, recomendation =
 }
 
 
-function renderConferenceCard(conf, index, ratings = {}, average = null, recomendation = null) {
+function renderConferenceCard(conf, index, ratings = {}, average = null) {
   const isFavorite = window.userFavorites?.includes(conf.id);
   const isLoggedIn = !!window.currentUser;
 
@@ -407,18 +407,18 @@ function handleRankingSourceChange(event) {
 }
 
 
-async function onRecomendationClick(event) {
-  const spinner = document.getElementById('recomendation-spinner');
+async function onRecommendationClick(event) {
+  const spinner = document.getElementById('recommendation-spinner');
   if (event) event.preventDefault();
   console.log('Recommendation button clicked');
-  recomendationBtn.disabled = true;
-  let original_button = recomendationBtn.innerHTML;
+  recommendationBtn.disabled = true;
+  let original_button = recommendationBtn.innerHTML;
   spinner.style.display = 'block';
   try{
 
     const token = await getAuthToken();
     if (!token) return;
-    const response = await fetch(`${window.API_BASE}/api/recomendation-confs`, {
+    const response = await fetch(`${window.API_BASE}/api/recommendation-confs`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
     const data = await response.json();
@@ -427,12 +427,12 @@ async function onRecomendationClick(event) {
     lastSearchResults = data.results;
     lastSearchRatings = ratings;
     lastSearchAverages = averages;
-    lastRecommendation = data.recomendation || null;
+    lastRecommendation = data.recommendation || null;
     currentSortOrder = 'score';
     renderResults(data.results, ratings, averages, lastRecommendation);
   } finally {
-    recomendationBtn.disabled = false;
-    recomendationBtn.innerHTML = original_button
+    recommendationBtn.disabled = false;
+    recommendationBtn.innerHTML = original_button
     spinner.style.display = 'none';
   }
 } 

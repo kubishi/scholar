@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     resultsContainer.innerHTML = '<p class="text-muted">Loading recommendations...</p>';
     try {
       const token = await getAuthToken();
-      const res = await fetch(`${window.API_BASE || ''}/api/friends/recomendation`, {
+      const res = await fetch(`${window.API_BASE || ''}/api/friends/recommendation`, {
         headers: { 'Authorization': 'Bearer ' + token },
       });
       const data = await res.json();

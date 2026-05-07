@@ -111,7 +111,7 @@ export async function getPdfSummary(text: string, apiKey: string): Promise<strin
   return data.choices[0].message.content.trim();
 }
 
-export async function getRecomendation(user_info: string, conferences: string, apiKey: string): Promise<string> {
+export async function getRecommendation(user_info: string, conferences: string, apiKey: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {

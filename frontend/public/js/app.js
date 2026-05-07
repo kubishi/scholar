@@ -156,7 +156,7 @@ async function ragChatSearch(e) {
   e.preventDefault();
   user_input = document.getElementById('chatInput').value
 
-  const spinner = document.getElementById('chat-recomendation-spinner');
+  const spinner = document.getElementById('chat-recommendation-spinner');
   spinner.style.display = 'block';
 
   if (!user_input) {

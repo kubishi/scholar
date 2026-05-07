@@ -1,5 +1,5 @@
 import type { Env, AuthContext } from '../lib/types';
-import { getRecomendation } from '../lib/openai';
+import { getRecommendation } from '../lib/openai';
 import { get_user_papers, get_user_profile, getConferencesByIds } from '../lib/db';
 import { vectorSearch } from '../lib/vectorize';
 import { buildUserBlob } from '../lib/buildUserVector';
@@ -41,12 +41,12 @@ export const onRequestGet: PagesFunction = async (context) => {
         const conferences = await getConferencesByIds(env.DB, vecResults.map((r) => r.id));
 
         const userBlob = buildUserBlob(profile, papers, [], []);
-        const recomendation = await getRecomendation(userBlob, JSON.stringify(conferences), env.OPENAI_API_KEY);
+        const recommendation = await getRecommendation(userBlob, JSON.stringify(conferences), env.OPENAI_API_KEY);
 
         return Response.json({
             ok: true,
             results: conferences,
-            recomendation,
+            recommendation,
             count: conferences.length,
           });
     } catch (error) {
