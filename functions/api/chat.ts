@@ -138,5 +138,6 @@ export const onRequestPost: PagesFunction = async (context) => {
     }
   }
 
-  return Response.json({ ok: false, error: 'Could not make a response for you. Try something else.' }, { status: 500 });
+  return Response.json({ ok: true, reply: "Could not make a response for you. Try something else." });
+
 };
