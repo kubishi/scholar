@@ -12,7 +12,7 @@ async def fetch_page_content(url: str, max_retries: int = 3) -> Optional[str]:
     for attempt in range(max_retries):
         try:
             # Use Worker's native async fetch instead of requests
-            response = await fetch(url, headers=headers)
+            response = await fetch(url, {"headers": headers})
             if response.status != 200:
                 if response.body:
                     response.body.cancel()  # prevent memory leaks
@@ -55,7 +55,7 @@ async def extract_conference_details(page_content: str, api_key: str):
                     "Title": {"type": "string", "description": "The official name of the conference/event."},
                     "topics": {
                         "type": "string",
-                        "description": "Top 10 Main Computer Science topics separated by newline"
+                        "description": "Up to 10 main topics of the conference, one per line, no bullets or numbering (e.g. 'Distributed Algorithms\\nFault Tolerance\\nGraph Theory')"
                     }
                 },
                 "required": [

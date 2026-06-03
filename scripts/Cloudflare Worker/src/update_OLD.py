@@ -1,9 +1,15 @@
-from workers import WorkerEntrypoint, Response, fetch
-import json
+from workers import WorkerEntrypoint, Response
 
 # Assuming these are your local helper modules
 from scraper import fetch_page_content, extract_conference_details
 from GPTsearchURL import brave_search_conference_website
+
+def _normalize_topics(topics):
+    if isinstance(topics, list):
+        return "\n".join(t.strip().strip('"') for t in topics if t.strip())
+    cleaned = str(topics).strip().strip("[]")
+    items = [t.strip().strip('"') for t in cleaned.split(",") if t.strip()]
+    return "\n".join(items)
 
 class Default(WorkerEntrypoint):
     # 1. THE AUTOMATION ENTRY POINT
@@ -13,20 +19,20 @@ class Default(WorkerEntrypoint):
         await self.perform_updates()
 
     # 2. THE MANUAL ENTRY POINT (Optional)
-    # Allows you to trigger the update by visiting the Worker's URL
+    # Allows you to trigger the update byF visiting the Worker's URL
     async def fetch(self, request):
         await self.perform_updates()
         return Response("Update process completed successfully.")
 
     # 3. THE CORE LOGIC
     async def perform_updates(self):
-        # Fetch the 3 oldest conferences that need updating
+        # Fetch the 10 oldest conferences that need updating
         # Use .to_py() to convert the JavaScript result into a Python list
         res = await self.env.DB.prepare(
         "SELECT id, title, acronym, url, start_date "
         "FROM conferences "
         "WHERE start_date < DATE('now') "
-        "ORDER BY start_date DESC "
+        "ORDER BY start_date ASC "
         "LIMIT 10"
         ).all()
         
@@ -54,7 +60,7 @@ class Default(WorkerEntrypoint):
                     # Update D1 Database
                     # We use an UPSERT (INSERT ... ON CONFLICT) for SQLite
                     sql = """
-                    INSERT INTO submitted_conf (
+                    INSERT INTO submitted_conferences (
                         id, conference_name, city, country, deadline, 
                         start_date, end_date, topics, url, submitter_id, 
                         submitter_name, submitter_email, edit_type, status, submitted_at
@@ -84,18 +90,18 @@ class Default(WorkerEntrypoint):
                         details.get("deadline"),                    # deadline
                         details.get("start"),                       # start_date
                         details.get("end"),                         # end_date
-                        json.dumps(details.get("topics", [])),      # topics (stored as JSON string)
+                        _normalize_topics(details.get("topics", "")),  # topics (newline-separated)
                         url,                                        # url
                         "system-bot",                               # submitter_id
                         "Automation Worker",                        # submitter_name
-                        "admin@yourdomain.com",                     # submitter_email
+                        "admin@kubishi.com",                        # submitter_email
                         "auto-update"                               # edit_type
                     ).run()
                     
                     print(f"Successfully updated: {conf.get('title')}")
                 else:
-                    print(f"No new URL found for {conf.get('title')}")
+                    print(f"No new URL found for {conf.get('id')}")
 
             except Exception as e:
                 # Log error but continue with the next conference
-                print(f"Error processing {conf.get('title', 'Unknown')}: {str(e)}")
+                print(f"Error processing {conf.get('id', 'Unknown')}: {str(e)}")

@@ -21,7 +21,7 @@ async def brave_search_conference_website(conf_name, conf_acronym, env, count=10
     
     try:
         # Perform the asynchronous fetch
-        response = await fetch(url, headers=headers)
+        response = await fetch(url, {"headers": headers})
         
         if response.status != 200:
             return None

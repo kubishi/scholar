@@ -191,3 +191,5 @@ node_modules/
 # Wrangler
 .wrangler/
 .dev.vars
+python_modules/
+.venv-workers/
