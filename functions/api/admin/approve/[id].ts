@@ -11,7 +11,8 @@ type PagesFunction<E = Env> = (
 export const onRequestPost: PagesFunction = async (context) => {
   const { env, data, params } = context;
   const user = data.user;
-  const submissionId = params.id as string;
+  const rawId = params.id as string;
+  const submissionId = decodeURIComponent(Array.isArray(rawId) ? rawId[0] : rawId);
 
   if (!user) {
     return Response.json(
