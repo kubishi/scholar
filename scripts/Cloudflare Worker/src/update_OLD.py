@@ -1,7 +1,7 @@
 from workers import WorkerEntrypoint, Response
 
 # Assuming these are your local helper modules
-from scraper import fetch_page_content, extract_conference_details
+from scraper import crawl_conference_site, extract_conference_details
 from GPTsearchURL import brave_search_conference_website
 
 def _normalize_topics(topics):
@@ -33,7 +33,7 @@ class Default(WorkerEntrypoint):
         "FROM conferences "
         "WHERE start_date < DATE('now') "
         "ORDER BY start_date ASC "
-        "LIMIT 10"
+
         ).all()
         
         conferences = res.results.to_py()
@@ -49,7 +49,7 @@ class Default(WorkerEntrypoint):
                 
                 if url and url != conf.get("url"):
                 # FIX 2: fetch_page_content is already async in your file, just await it
-                    page_content = await fetch_page_content(url) 
+                    page_content = await crawl_conference_site(url)
             
                     if not page_content:
                         continue

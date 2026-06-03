@@ -1,35 +1,82 @@
 from js import fetch, Headers
-
+from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 import json
 from typing import Optional
 
-async def fetch_page_content(url: str, max_retries: int = 3) -> Optional[str]:
+CRAWL_KEYWORDS = ["dates", "cfp", "call-for-papers", "call", "submission", "papers", "important", "deadline", "program"]
+
+def _make_headers():
     headers = Headers.new()
     headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
     headers.set("Referer", "https://research.kubishi.com")
-    
+    return headers
+
+async def _fetch_html(url: str, max_retries: int = 2) -> Optional[str]:
+    headers = _make_headers()
     for attempt in range(max_retries):
         try:
-            # Use Worker's native async fetch instead of requests
             response = await fetch(url, {"headers": headers})
             if response.status != 200:
                 if response.body:
-                    response.body.cancel()  # prevent memory leaks
+                    response.body.cancel()
                 continue
-                
-            html_text = await response.text()
-            soup = BeautifulSoup(html_text, "html.parser")
-            
-            for script_or_style in soup(["script", "style"]):
-                script_or_style.extract()
-                
-            page_content = soup.get_text(separator="\n")
-            return "\n".join(line.strip() for line in page_content.splitlines() if line.strip())
+            return await response.text()
         except Exception as e:
             print(f"Attempt {attempt + 1} failed for {url}: {e}")
-            # Note: time.sleep() is not supported; Workers use async/await for flow control
     return None
+
+def _html_to_text(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style"]):
+        tag.extract()
+    text = soup.get_text(separator="\n")
+    return "\n".join(line.strip() for line in text.splitlines() if line.strip())
+
+def _extract_relevant_links(html: str, base_url: str) -> list:
+    soup = BeautifulSoup(html, "html.parser")
+    base_domain = urlparse(base_url).netloc
+    seen = set()
+    links = []
+    for a in soup.find_all("a", href=True):
+        href = a.get("href", "").strip()
+        text = a.get_text().lower().strip()
+        if not href or href.startswith("#") or href.startswith("mailto:"):
+            continue
+        full_url = urljoin(base_url, href).split("#")[0]
+        if urlparse(full_url).netloc != base_domain:
+            continue
+        if full_url in seen or full_url == base_url:
+            continue
+        combined = (text + " " + href).lower()
+        if any(kw in combined for kw in CRAWL_KEYWORDS):
+            seen.add(full_url)
+            links.append(full_url)
+    return links
+
+async def fetch_page_content(url: str, max_retries: int = 3) -> Optional[str]:
+    html = await _fetch_html(url, max_retries)
+    if not html:
+        return None
+    return _html_to_text(html)
+
+async def crawl_conference_site(url: str, max_subpages: int = 3) -> Optional[str]:
+    html = await _fetch_html(url)
+    if not html:
+        return None
+
+    sections = [f"[Main Page]\n{_html_to_text(html)}"]
+
+    for sub_url in _extract_relevant_links(html, url)[:max_subpages]:
+        try:
+            sub_html = await _fetch_html(sub_url)
+            if sub_html:
+                sections.append(f"[{sub_url}]\n{_html_to_text(sub_html)}")
+                print(f"Crawled sub-page: {sub_url}")
+        except Exception as e:
+            print(f"Failed to fetch sub-page {sub_url}: {e}")
+
+    return "\n\n".join(sections)
 
 async def extract_conference_details(page_content: str, api_key: str):
 
@@ -46,10 +93,10 @@ async def extract_conference_details(page_content: str, api_key: str):
                 "type": "object",
                 "properties": {
                     "Acronym": {"type": "string", "description": "The acronym of the conference/event."},
-                    "deadline": {"type": "string", "format": "date-time", "description": "The date when the application submission is due."},
-                    "notification": {"type": "string", "format": "date-time", "description": "The date when notification is sent to the applicants."},
-                    "start": {"type": "string", "format": "date-time", "description": "The start date of the conference/event."},
-                    "end": {"type": "string", "format": "date-time", "description": "The end date of the conference/event."},
+                    "deadline": {"type": "string", "description": "Submission deadline. Must be in YYYY-MM-DD format only."},
+                    "notification": {"type": "string", "description": "Notification date. Must be in YYYY-MM-DD format only."},
+                    "start": {"type": "string", "description": "Conference start date. Must be in YYYY-MM-DD format only."},
+                    "end": {"type": "string", "description": "Conference end date. Must be in YYYY-MM-DD format only."},
                     "city": {"type": "string", "description": "The city where the conference/event is held."},
                     "country": {"type": "string", "description": "The country where the conference/event is held."},
                     "Title": {"type": "string", "description": "The official name of the conference/event."},
@@ -79,7 +126,7 @@ async def extract_conference_details(page_content: str, api_key: str):
         "messages": [
             {
                 "role": "system",
-                "content": "Extract relevant conference details and call the function."
+                "content": "Extract conference details from the page and call the function. Only use information explicitly stated on the page. All dates must be in YYYY-MM-DD format. Do not guess or infer dates that are not clearly written on the page."
             },
             {
                 "role": "user",
