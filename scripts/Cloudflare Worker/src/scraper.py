@@ -28,7 +28,7 @@ async def _fetch_html(url: str, max_retries: int = 2) -> Optional[str]:
 
 def _html_to_text(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
-    for tag in soup(["script", "style"]):
+    for tag in soup(["script", "style", "s", "del", "strike"]):
         tag.extract()
     text = soup.get_text(separator="\n")
     return "\n".join(line.strip() for line in text.splitlines() if line.strip())

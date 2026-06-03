@@ -40,13 +40,28 @@ async def brave_search_conference_website(conf_name, conf_acronym, env, count=10
             "link.springer.com", "clocate.com", "myhuiban.com"
         ]
 
+        preferred_tlds = {".org", ".com", ".net", ".io", ".edu", ".gov"}
+
+        preferred = []
+        fallback = []
+
         for item in items:
             candidate = item.get("url")
             if not candidate:
                 continue
             host = urlparse(candidate).hostname or ""
-            if not any(bad in host for bad in blacklist):
-                return candidate 
+            if any(bad in host for bad in blacklist):
+                continue
+            # Check if TLD is generic/preferred or academic (.ac.xx)
+            if any(host.endswith(tld) for tld in preferred_tlds) or ".ac." in host:
+                preferred.append(candidate)
+            else:
+                fallback.append(candidate)
+
+        if preferred:
+            return preferred[0]
+        if fallback:
+            return fallback[0]
 
     except Exception as e:
         print(f"Brave Search Error: {e}")

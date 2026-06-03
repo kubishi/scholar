@@ -26,14 +26,25 @@ class Default(WorkerEntrypoint):
 
     # 3. THE CORE LOGIC
     async def perform_updates(self):
-        # Fetch the 10 oldest conferences that need updating
-        # Use .to_py() to convert the JavaScript result into a Python list
+        #Upcoming + no deadline
+        #Upcoming + deadline within 60 days
+        #Past, within last 2 years
         res = await self.env.DB.prepare(
-        "SELECT id, title, acronym, url, start_date "
+        "SELECT id, title, acronym, url, start_date, deadline, "
+        "  CASE "
+        "    WHEN start_date > DATE('now') AND (deadline IS NULL OR deadline = '') THEN 0 "
+        "    WHEN start_date > DATE('now') AND deadline > DATE('now') AND deadline < DATE('now', '+60 days') THEN 1 "
+        "    WHEN start_date < DATE('now') AND start_date > DATE('now', '-2 years') THEN 2 "
+        "    ELSE 3 "
+        "  END AS priority "
         "FROM conferences "
-        "WHERE start_date < DATE('now') "
-        "ORDER BY start_date ASC "
-
+        "WHERE ("
+        "  (start_date > DATE('now') AND (deadline IS NULL OR deadline = '')) "
+        "  OR (start_date > DATE('now') AND deadline > DATE('now') AND deadline < DATE('now', '+60 days')) "
+        "  OR (start_date < DATE('now') AND start_date > DATE('now', '-2 years')) "
+        ") "
+        "ORDER BY priority ASC, start_date ASC "
+        "LIMIT 50"
         ).all()
         
         conferences = res.results.to_py()
