@@ -187,6 +187,8 @@
                             </span>
                         </div>
                         <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" onclick="toggleCompare('${sub.id}')">Compare</button>
+                            <button class="btn btn-outline-primary" onclick="toggleEdit('${sub.id}')">Edit</button>
                             ${sub.status === 'waiting' ? `
                                 <button class="btn btn-success" onclick="approveSubmission('${sub.id}')">Approve</button>
                             ` : ''}
@@ -202,6 +204,8 @@
                             <strong>URL:</strong> ${sub.url ? `<a href="${sub.url}" target="_blank">${sub.url}</a>` : 'N/A'}
                         </p>
                         <p><strong>Topics:</strong><br>${(sub.topics || '').replace(/\n/g, ', ')}</p>
+                        <div id="compare-${sub.id}" style="display:none;"></div>
+                        <div id="edit-${sub.id}" style="display:none;"></div>
                         <hr>
                         <p class="small text-muted mb-0">
                             Submitted by: ${sub.submitter_name} (${sub.submitter_email})<br>
@@ -210,6 +214,165 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function toggleEdit(id) {
+            const editDiv = document.getElementById(`edit-${id}`);
+            if (editDiv.style.display !== 'none') {
+                editDiv.style.display = 'none';
+                return;
+            }
+
+            const sub = submissions.find(s => s.id === id);
+            if (!sub) return;
+
+            editDiv.innerHTML = `
+                <div class="mt-3 p-3 border rounded bg-light">
+                    <h6 class="mb-3">Edit Submission</h6>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Conference Name</label>
+                            <input class="form-control form-control-sm" id="edit-name-${id}" value="${sub.conference_name || ''}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">City</label>
+                            <input class="form-control form-control-sm" id="edit-city-${id}" value="${sub.city || ''}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Country</label>
+                            <input class="form-control form-control-sm" id="edit-country-${id}" value="${sub.country || ''}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Deadline</label>
+                            <input type="date" class="form-control form-control-sm" id="edit-deadline-${id}" value="${sub.deadline || ''}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Start Date</label>
+                            <input type="date" class="form-control form-control-sm" id="edit-start-${id}" value="${sub.start_date || ''}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">End Date</label>
+                            <input type="date" class="form-control form-control-sm" id="edit-end-${id}" value="${sub.end_date || ''}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">URL</label>
+                            <input class="form-control form-control-sm" id="edit-url-${id}" value="${sub.url || ''}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Topics (one per line)</label>
+                            <textarea class="form-control form-control-sm" id="edit-topics-${id}" rows="5">${sub.topics || ''}</textarea>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex gap-2">
+                        <button class="btn btn-primary btn-sm" onclick="saveEdit('${id}')">Save</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('edit-${id}').style.display='none'">Cancel</button>
+                    </div>
+                </div>`;
+            editDiv.style.display = 'block';
+        }
+
+        async function saveEdit(id) {
+            const body = {
+                conference_name: document.getElementById(`edit-name-${id}`).value.trim(),
+                city:            document.getElementById(`edit-city-${id}`).value.trim() || null,
+                country:         document.getElementById(`edit-country-${id}`).value.trim() || null,
+                deadline:        document.getElementById(`edit-deadline-${id}`).value || null,
+                start_date:      document.getElementById(`edit-start-${id}`).value || null,
+                end_date:        document.getElementById(`edit-end-${id}`).value || null,
+                url:             document.getElementById(`edit-url-${id}`).value.trim() || null,
+                topics:          document.getElementById(`edit-topics-${id}`).value.trim() || null,
+            };
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch(`/api/admin/submissions/${encodeURIComponent(id)}`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showStatus(`Saved: ${id}`, 'success');
+                    await loadSubmissions();
+                } else {
+                    showStatus(result.error || 'Failed to save', 'danger');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                showStatus('An error occurred', 'danger');
+            }
+        }
+
+        const compareCache = {};
+
+        async function toggleCompare(id) {
+            const compareDiv = document.getElementById(`compare-${id}`);
+            if (compareDiv.style.display !== 'none') {
+                compareDiv.style.display = 'none';
+                return;
+            }
+
+            compareDiv.style.display = 'block';
+            compareDiv.innerHTML = '<div class="text-muted small mt-2">Loading comparison...</div>';
+
+            const sub = submissions.find(s => s.id === id);
+            if (!sub) return;
+
+            if (!(id in compareCache)) {
+                try {
+                    const response = await fetch(`/api/conferences/${encodeURIComponent(id)}`);
+                    const data = await response.json();
+                    compareCache[id] = data.ok ? data.conference : null;
+                } catch {
+                    compareCache[id] = null;
+                }
+            }
+
+            const orig = compareCache[id];
+
+            if (!orig) {
+                compareDiv.innerHTML = `
+                    <div class="alert alert-info mb-0 mt-2 small">
+                        <strong>New conference</strong> — no existing record in the database.
+                    </div>`;
+                return;
+            }
+
+            const fields = [
+                { label: 'Name',     origVal: orig.title,                  subVal: sub.conference_name },
+                { label: 'City',     origVal: orig.city,                   subVal: sub.city },
+                { label: 'Country',  origVal: orig.country,                subVal: sub.country },
+                { label: 'Deadline', origVal: formatDate(orig.deadline),   subVal: formatDate(sub.deadline) },
+                { label: 'Start',    origVal: formatDate(orig.start_date), subVal: formatDate(sub.start_date) },
+                { label: 'End',      origVal: formatDate(orig.end_date),   subVal: formatDate(sub.end_date) },
+                { label: 'URL',      origVal: orig.url,                    subVal: sub.url },
+                { label: 'Topics',   origVal: orig.topics,                 subVal: sub.topics },
+            ];
+
+            const rows = fields.map(({ label, origVal, subVal }) => {
+                const changed = (origVal || '') !== (subVal || '');
+                const fmt = v => v ? v.replace(/\n/g, '<br>') : '<span class="text-muted">—</span>';
+                const origBg = changed ? 'background:#ffd6d6;' : '';
+                const subBg  = changed ? 'background:#d6f5d6;' : '';
+                return `
+                    <tr>
+                        <td class="fw-semibold small">${label}</td>
+                        <td class="small" style="${origBg}">${fmt(origVal)}</td>
+                        <td class="small" style="${subBg}">${fmt(subVal)}</td>
+                    </tr>`;
+            }).join('');
+
+            compareDiv.innerHTML = `
+                <div class="mt-3">
+                    <table class="table table-sm table-bordered mb-0">
+                            <tr>
+                                <th style="width:12%">Field</th>
+                                <th style="width:44%">Original (Published)</th>
+                                <th style="width:44%">Submitted (New)</th>
+                            </tr>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>`;
         }
 
         async function approveSubmission(id) {

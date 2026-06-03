@@ -238,6 +238,47 @@ export async function updateSubmissionStatus(
 }
 
 /**
+ * Update editable fields of a submission
+ */
+export async function updateSubmission(
+  db: D1Database,
+  id: string,
+  fields: {
+    conference_name?: string;
+    city?: string;
+    country?: string;
+    deadline?: string;
+    start_date?: string;
+    end_date?: string;
+    url?: string;
+    topics?: string;
+  }
+): Promise<void> {
+  await db.prepare(`
+    UPDATE submitted_conferences SET
+      conference_name = ?,
+      city = ?,
+      country = ?,
+      deadline = ?,
+      start_date = ?,
+      end_date = ?,
+      url = ?,
+      topics = ?
+    WHERE id = ?
+  `).bind(
+    fields.conference_name ?? null,
+    fields.city ?? null,
+    fields.country ?? null,
+    fields.deadline ?? null,
+    fields.start_date ?? null,
+    fields.end_date ?? null,
+    fields.url ?? null,
+    fields.topics ?? null,
+    id
+  ).run();
+}
+
+/**
  * Delete submission
  */
 export async function deleteSubmission(db: D1Database, id: string): Promise<void> {
