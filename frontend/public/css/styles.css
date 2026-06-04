@@ -82,6 +82,7 @@ body {
 
 .title_subtext {
   font-size: 10pt;
+  font-weight: bold;
 }
 
 .conference_count {
