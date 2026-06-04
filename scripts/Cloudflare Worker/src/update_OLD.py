@@ -2,7 +2,7 @@ from workers import WorkerEntrypoint, Response
 
 # Assuming these are your local helper modules
 from scraper import crawl_conference_site, extract_conference_details
-from GPTsearchURL import brave_search_conference_website
+from BRAVEsearchURL import brave_search_conference_website
 
 def _normalize_topics(topics):
     if isinstance(topics, list):
@@ -59,7 +59,6 @@ class Default(WorkerEntrypoint):
                 )
                 
                 if url and url != conf.get("url"):
-                # FIX 2: fetch_page_content is already async in your file, just await it
                     page_content = await crawl_conference_site(url)
             
                     if not page_content:
@@ -71,15 +70,16 @@ class Default(WorkerEntrypoint):
                     # Update D1 Database
                     sql = """
                     INSERT INTO submitted_conferences (
-                        id, conference_name, city, country, deadline, 
-                        start_date, end_date, topics, url, submitter_id, 
+                        id, conference_name, city, country, deadline,
+                        notification, start_date, end_date, topics, url, submitter_id,
                         submitter_name, submitter_email, edit_type, status, submitted_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'waiting', datetime('now'))
-                    ON CONFLICT(id) DO UPDATE SET 
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'waiting', datetime('now'))
+                    ON CONFLICT(id) DO UPDATE SET
                         conference_name = excluded.conference_name,
                         city = excluded.city,
                         country = excluded.country,
                         deadline = excluded.deadline,
+                        notification = excluded.notification,
                         start_date = excluded.start_date,
                         end_date = excluded.end_date,
                         topics = excluded.topics,
@@ -91,13 +91,14 @@ class Default(WorkerEntrypoint):
                         status = 'waiting',
                         submitted_at = datetime('now')
                     """
-                    
+
                     await self.env.DB.prepare(sql).bind(
                         conf["id"],                                 # id
                         details.get("Title", conf["title"]),        # conference_name
                         details.get("city"),                        # city
                         details.get("country"),                     # country
                         details.get("deadline"),                    # deadline
+                        details.get("notification"),                # notification
                         details.get("start"),                       # start_date
                         details.get("end"),                         # end_date
                         _normalize_topics(details.get("topics", "")),  # topics (newline-separated)

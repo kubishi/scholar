@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS submitted_conferences (
     city TEXT,
     country TEXT,
     deadline TEXT,
+    notification TEXT,
     start_date TEXT,
     end_date TEXT,
     topics TEXT,

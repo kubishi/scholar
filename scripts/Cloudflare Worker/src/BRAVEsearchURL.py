@@ -7,7 +7,7 @@ async def brave_search_conference_website(conf_name, conf_acronym, env, count=10
     api_key = env.BRAVE_API_KEY
     
     # Workers are non-blocking; we use the current year for the search query
-    year = 2026 
+    year = datetime.now().year
     query_text = f"Find me the {year} conference website for the {conf_name} ({conf_acronym})"
     encoded_query = quote(query_text)
     
