@@ -97,8 +97,8 @@ export async function lexicalSearch(
   query: string,
   topK: number = 50
 ): Promise<Array<{ id: string; score: number }>> {
-  // Escape special FTS5 characters and create query
-  const escapedQuery = query.replace(/['"]/g, '').trim();
+  // Strip characters FTS5 treats as syntax (commas, colons, parens, etc.)
+  const escapedQuery = query.replace(/[^\w\s]/g, ' ').replace(/\s+/g, ' ').trim();
   if (!escapedQuery) return [];
 
   // FTS5 MATCH with BM25 scoring (lower is better, negate for descending)

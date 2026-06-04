@@ -69,7 +69,6 @@ class Default(WorkerEntrypoint):
                     details = await extract_conference_details(page_content, self.env.OPENAI_API_KEY)
                     
                     # Update D1 Database
-                    # We use an UPSERT (INSERT ... ON CONFLICT) for SQLite
                     sql = """
                     INSERT INTO submitted_conferences (
                         id, conference_name, city, country, deadline, 
