@@ -37,6 +37,9 @@
 
             <div class="d-flex gap-2 mb-4">
                 <a href="/" class="btn btn-outline-dark">&larr; Back to Search</a>
+                <button id="approve-all-btn" class="btn btn-warning" style="display: none;">
+                    Approve All Waiting
+                </button>
                 <button id="publish-all-btn" class="btn btn-success" style="display: none;">
                     Publish All Approved
                 </button>
@@ -85,6 +88,7 @@
             const loading = document.getElementById('loading');
             const accessDenied = document.getElementById('access-denied');
             const container = document.getElementById('submissions-container');
+            const approveAllBtn = document.getElementById('approve-all-btn');
             const publishAllBtn = document.getElementById('publish-all-btn');
             const statusMessage = document.getElementById('status-message');
 
@@ -97,6 +101,36 @@
             document.getElementById('danger-zone').style.display = 'block';
 
             await loadSubmissions();
+
+            // Approve all waiting button
+            approveAllBtn.addEventListener('click', async () => {
+                const waitingCount = submissions.filter(s => s.status === 'waiting').length;
+                if (!confirm(`Approve all ${waitingCount} waiting submission(s)?`)) return;
+
+                approveAllBtn.disabled = true;
+                approveAllBtn.textContent = 'Approving...';
+
+                try {
+                    const token = await getAuthToken();
+                    const response = await fetch('/api/admin/submissions', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                    });
+                    const result = await response.json();
+                    if (result.ok) {
+                        showStatus(`Approved ${result.count} submission(s)`, 'success');
+                        await loadSubmissions();
+                    } else {
+                        showStatus(result.error || 'Failed to approve all', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Approve-all error:', error);
+                    showStatus('An error occurred', 'danger');
+                } finally {
+                    approveAllBtn.disabled = false;
+                    approveAllBtn.textContent = 'Approve All Waiting';
+                }
+            });
 
             // Publish all button
             publishAllBtn.addEventListener('click', async () => {
@@ -133,6 +167,7 @@
         async function loadSubmissions() {
             const loading = document.getElementById('loading');
             const container = document.getElementById('submissions-container');
+            const approveAllBtn = document.getElementById('approve-all-btn');
             const publishAllBtn = document.getElementById('publish-all-btn');
 
             loading.style.display = 'block';
@@ -155,7 +190,9 @@
                 submissions = data.submissions || [];
                 renderSubmissions();
 
+                const hasWaiting = submissions.some(s => s.status === 'waiting');
                 const hasApproved = submissions.some(s => s.status === 'approved');
+                approveAllBtn.style.display = hasWaiting ? 'inline-block' : 'none';
                 publishAllBtn.style.display = hasApproved ? 'inline-block' : 'none';
             } catch (error) {
                 console.error('Load error:', error);

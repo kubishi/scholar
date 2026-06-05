@@ -6,6 +6,7 @@ let lastSearchRatings = {};
 let lastSearchAverages = {};
 let lastRecommendation = null;
 let currentSortOrder = 'score';
+let currentSortDirection = 'asc';
 let recommendationBtn = null;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -22,21 +23,27 @@ document.addEventListener('DOMContentLoaded', function () {
  * Sort conference array by score (original order), name, start date, or deadline.
  * Returns a new array; does not mutate.
  */
-function sortResults(results, sortBy) {
+function sortResults(results, sortBy, direction = 'asc') {
   if (!results?.length) return [];
-  if (sortBy === 'score') return [...results];
+
+  const dir = direction === 'desc' ? -1 : 1;
+
+  if (sortBy === 'score') {
+    const arr = [...results];
+    return direction === 'desc' ? arr.reverse() : arr;
+  }
 
   const sorted = [...results];
   if (sortBy === 'name') {
-    sorted.sort((a, b) => (a.title || a.id || '').localeCompare(b.title || b.id || '', undefined, { sensitivity: 'base' }));
+    sorted.sort((a, b) => dir * (a.title || a.id || '').localeCompare(b.title || b.id || '', undefined, { sensitivity: 'base' }));
     return sorted;
   }
   if (sortBy === 'date') {
     sorted.sort((a, b) => {
       const da = a.start_date ? new Date(a.start_date).getTime() : 0;
       const db = b.start_date ? new Date(b.start_date).getTime() : 0;
-      if (da !== db) return da - db;
-      return (a.id || '').localeCompare(b.id || '');
+      if (da !== db) return dir * (da - db);
+      return dir * (a.id || '').localeCompare(b.id || '');
     });
     return sorted;
   }
@@ -44,8 +51,8 @@ function sortResults(results, sortBy) {
     sorted.sort((a, b) => {
       const da = a.deadline ? new Date(a.deadline).getTime() : 0;
       const db = b.deadline ? new Date(b.deadline).getTime() : 0;
-      if (da !== db) return da - db;
-      return (a.id || '').localeCompare(b.id || '');
+      if (da !== db) return dir * (da - db);
+      return dir * (a.id || '').localeCompare(b.id || '');
     });
     return sorted;
   }
@@ -106,6 +113,7 @@ async function handleSearch(event) {
       lastSearchAverages = averages;
       lastRecommendation = null;
       currentSortOrder = 'score';
+      currentSortDirection = 'asc';
       renderResults(data.results, ratings, averages);
     } else {
       resultsContainer.innerHTML = '<p class="text-muted text-center">No results found.</p>';
@@ -129,7 +137,8 @@ function renderResults(results, userRatings = {}, averages = {}, recommendation 
 
   lastSearchRatings = userRatings;
   lastSearchAverages = averages;
-  const sorted = sortResults(results, currentSortOrder);
+  const sorted = sortResults(results, currentSortOrder, currentSortDirection);
+  const dirIcon = currentSortDirection === 'asc' ? '▲' : '▼';
 
   container.innerHTML = `
     <h4 class="mb-3">Conference Results (${sorted.length})</h4>
@@ -137,11 +146,12 @@ function renderResults(results, userRatings = {}, averages = {}, recommendation 
     <div class="d-flex align-items-center gap-2 mb-3">
       <label for="results-sort" class="form-label mb-0">Sort by:</label>
       <select id="results-sort" class="form-select form-select-sm" style="max-width: 200px;" aria-label="Sort results">
-        <option value="score" ${currentSortOrder === 'score' ? 'selected' : ''}>Relevance (score)</option>
-        <option value="name" ${currentSortOrder === 'name' ? 'selected' : ''}>Name (A–Z)</option>
+        <option value="score" ${currentSortOrder === 'score' ? 'selected' : ''}>Relevance</option>
+        <option value="name" ${currentSortOrder === 'name' ? 'selected' : ''}>Name</option>
         <option value="date" ${currentSortOrder === 'date' ? 'selected' : ''}>Start date</option>
         <option value="deadline" ${currentSortOrder === 'deadline' ? 'selected' : ''}>Deadline</option>
       </select>
+      <button id="sort-direction-btn" class="btn btn-sm btn-outline-secondary" title="Toggle sort direction">${dirIcon}</button>
     </div>
 
     ${sorted.map((conf, index) => renderConferenceCard(conf, index + 1, userRatings[conf.id], averages[conf.id])).join('')}
@@ -151,7 +161,16 @@ function renderResults(results, userRatings = {}, averages = {}, recommendation 
   if (sortSelect) {
     sortSelect.addEventListener('change', function () {
       currentSortOrder = this.value;
-      const reordered = sortResults(lastSearchResults, currentSortOrder);
+      const reordered = sortResults(lastSearchResults, currentSortOrder, currentSortDirection);
+      renderResults(reordered, lastSearchRatings, lastSearchAverages, lastRecommendation);
+    });
+  }
+
+  const dirBtn = document.getElementById('sort-direction-btn');
+  if (dirBtn) {
+    dirBtn.addEventListener('click', function () {
+      currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+      const reordered = sortResults(lastSearchResults, currentSortOrder, currentSortDirection);
       renderResults(reordered, lastSearchRatings, lastSearchAverages, lastRecommendation);
     });
   }

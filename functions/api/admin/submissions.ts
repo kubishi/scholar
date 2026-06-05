@@ -8,6 +8,32 @@ type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
 
+export const onRequestPost: PagesFunction = async (context) => {
+  const { env, data } = context;
+  const user = data.user;
+
+  if (!user) {
+    return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const userRecord = await getUserById(env.DB, user.id);
+    if (userRecord?.privilege !== 'admin') {
+      return forbiddenResponse('Admin access required');
+    }
+
+    const now = new Date().toISOString();
+    const result = await env.DB.prepare(
+      "UPDATE submitted_conferences SET status = 'approved', approved_at = ? WHERE status = 'waiting'"
+    ).bind(now).run();
+
+    return Response.json({ ok: true, count: result.meta.changes });
+  } catch (error) {
+    console.error('Approve-all error:', error);
+    return Response.json({ ok: false, error: 'Failed to approve all' }, { status: 500 });
+  }
+};
+
 export const onRequestGet: PagesFunction = async (context) => {
   const { env, data } = context;
   const user = data.user;
