@@ -9,7 +9,7 @@
  *   npx tsx --env-file=.dev.vars scripts/eval-recommendations.ts
  *
  * Optional env vars:
- *   LIMIT        max conferences to sample (default: 20)
+ *   LIMIT        max conferences to sample (default: 50)
  *   TOP_K        how many results to check (default: 5)
  *   SEARCH_TYPE  semantic | lexical | hybrid (default: semantic)
  *   BASE_URL     API base URL (default: https://scholar.kubishi.com)
@@ -35,7 +35,7 @@ interface Paper { title?: string; abstract: string; }
 
 function getConferences(): Conference[] {
   const out = execSync(
-    `npx wrangler d1 execute ${DB_NAME} --remote --command ${JSON.stringify(`SELECT id, title, acronym FROM conferences ORDER BY RANDOM() LIMIT ${CONF_LIMIT}`)} --json`,
+    `npx wrangler d1 execute ${DB_NAME} --remote --command ${JSON.stringify(`SELECT id, title, acronym FROM conferences WHERE url IS NOT NULL AND url != '' ORDER BY RANDOM() LIMIT ${CONF_LIMIT}`)} --json`,
     { cwd: resolve(__dirname, '..') }
   ).toString();
   return JSON.parse(out)[0]?.results ?? [];
