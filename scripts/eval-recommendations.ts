@@ -43,28 +43,31 @@ function getConferences(): Conference[] {
 
 // ── Semantic Scholar ─────────────────────────────────────────────────────────
 
+function venueMatches(venue: string, acronym: string, title: string): boolean {
+  const acronymRe = new RegExp(`\\b${acronym.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+  if (acronymRe.test(venue)) return true;
+  if (venue.includes(title.toLowerCase())) return true;
+  return false;
+}
+
 async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
-  const queries = [acronym, title];
   const seen = new Set<string>();
   const papers: Paper[] = [];
 
-  for (const query of queries) {
-    const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(query)}&fields=title,abstract,venue&limit=30`;
-    const res = await fetch(url, {
-      headers: SEMANTIC_SCHOLAR_API_KEY ? { 'x-api-key': SEMANTIC_SCHOLAR_API_KEY } : {},
-    });
-    if (!res.ok) continue;
+  const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(acronym)}&fields=title,abstract,venue&limit=30`;
+  const res = await fetch(url, {
+    headers: SEMANTIC_SCHOLAR_API_KEY ? { 'x-api-key': SEMANTIC_SCHOLAR_API_KEY } : {},
+  });
+  if (!res.ok) return papers;
 
-    const data = await res.json() as { data?: Array<{ paperId?: string; title?: string; abstract?: string; venue?: string }> };
-    const lower = [acronym.toLowerCase(), title.toLowerCase()];
+  const data = await res.json() as { data?: Array<{ paperId?: string; title?: string; abstract?: string; venue?: string }> };
 
-    for (const p of data.data ?? []) {
-      if (!p.paperId || seen.has(p.paperId) || !p.abstract) continue;
-      const venue = p.venue?.toLowerCase() ?? '';
-      if (lower.some(l => venue.includes(l))) {
-        seen.add(p.paperId);
-        papers.push({ title: p.title, abstract: p.abstract });
-      }
+  for (const p of data.data ?? []) {
+    if (!p.paperId || seen.has(p.paperId) || !p.abstract) continue;
+    const venue = p.venue?.toLowerCase() ?? '';
+    if (venueMatches(venue, acronym, title)) {
+      seen.add(p.paperId);
+      papers.push({ title: p.title, abstract: p.abstract });
     }
   }
 
