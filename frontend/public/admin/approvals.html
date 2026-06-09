@@ -229,6 +229,9 @@
                             ${sub.status === 'waiting' ? `
                                 <button class="btn btn-success" onclick="approveSubmission('${sub.id}')">Approve</button>
                             ` : ''}
+                            ${sub.status === 'approved' ? `
+                                <button class="btn btn-warning" onclick="unapproveSubmission('${sub.id}')">Unapprove</button>
+                            ` : ''}
                             <button class="btn btn-danger" onclick="rejectSubmission('${sub.id}')">Reject</button>
                         </div>
                     </div>
@@ -430,6 +433,28 @@
                 }
             } catch (error) {
                 console.error('Approve error:', error);
+                showStatus('An error occurred', 'danger');
+            }
+        }
+
+        async function unapproveSubmission(id) {
+            if (!confirm(`Revert "${id}" back to waiting?`)) return;
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch(`/api/admin/unapprove/${encodeURIComponent(id)}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showStatus(`Reverted to waiting: ${id}`, 'success');
+                    await loadSubmissions();
+                } else {
+                    showStatus(result.error || 'Failed to unapprove', 'danger');
+                }
+            } catch (error) {
+                console.error('Unapprove error:', error);
                 showStatus('An error occurred', 'danger');
             }
         }
