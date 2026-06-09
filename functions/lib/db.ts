@@ -285,6 +285,11 @@ export async function deleteSubmission(db: D1Database, id: string): Promise<void
   await db.prepare('DELETE FROM submitted_conferences WHERE id = ?').bind(id).run();
 }
 
+export async function deleteAllSubmissions(db: D1Database): Promise<number> {
+  const result = await db.prepare('DELETE FROM submitted_conferences').run();
+  return result.meta.changes ?? 0;
+}
+
 /**
  * Delete a published conference from D1 (cascade handles rankings/favorites/ratings)
  */

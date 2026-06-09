@@ -66,12 +66,18 @@
 
         <!-- Danger Zone -->
         <div class="search-box p-4 rounded-4 mt-4 border border-danger" id="danger-zone" style="display:none;">
-            <h5 class="text-danger mb-3">Delete Published Conference</h5>
-            <p class="text-muted small">Removes the conference from D1 and Vectorize. Irreversible.</p>
-            <div class="d-flex gap-2">
+            <h5 class="text-danger mb-3">Danger Zone</h5>
+
+            <p class="text-muted small fw-semibold mb-1">Delete Published Conference</p>
+            <p class="text-muted small">Removes the conference from all D1 database and Vectorize. Irreversible.</p>
+            <div class="d-flex gap-2 mb-4">
                 <input type="text" id="delete-conf-id" class="form-control" placeholder="Conference ID (e.g. NEURIPS)" style="max-width: 300px;">
                 <button class="btn btn-danger" onclick="deletePublishedConference()">Delete</button>
             </div>
+
+            <p class="text-muted small fw-semibold mb-1">Delete All Submissions</p>
+            <p class="text-muted small">Permanently removes every submission from the submitted database. Irreversible.</p>
+            <button class="btn btn-danger" onclick="deleteAllSubmissions()">Delete All Submissions</button>
         </div>
     </div>
 
@@ -491,6 +497,28 @@
                 });
             } catch {
                 return dateStr;
+            }
+        }
+
+        async function deleteAllSubmissions() {
+            if (!confirm('Permanently delete ALL submissions? This cannot be undone.')) return;
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch('/api/admin/submissions', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showStatus(`Deleted ${result.count} submission(s)`, 'success');
+                    await loadSubmissions();
+                } else {
+                    showStatus(result.error || 'Failed to delete all', 'danger');
+                }
+            } catch (error) {
+                console.error('Delete all error:', error);
+                showStatus('An error occurred', 'danger');
             }
         }
 

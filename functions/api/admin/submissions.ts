@@ -1,7 +1,7 @@
 // Admin submissions list API endpoint
 
 import type { Env, AuthContext } from '../../lib/types';
-import { getUserById, getPendingSubmissions } from '../../lib/db';
+import { getUserById, getPendingSubmissions, deleteAllSubmissions } from '../../lib/db';
 import { forbiddenResponse } from '../../lib/auth';
 
 type PagesFunction<E = Env> = (
@@ -31,6 +31,24 @@ export const onRequestPost: PagesFunction = async (context) => {
   } catch (error) {
     console.error('Approve-all error:', error);
     return Response.json({ ok: false, error: 'Failed to approve all' }, { status: 500 });
+  }
+};
+
+export const onRequestDelete: PagesFunction = async (context) => {
+  const { env, data } = context;
+  const user = data.user;
+
+  if (!user) return Response.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
+
+  const userRecord = await getUserById(env.DB, user.id);
+  if (userRecord?.privilege !== 'admin') return forbiddenResponse('Admin access required');
+
+  try {
+    const count = await deleteAllSubmissions(env.DB);
+    return Response.json({ ok: true, count });
+  } catch (error) {
+    console.error('Delete-all submissions error:', error);
+    return Response.json({ ok: false, error: 'Failed to delete all submissions' }, { status: 500 });
   }
 };
 
