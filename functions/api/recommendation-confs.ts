@@ -19,20 +19,14 @@ export const onRequestGet: PagesFunction = async (context) => {
     }
 
     try {
-        // const user_papers = await get_user_papers(env.DB, user.id);
+        const [profile, papers, profileVectors] = await Promise.all([
+            get_user_profile(env.DB, user.id),
+            get_user_papers(env.DB, user.id),
+            env.FULL_PROFILE_VECTORIZE_INDEX.getByIds([user.id]),
+        ]);
 
-        // const combinedText = user_papers
-        // .map((p) => p.paper_summary)
-        // .filter(Boolean)
-        // .join(' ')
-        // .slice(0, MAX_CONTEXT_CHARS);
-
-        const profile = await get_user_profile(env.DB, user.id);
-        const papers = await get_user_papers(env.DB, user.id);
-
-        const profileVectors = await env.FULL_PROFILE_VECTORIZE_INDEX.getByIds([user.id]);
         const queryVector = Array.from(profileVectors[0]?.values ?? []);
-        if (!queryVector) {
+        if (!queryVector.length) {
             return Response.json({ ok: false, error: 'No profile vector found. Please complete your profile first.' }, { status: 404 });
         }
 

@@ -7,6 +7,8 @@ type PagesFunction<E = Env> = (
   context: EventContext<E, string, AuthContext>
 ) => Response | Promise<Response>;
 
+const CACHE_TTL = 60 * 60; // 1 hour
+
 export const onRequestGet: PagesFunction = async (context) => {
   const { env, params, request } = context;
 
@@ -16,6 +18,12 @@ export const onRequestGet: PagesFunction = async (context) => {
 
   const url = new URL(request.url);
   const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '5'), 20);
+
+  const cache = caches.default;
+  const cacheKey = new Request(request.url);
+
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
 
   try {
     const conference = await getConferenceById(env.DB, id);
@@ -31,7 +39,11 @@ export const onRequestGet: PagesFunction = async (context) => {
       .slice(0, limit);
 
     const conferences = await getConferencesByIds(env.DB, similarIds);
-    return Response.json({ ok: true, results: conferences });
+
+    const response = Response.json({ ok: true, results: conferences });
+    response.headers.set('Cache-Control', `public, max-age=${CACHE_TTL}`);
+    await cache.put(cacheKey, response.clone());
+    return response;
   } catch (error) {
     console.error('Similar conferences error:', error);
     return Response.json({ ok: false, error: 'Failed to fetch similar conferences' }, { status: 500 });
