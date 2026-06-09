@@ -138,8 +138,8 @@ export function isPublicPath(url: URL, method: string): boolean {
     if (publicGetPaths.includes(path)) {
       return true;
     }
-    // Check /api/conferences/:id pattern
-    if (path.match(/^\/api\/conferences\/[^/]+$/)) {
+    // Check /api/conferences/:id and /api/conferences/:id/* patterns
+    if (path.match(/^\/api\/conferences\/[^/]+(\/.*)?$/)) {
       return true;
     }
     // Public profile by slug: /api/profile/public/:slug

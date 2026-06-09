@@ -253,6 +253,10 @@ function renderConferenceCard(conf, index, ratings = {}, average = null) {
           <summary class="small">Rankings &amp; Metrics &#9776;</summary>
           <div class="mt-2">${rankingsHtml}</div>
         </details>
+        <details class="similar-conferences-details" data-conf-id="${conf.id}">
+          <summary class="small">Similar Conferences &#8771;</summary>
+          <div class="similar-conferences-content mt-2 text-muted small">Loading...</div>
+        </details>
         ${isLoggedIn ? `
         <details>
           <summary class="rating_dropdown small">User Ratings &#9734;</summary>
@@ -455,4 +459,39 @@ async function onRecommendationClick(event) {
     recommendationBtn.innerHTML = original_button
     spinner.style.display = 'none';
   }
-} 
+}
+
+// Lazy-load similar conferences when the details element is opened
+document.addEventListener('toggle', async (e) => {
+  const details = e.target.closest('.similar-conferences-details');
+  if (!details || !details.open) return;
+
+  const content = details.querySelector('.similar-conferences-content');
+  if (!content || content.dataset.loaded) return;
+
+  const confId = details.dataset.confId;
+  content.dataset.loaded = 'true';
+
+  try {
+    const res = await fetch(`${window.API_BASE}/api/conferences/${encodeURIComponent(confId)}/similar?limit=5`);
+    const data = await res.json();
+
+    if (!data.ok || !data.results.length) {
+      content.textContent = 'No similar conferences found.';
+      return;
+    }
+
+    content.innerHTML = data.results.map(c => `
+      <div class="mb-1">
+        <strong>${c.id}</strong>
+        ${c.url
+          ? `<a href="${c.url}" target="_blank" rel="noopener noreferrer" class="ms-1 text-decoration-none">${c.title || c.id}</a>`
+          : `<span class="ms-1 text-muted">${c.title || c.id}</span>`
+        }
+        ${c.deadline ? `<span class="ms-2 text-muted">· deadline ${formatDate(c.deadline)}</span>` : ''}
+      </div>
+    `).join('');
+  } catch {
+    content.textContent = 'Failed to load similar conferences.';
+  }
+}, true); 
