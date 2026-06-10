@@ -89,7 +89,7 @@ export interface SubmittedConference {
   submitter_name?: string;
   submitter_email?: string;
   status: 'waiting' | 'approved' | 'submitted' | 'rejected';
-  edit_type: 'new' | 'edit';
+  edit_type: 'new' | 'edit' | 'auto-update';
   submitted_at?: string;
   approved_at?: string;
 }

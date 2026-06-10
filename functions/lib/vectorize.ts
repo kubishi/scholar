@@ -14,6 +14,12 @@ export interface PeopleSearchResult {
   metadata?: { name?: string; email?: string; slug?: string };
 }
 
+// Vectorize has no local emulator and the binding errors outside of
+// `--remote` mode, so all Vectorize calls are skipped in local dev.
+function isVectorizeAvailable(env: Env): boolean {
+  return env.ENVIRONMENT === 'production';
+}
+
 /**
  * Search for similar conferences using vector similarity
  */
@@ -22,6 +28,8 @@ export async function vectorSearch(
   queryVector: number[],
   topK: number = 50
 ): Promise<VectorSearchResult[]> {
+  if (!isVectorizeAvailable(env)) return [];
+
   const results = await env.VECTORIZE_INDEX.query(queryVector, {
     topK,
     returnMetadata: 'all',
@@ -39,6 +47,8 @@ export async function vectorSearchPeople(
   queryVector: number[],
   topK: number = 10
 ): Promise<PeopleSearchResult[]> {
+  if (!isVectorizeAvailable(env)) return [];
+
   const results = await env.FULL_PROFILE_VECTORIZE_INDEX.query(queryVector, {
     topK,
     returnMetadata: 'all',
@@ -58,6 +68,8 @@ export async function upsertVector(
   vector: number[],
   metadata: ConferenceVectorMetadata
 ): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
+
   await env.VECTORIZE_INDEX.upsert([
     {
       id,
@@ -78,6 +90,8 @@ export async function upsertVectors(
     metadata: ConferenceVectorMetadata;
   }>
 ): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
+
   // Vectorize supports up to 1000 vectors per batch
   const batchSize = 1000;
   for (let i = 0; i < vectors.length; i += batchSize) {
@@ -90,10 +104,12 @@ export async function upsertVectors(
  * Delete vectors by IDs
  */
 export async function deleteVectors(env: Env, ids: string[]): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
   await env.VECTORIZE_INDEX.deleteByIds(ids);
 }
 
 export async function deletePaperVectors(env: Env, ids: string[]): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
   await env.PAPERS_VECTORIZE_INDEX.deleteByIds(ids);
 }
 
@@ -106,6 +122,8 @@ export async function upsertUserPapersVector(
   vector: number[],
   paper_title: string
 ): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
+
   const paperId = `${userId}-${paper_title}`;
 
   await env.PAPERS_VECTORIZE_INDEX.upsert([{
@@ -127,12 +145,13 @@ export async function upsertFullUserProfile(
   email: string,
   slug: string
 ): Promise<void> {
+  if (!isVectorizeAvailable(env)) return;
+
   await env.FULL_PROFILE_VECTORIZE_INDEX.upsert([{
     id: userId,
     values: vector,
     metadata: { name, email, slug },
   }]);
 }
-
 
 

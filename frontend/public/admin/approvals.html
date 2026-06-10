@@ -43,6 +43,9 @@
                 <button id="publish-all-btn" class="btn btn-success" style="display: none;">
                     Publish All Approved
                 </button>
+                <button id="approve-auto-updates-btn" class="btn btn-info" style="display: none;">
+                    Approve &amp; Publish Worker Updates
+                </button>
             </div>
 
             <!-- Access denied message -->
@@ -96,6 +99,7 @@
             const container = document.getElementById('submissions-container');
             const approveAllBtn = document.getElementById('approve-all-btn');
             const publishAllBtn = document.getElementById('publish-all-btn');
+            const approveAutoUpdatesBtn = document.getElementById('approve-auto-updates-btn');
             const statusMessage = document.getElementById('status-message');
 
             if (!window.currentUser || window.currentUser.privilege !== 'admin') {
@@ -168,6 +172,37 @@
                     publishAllBtn.textContent = 'Publish All Approved';
                 }
             });
+
+            // Approve & publish automation worker updates button
+            approveAutoUpdatesBtn.addEventListener('click', async () => {
+                const autoUpdateCount = submissions.filter(s => s.status === 'waiting' && s.edit_type === 'auto-update').length;
+                if (!confirm(`Approve and publish ${autoUpdateCount} automation worker update(s)?`)) return;
+
+                approveAutoUpdatesBtn.disabled = true;
+                approveAutoUpdatesBtn.textContent = 'Publishing...';
+
+                try {
+                    const token = await getAuthToken();
+                    const response = await fetch('/api/admin/approve-auto-updates', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                    });
+                    const result = await response.json();
+                    if (result.ok) {
+                        const skippedMsg = result.skipped ? ` (${result.skipped.length} skipped for manual review due to name mismatch)` : '';
+                        showStatus(`Published ${result.count} conference update(s)${skippedMsg}`, 'success');
+                        await loadSubmissions();
+                    } else {
+                        showStatus(result.error || 'Failed to publish worker updates', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Approve auto-updates error:', error);
+                    showStatus('An error occurred', 'danger');
+                } finally {
+                    approveAutoUpdatesBtn.disabled = false;
+                    approveAutoUpdatesBtn.textContent = 'Approve & Publish Worker Updates';
+                }
+            });
         });
 
         async function loadSubmissions() {
@@ -175,6 +210,7 @@
             const container = document.getElementById('submissions-container');
             const approveAllBtn = document.getElementById('approve-all-btn');
             const publishAllBtn = document.getElementById('publish-all-btn');
+            const approveAutoUpdatesBtn = document.getElementById('approve-auto-updates-btn');
 
             loading.style.display = 'block';
             container.style.display = 'none';
@@ -198,8 +234,10 @@
 
                 const hasWaiting = submissions.some(s => s.status === 'waiting');
                 const hasApproved = submissions.some(s => s.status === 'approved');
+                const hasAutoUpdates = submissions.some(s => s.status === 'waiting' && s.edit_type === 'auto-update');
                 approveAllBtn.style.display = hasWaiting ? 'inline-block' : 'none';
                 publishAllBtn.style.display = hasApproved ? 'inline-block' : 'none';
+                approveAutoUpdatesBtn.style.display = hasAutoUpdates ? 'inline-block' : 'none';
             } catch (error) {
                 console.error('Load error:', error);
                 showStatus('Failed to load submissions', 'danger');
@@ -225,7 +263,7 @@
                             <span class="badge ${sub.status === 'approved' ? 'bg-success' : 'bg-warning'} ms-2">
                                 ${sub.status}
                             </span>
-                            <span class="badge ${sub.edit_type === 'new' ? 'bg-primary' : 'bg-secondary'} ms-1">
+                            <span class="badge ${sub.edit_type === 'new' ? 'bg-primary' : sub.edit_type === 'auto-update' ? 'bg-info' : 'bg-secondary'} ms-1">
                                 ${sub.edit_type}
                             </span>
                         </div>
