@@ -38,7 +38,7 @@ npx wrangler login
 ### Local Development
 
 ```bash
-npx wrangler pages dev frontend/public --compatibility-date=2024-01-01
+npx wrangler pages dev frontend/public
 ```
 
 Note: Local dev has limitations - D1 will be empty and Vectorize doesn't work locally.
