@@ -1,8 +1,9 @@
 # Remote MCP server for kubishi-scholar (Streamable HTTP transport).
 # Deploy with: npm run deploy:mcp
-# NOTE: this endpoint is currently UNAUTHENTICATED. Add an auth check in
-# worker.ts (e.g. a bearer token via `wrangler secret put MCP_TOKEN`)
-# before sharing the deployed URL.
+#
+# Requires the MCP_TOKEN secret (checked as a Bearer token in worker.ts):
+#   wrangler secret put MCP_TOKEN --config mcp/remote/wrangler.toml
+# For local `wrangler dev`, set MCP_TOKEN in mcp/remote/.dev.vars instead.
 
 name = "kubishi-scholar-mcp"
 main = "worker.ts"

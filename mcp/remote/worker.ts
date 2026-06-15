@@ -11,6 +11,7 @@ import { registerStatsTools } from "./tools/stats.ts";
 export interface Env {
   DB: D1Database;
   ScholarMCP: DurableObjectNamespace;
+  MCP_TOKEN: string;
 }
 
 export class ScholarMCP extends McpAgent<Env, {}, {}> {
@@ -28,6 +29,13 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith("/mcp")) {
+      const auth = request.headers.get("Authorization");
+      if (auth !== `Bearer ${env.MCP_TOKEN}`) {
+        return new Response("Unauthorized", {
+          status: 401,
+          headers: { "WWW-Authenticate": "Bearer" },
+        });
+      }
       return ScholarMCP.serve("/mcp", { binding: "ScholarMCP" }).fetch(request, env, ctx);
     }
 

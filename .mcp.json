@@ -3,6 +3,13 @@
     "scholar": {
       "command": "npx",
       "args": ["tsx", "mcp/server.ts"]
+    },
+    "scholar-remote": {
+      "type": "http",
+      "url": "https://kubishi-scholar-mcp.jaredraycoleman.workers.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MCP_TOKEN}"
+      }
     }
   }
 }
