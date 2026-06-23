@@ -29,6 +29,10 @@ const SEMANTIC_SCHOLAR_API_KEY = process.env.SEMANTIC_SCHOLAR_API_KEY;
 const LIMIT = process.env.LIMIT ? parseInt(process.env.LIMIT) : Infinity;
 const PAPERS_PER_CONF = parseInt(process.env.PAPERS_PER_CONF ?? '30');
 const DRY_RUN = process.argv.includes('--dry-run');
+// Semantic Scholar's unauthenticated tier rate-limits aggressively (and can
+// trigger a longer WAF block if hammered) — without an API key, stay well
+// under 1 request/second.
+const REQUEST_DELAY_MS = SEMANTIC_SCHOLAR_API_KEY ? 300 : 1500;
 
 interface Conference {
   id: string;
@@ -95,6 +99,21 @@ function venueMatches(venue: string, acronym: string, title: string): boolean {
   return false;
 }
 
+// Throws on persistent rate-limiting so the caller can record a distinct
+// 'rate-limited' status instead of silently reporting "no papers found".
+async function fetchWithRetry(url: string, maxRetries = 5): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await fetch(url, {
+      headers: SEMANTIC_SCHOLAR_API_KEY ? { 'x-api-key': SEMANTIC_SCHOLAR_API_KEY } : {},
+    });
+    if (res.status !== 429) return res;
+    if (attempt === maxRetries) return res;
+    const backoffMs = 2000 * 2 ** attempt; // 2s, 4s, 8s, 16s, 32s
+    await new Promise(r => setTimeout(r, backoffMs));
+  }
+  throw new Error('unreachable');
+}
+
 async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
   const seen = new Set<string>();
   const papers: Paper[] = [];
@@ -102,9 +121,11 @@ async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
   // Query by acronym — Semantic Scholar search ranks by relevance so acronym
   // queries surface papers whose venue field actually contains it.
   const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(acronym)}&fields=title,abstract,venue&limit=100`;
-  const res = await fetch(url, {
-    headers: SEMANTIC_SCHOLAR_API_KEY ? { 'x-api-key': SEMANTIC_SCHOLAR_API_KEY } : {},
-  });
+  const res = await fetchWithRetry(url);
+
+  if (res.status === 429) {
+    throw new Error('rate-limited');
+  }
 
   if (res.ok) {
     const data = await res.json() as {
@@ -173,9 +194,15 @@ async function main() {
       console.error(`\n  ERROR: ${msg}`);
       writeCsvRow({ id: conf.id, title: conf.title, acronym: conf.acronym, paper_count: 0, paper_text: '', status: `error: ${msg}` });
       failed++;
+      if (msg === 'rate-limited') {
+        // Still rate-limited after retry/backoff inside fetchPapers — cool down
+        // longer before hammering the API again.
+        console.log('  Still rate-limited after backoff; pausing 30s...');
+        await new Promise(r => setTimeout(r, 30_000));
+      }
     }
 
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, REQUEST_DELAY_MS));
   }
 
   console.log(`\nDone. ${succeeded} succeeded, ${failed} failed.`);
