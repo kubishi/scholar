@@ -34,6 +34,48 @@ export async function vectorSearch(
   }));
 }
 
+/**
+ * Search individual conference-accepted papers (kubishi-conference-papers)
+ * and roll the matches up to conference-level results.
+ *
+ * Querying one averaged vector per conference dilutes broad, multi-track
+ * conferences (a single vector blending many unrelated subtopics scores
+ * worse against any specific query than a narrow sibling conference would).
+ * Querying individual papers and rolling up to their conference avoids that
+ * averaging step entirely. Measured ~1.6-2.5x Hit@1/5/10 improvement over
+ * the conference-centroid approach on a held-out, leakage-free eval
+ * (see scripts/compare-search-approaches.ts). Only covers conferences that
+ * have at least one paper in the index — callers should fall back to
+ * vectorSearch() for conferences this returns nothing for.
+ */
+export async function vectorSearchConferencesByPapers(
+  env: Env,
+  queryVector: number[],
+  topK: number = 50
+): Promise<VectorSearchResult[]> {
+  const results = await env.CONFERENCE_PAPERS_VECTORIZE_INDEX.query(queryVector, {
+    topK,
+    returnMetadata: 'all',
+  });
+
+  const byConference = new Map<string, { maxScore: number; count: number }>();
+  for (const match of results.matches) {
+    const metadata = match.metadata as { conference_id?: string } | undefined;
+    const conferenceId = metadata?.conference_id;
+    if (!conferenceId) continue;
+
+    const cur = byConference.get(conferenceId) ?? { maxScore: 0, count: 0 };
+    cur.maxScore = Math.max(cur.maxScore, match.score);
+    cur.count += 1;
+    byConference.set(conferenceId, cur);
+  }
+
+  return [...byConference.entries()]
+    .map(([id, { maxScore, count }]) => ({ id, score: maxScore + 0.1 * count }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK);
+}
+
 export async function vectorSearchPeople(
   env: Env,
   queryVector: number[],
