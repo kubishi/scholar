@@ -29,6 +29,16 @@ index_name = "kubishi-papers"
 binding = "FULL_PROFILE_VECTORIZE_INDEX"
 index_name = "kubishi-user-profiles"
 
+# Vectorize binding: individual conference-accepted-paper embeddings (id =
+# "<conference_id>-<semanticScholarPaperId>", metadata.conference_id links
+# back to conferences.id). One vector per paper, not one per conference —
+# avoids the centroid-dilution problem broad multi-track conferences hit when
+# represented by a single averaged vector. See scripts/backfill-conference-papers-vectors.ts.
+# Run: wrangler vectorize create kubishi-conference-papers --dimensions 1536 --metric cosine
+[[vectorize]]
+binding = "CONFERENCE_PAPERS_VECTORIZE_INDEX"
+index_name = "kubishi-conference-papers"
+
 # Environment variables
 [vars]
 ENVIRONMENT = "production"

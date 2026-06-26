@@ -2,7 +2,7 @@
 
 import type { Env, AuthContext, Conference, SearchParams } from '../lib/types';
 import { getEmbedding } from '../lib/openai';
-import { vectorSearch } from '../lib/vectorize';
+import { vectorSearch, vectorSearchConferencesByPapers } from '../lib/vectorize';
 import { lexicalSearch, getConferencesByIds, parseRankings } from '../lib/db';
 
 type PagesFunction<E = Env> = (
@@ -139,18 +139,32 @@ export const onRequestGet: PagesFunction = async (context) => {
       const lexResults = await lexicalSearch(env.DB, params.query, 50);
       resultIds = lexResults.map((r) => r.id);
     } else if (params.search_type === 'semantic') {
-      // Vector search only
+      // Per-paper roll-up (kubishi-conference-papers) is the primary signal —
+      // measured ~1.6-2.5x Hit@1/5/10 over the old conference-centroid
+      // approach on a held-out eval (scripts/compare-search-approaches.ts).
+      // It only covers conferences with at least one paper in that index, so
+      // the centroid search fills in conferences it has no data on at all —
+      // those conferences don't compete with/re-rank anything the per-paper
+      // search already found (we measured that RRF-fusing the two performs
+      // worse than per-paper alone, even weighted 60/40 in its favor).
       const queryVector = await getEmbedding(params.query, env.OPENAI_API_KEY);
-      const vecResults = await vectorSearch(env, queryVector, 50);
-      resultIds = vecResults.map((r) => r.id);
+      const [paperResults, centroidResults] = await Promise.all([
+        vectorSearchConferencesByPapers(env, queryVector, 50),
+        vectorSearch(env, queryVector, 50),
+      ]);
+      const paperIds = new Set(paperResults.map((r) => r.id));
+      const supplementary = centroidResults.filter((r) => !paperIds.has(r.id));
+      resultIds = [...paperResults.map((r) => r.id), ...supplementary.map((r) => r.id)];
     } else {
-      // Hybrid search with RRF fusion
+      // Hybrid search with RRF fusion — same lexical+semantic structure as
+      // before, but the semantic input is now the per-paper roll-up instead
+      // of the conference centroid.
       const queryVector = await getEmbedding(params.query, env.OPENAI_API_KEY);
 
       // Run lexical and vector searches in parallel
       const [lexResults, vecResults] = await Promise.all([
         lexicalSearch(env.DB, params.query, 50),
-        vectorSearch(env, queryVector, 50),
+        vectorSearchConferencesByPapers(env, queryVector, 50),
       ]);
 
       // Fuse results using RRF
