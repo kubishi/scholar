@@ -14,6 +14,14 @@
  *   SEARCH_TYPE  semantic | lexical | hybrid (default: semantic)
  *   BASE_URL     API base URL (default: https://scholar.kubishi.com)
  *
+ * Held-out split: for conferences whose embedding was built from paper_text
+ * (see backfill-paper-text.ts / ingest-paper-text.ts), this script fetches
+ * the same Semantic Scholar pool but excludes any paper whose abstract is
+ * already baked into that conference's paper_text — i.e. papers used to
+ * build the embedding ("train") are never reused to test it ("test"). This
+ * avoids the train/test leakage where a conference "finds itself" only
+ * because the test paper's own abstract is part of its vector.
+ *
  * Output: scripts/eval-results.csv — one row per paper tested, with hit@K
  * flags and the abstract text, so missed papers (hit_top_k=false) can be
  * inspected directly.
@@ -28,7 +36,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const DB_NAME = 'kubishi-scholar-db';
 
 const SEMANTIC_SCHOLAR_API_KEY = process.env.SEMANTIC_SCHOLAR_API_KEY;
-const CONF_LIMIT = parseInt(process.env.LIMIT ?? '50');
+const CONF_LIMIT = parseInt(process.env.LIMIT ?? '100');
 const TOP_K = parseInt(process.env.TOP_K ?? '10');
 const SEARCH_TYPE = process.env.SEARCH_TYPE ?? 'semantic';
 const BASE_URL = (process.env.BASE_URL ?? 'https://scholar.kubishi.com').replace(/\/$/, '');
@@ -38,7 +46,7 @@ const MAX_PAPERS_PER_CONFERENCE = 30;
 // under 1 request/second between conference-level lookups.
 const SEMANTIC_SCHOLAR_DELAY_MS = SEMANTIC_SCHOLAR_API_KEY ? 300 : 1500;
 
-interface Conference { id: string; title: string; acronym: string; }
+interface Conference { id: string; title: string; acronym: string; paper_text: string | null; }
 interface Paper { title?: string; abstract: string; }
 interface ResultRow {
   conf_acronym: string;
@@ -50,6 +58,7 @@ interface ResultRow {
   hit_5: boolean;
   hit_10: boolean;
   missed: boolean;
+  held_out: boolean;
   error: string;
 }
 
@@ -63,7 +72,7 @@ function escCsv(v: string): string {
 function writeResultsCsv(rows: ResultRow[], outPath: string): void {
   const headers: (keyof ResultRow)[] = [
     'conf_acronym', 'conf_title', 'paper_title', 'abstract',
-    'hit_1', 'hit_5', 'hit_10', 'missed', 'top_result_ids', 'error',
+    'hit_1', 'hit_5', 'hit_10', 'missed', 'held_out', 'top_result_ids', 'error',
   ];
   const lines = [
     headers.join(','),
@@ -76,20 +85,13 @@ function writeResultsCsv(rows: ResultRow[], outPath: string): void {
 
 function getConferences(): Conference[] {
   const out = execSync(
-    `npx wrangler d1 execute ${DB_NAME} --remote --command ${JSON.stringify(`SELECT id, title, acronym FROM conferences WHERE url IS NOT NULL AND url != '' ORDER BY RANDOM() LIMIT ${CONF_LIMIT}`)} --json`,
-    { cwd: resolve(__dirname, '..') }
+    `npx wrangler d1 execute ${DB_NAME} --remote --command ${JSON.stringify(`SELECT id, title, acronym, paper_text FROM conferences WHERE url IS NOT NULL AND url != '' ORDER BY RANDOM() LIMIT ${CONF_LIMIT}`)} --json`,
+    { cwd: resolve(__dirname, '..'), maxBuffer: 1024 * 1024 * 100 }
   ).toString();
   return JSON.parse(out)[0]?.results ?? [];
 }
 
 // ── Semantic Scholar ─────────────────────────────────────────────────────────
-
-function venueMatches(venue: string, acronym: string, title: string): boolean {
-  const acronymRe = new RegExp(`\\b${acronym.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-  if (acronymRe.test(venue)) return true;
-  if (venue.includes(title.toLowerCase())) return true;
-  return false;
-}
 
 // Throws on persistent rate-limiting so the caller can surface it distinctly
 // instead of silently treating a 429 as "no papers found".
@@ -106,30 +108,49 @@ async function fetchWithRetry(url: string, maxRetries = 5): Promise<Response> {
   throw new Error('unreachable');
 }
 
-async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
+// A paper counts as "in the training set" if its abstract is already baked
+// into the conference's paper_text (backfill-paper-text.ts builds paper_text
+// as "title: abstract" pairs joined verbatim, so an exact substring match is
+// reliable here).
+function isAlreadyEmbedded(abstract: string, paperText: string | null): boolean {
+  if (!paperText) return false;
+  return paperText.includes(abstract);
+}
+
+async function fetchPapers(
+  acronym: string,
+  _title: string,
+  paperText: string | null
+): Promise<{ papers: Paper[]; heldOutCount: number; trainCount: number }> {
   const seen = new Set<string>();
   const papers: Paper[] = [];
+  let trainCount = 0;
 
-  // Note: /paper/search/bulk ignores `limit` (it's a pagination endpoint that
-  // returns up to 1000 results per page) — cap the matched papers ourselves.
-  const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(acronym)}&fields=title,abstract,venue`;
+  // Use Semantic Scholar's server-side `venue` filter instead of free-text
+  // query + client-side string matching — see backfill-paper-text.ts for why.
+  const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?venue=${encodeURIComponent(acronym)}&fields=title,abstract,venue`;
   const res = await fetchWithRetry(url);
   if (res.status === 429) throw new Error('rate-limited');
-  if (!res.ok) return papers;
+  if (!res.ok) return { papers, heldOutCount: 0, trainCount: 0 };
 
   const data = await res.json() as { data?: Array<{ paperId?: string; title?: string; abstract?: string; venue?: string }> };
 
   for (const p of data.data ?? []) {
     if (papers.length >= MAX_PAPERS_PER_CONFERENCE) break;
     if (!p.paperId || seen.has(p.paperId) || !p.abstract) continue;
-    const venue = p.venue?.toLowerCase() ?? '';
-    if (venueMatches(venue, acronym, title)) {
-      seen.add(p.paperId);
-      papers.push({ title: p.title, abstract: p.abstract });
+    seen.add(p.paperId);
+
+    // Held-out split: skip papers that were already used to build this
+    // conference's embedding — only test on papers it has never seen.
+    if (isAlreadyEmbedded(p.abstract, paperText)) {
+      trainCount++;
+      continue;
     }
+
+    papers.push({ title: p.title, abstract: p.abstract });
   }
 
-  return papers;
+  return { papers, heldOutCount: papers.length, trainCount };
 }
 
 // ── Live search API ───────────────────────────────────────────────────────────
@@ -168,13 +189,18 @@ async function main() {
 
   const worstConferences: Array<{ acronym: string; papers: number }> = [];
   const results: ResultRow[] = [];
+  let totalTrainExcluded = 0;
+  let conferencesWithSplit = 0;
 
   for (const conf of conferences) {
     process.stdout.write(`[${conf.acronym}] Fetching papers... `);
 
     let papers: Paper[];
+    let trainCount = 0;
     try {
-      papers = await fetchPapers(conf.acronym, conf.title);
+      const fetched = await fetchPapers(conf.acronym, conf.title, conf.paper_text);
+      papers = fetched.papers;
+      trainCount = fetched.trainCount;
     } catch (err) {
       console.log(`rate-limited, pausing 30s...`);
       await new Promise(r => setTimeout(r, 30_000));
@@ -182,13 +208,18 @@ async function main() {
       continue;
     }
 
+    if (trainCount > 0) {
+      conferencesWithSplit++;
+      totalTrainExcluded += trainCount;
+    }
+
     if (papers.length === 0) {
-      console.log('no papers found, skipping.');
+      console.log(`no held-out papers found${trainCount > 0 ? ` (${trainCount} excluded as already trained on)` : ''}, skipping.`);
       skippedConferences++;
       await new Promise(r => setTimeout(r, SEMANTIC_SCHOLAR_DELAY_MS));
       continue;
     }
-    console.log(`${papers.length} papers.`);
+    console.log(`${papers.length} held-out papers${trainCount > 0 ? ` (${trainCount} excluded as already trained on)` : ''}.`);
 
     let confHit1 = 0;
 
@@ -218,6 +249,7 @@ async function main() {
         hit_5: resultIds.slice(0, 5).includes(conf.id),
         hit_10: resultIds.slice(0, 10).includes(conf.id),
         missed: !error && !resultIds.slice(0, maxK).includes(conf.id),
+        held_out: true, // fetchPapers already excludes anything baked into paper_text
         error,
       });
 
@@ -247,7 +279,10 @@ async function main() {
   console.log('RESULTS');
   console.log('─'.repeat(50));
   console.log(`Conferences : ${conferences.length - skippedConferences} evaluated, ${skippedConferences} skipped`);
-  console.log(`Papers      : ${totalPapers} tested`);
+  console.log(`Papers      : ${totalPapers} tested (all held-out — never seen by the conference's embedding)`);
+  if (conferencesWithSplit > 0) {
+    console.log(`Held-out split applied to ${conferencesWithSplit} conferences; ${totalTrainExcluded} training papers excluded from testing`);
+  }
   console.log();
 
   for (const k of ks) {

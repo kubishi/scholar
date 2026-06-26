@@ -19,6 +19,15 @@ const CSV_PATH = resolve(__dirname, 'paper-text-output.csv');
 const TMP_SQL = resolve(__dirname, '_tmp_paper_text.sql');
 const DRY_RUN = process.argv.includes('--dry-run');
 
+// Manually confirmed acronym-collision / acronym-truncation false positives —
+// excluded from ingestion. DNA/OP: Semantic Scholar's own venue index resolves
+// these to a larger, unrelated venue (DNA biology research, German "OP" =
+// surgery) instead of the small CS conference. ICCV/ICVS/HPCC/CANS/SOFTCOM:
+// truncated/wrong acronyms in our own conferences table point at famous,
+// unrelated real conferences (e.g. ICCV = Computer Vision, not "ICCCV" =
+// Control and Computer Vision).
+const EXCLUDE_ACRONYMS = new Set(['DNA', 'OP', 'ICCV', 'ICVS', 'HPCC', 'CANS', 'SOFTCOM']);
+
 // ── CSV parser ────────────────────────────────────────────────────────────────
 
 function parseCsv(content: string): Array<Record<string, string>> {
@@ -76,9 +85,11 @@ function parseCsv(content: string): Array<Record<string, string>> {
 function main() {
   const content = readFileSync(CSV_PATH, 'utf8');
   const rows = parseCsv(content);
-  const successful = rows.filter(r => r.status === 'success' && r.paper_text);
+  const allSuccessful = rows.filter(r => r.status === 'success' && r.paper_text);
+  const successful = allSuccessful.filter(r => !EXCLUDE_ACRONYMS.has(r.acronym));
+  const excludedCount = allSuccessful.length - successful.length;
 
-  console.log(`CSV rows: ${rows.length} total, ${successful.length} successful`);
+  console.log(`CSV rows: ${rows.length} total, ${allSuccessful.length} successful, ${excludedCount} excluded as known false positives, ${successful.length} to write`);
 
   if (successful.length === 0) {
     console.log('Nothing to write.');
@@ -95,7 +106,8 @@ function main() {
 
   const statements = successful.map(r => {
     const escaped = r.paper_text.replace(/'/g, "''");
-    return `UPDATE conferences SET paper_text = '${escaped}', updated_at = datetime('now') WHERE id = '${r.id}';`;
+    const escapedId = r.id.replace(/'/g, "''");
+    return `UPDATE conferences SET paper_text = '${escaped}', updated_at = datetime('now') WHERE id = '${escapedId}';`;
   });
 
   writeFileSync(TMP_SQL, statements.join('\n') + '\n', 'utf8');

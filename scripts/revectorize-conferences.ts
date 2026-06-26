@@ -7,17 +7,21 @@
  *   npx tsx --env-file=.dev.vars scripts/revectorize-conferences.ts
  *   npx tsx --env-file=.dev.vars scripts/revectorize-conferences.ts --dry-run
  *
+ * Uses `wrangler vectorize upsert` (OAuth-authenticated) instead of the raw
+ * Vectorize REST API, so no CLOUDFLARE_API_TOKEN is required.
+ *
  * Required env vars:
  *   OPENAI_API_KEY
- *   CLOUDFLARE_ACCOUNT_ID
- *   CLOUDFLARE_API_TOKEN
  *
  * Optional env vars:
- *   LIMIT   max conferences to process (default: all)
+ *   LIMIT             max conferences to process (default: all)
+ *   ONLY_PAPER_TEXT=1 only process conferences that have paper_text (default: all)
  */
 
 import { execSync } from 'child_process';
+import { writeFileSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
+import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url).toString());
@@ -25,13 +29,13 @@ const DB_NAME = 'kubishi-scholar-db';
 const VECTORIZE_INDEX = 'kubishi-conferences';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID!;
-const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN!;
 const LIMIT = process.env.LIMIT ? parseInt(process.env.LIMIT) : Infinity;
+const SKIP = process.env.SKIP ? parseInt(process.env.SKIP) : 0;
+const ONLY_PAPER_TEXT = process.env.ONLY_PAPER_TEXT === '1';
 const DRY_RUN = process.argv.includes('--dry-run');
 
-if (!OPENAI_API_KEY || !CLOUDFLARE_ACCOUNT_ID || !CLOUDFLARE_API_TOKEN) {
-  console.error('Missing required env vars: OPENAI_API_KEY, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN');
+if (!OPENAI_API_KEY) {
+  console.error('Missing required env var: OPENAI_API_KEY');
   process.exit(1);
 }
 
@@ -46,11 +50,12 @@ interface Conference {
 // ── D1 ───────────────────────────────────────────────────────────────────────
 
 function getConferences(): Conference[] {
+  const where = ONLY_PAPER_TEXT ? `WHERE paper_text IS NOT NULL AND paper_text != ''` : '';
   const out = execSync(
     `npx wrangler d1 execute ${DB_NAME} --remote --command ${JSON.stringify(
-      `SELECT id, title, acronym, paper_text, topics FROM conferences ORDER BY id`
+      `SELECT id, title, acronym, paper_text, topics FROM conferences ${where} ORDER BY id`
     )} --json`,
-    { cwd: resolve(__dirname, '..') }
+    { cwd: resolve(__dirname, '..'), maxBuffer: 1024 * 1024 * 100 }
   ).toString();
   return JSON.parse(out)[0]?.results ?? [];
 }
@@ -85,21 +90,21 @@ async function getEmbedding(text: string): Promise<number[]> {
 
 // ── Vectorize ─────────────────────────────────────────────────────────────────
 
-async function upsertVectors(vectors: Array<{ id: string; values: number[]; metadata: Record<string, string> }>): Promise<void> {
-  const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/vectorize/v2/indexes/${VECTORIZE_INDEX}/upsert`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
-        'Content-Type': 'application/x-ndjson',
-      },
-      body: vectors.map(v => JSON.stringify(v)).join('\n'),
-    }
-  );
-  if (!res.ok) throw new Error(`Vectorize upsert failed: ${await res.text()}`);
-  const result = await res.json() as { success: boolean; errors?: unknown[] };
-  if (!result.success) throw new Error(`Vectorize error: ${JSON.stringify(result.errors)}`);
+function upsertVectors(vectors: Array<{ id: string; values: number[]; metadata: Record<string, string> }>): void {
+  const tmpFile = resolve(tmpdir(), `vectorize-upsert-${Date.now()}.ndjson`);
+  try {
+    writeFileSync(tmpFile, vectors.map(v => JSON.stringify(v)).join('\n'), 'utf8');
+    execSync(
+      `npx wrangler vectorize upsert ${VECTORIZE_INDEX} --file ${JSON.stringify(tmpFile)}`,
+      { cwd: resolve(__dirname, '..'), stdio: 'pipe' }
+    );
+  } catch (err: unknown) {
+    const execErr = err as { stdout?: Buffer; message?: string };
+    const raw = execErr.stdout?.toString() ?? execErr.message ?? String(err);
+    throw new Error(raw.slice(0, 500));
+  } finally {
+    try { unlinkSync(tmpFile); } catch {}
+  }
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -107,8 +112,9 @@ async function upsertVectors(vectors: Array<{ id: string; values: number[]; meta
 async function main() {
   console.log('Loading conferences from D1...');
   const all = getConferences();
-  const conferences = all.slice(0, LIMIT === Infinity ? all.length : LIMIT);
-  console.log(`Loaded ${conferences.length} conferences.\n`);
+  const afterSkip = SKIP > 0 ? all.slice(SKIP) : all;
+  const conferences = afterSkip.slice(0, LIMIT === Infinity ? afterSkip.length : LIMIT);
+  console.log(`Loaded ${all.length} conferences (skipped ${SKIP}); processing ${conferences.length}.\n`);
 
   const withPaperText = conferences.filter(c => c.paper_text?.trim());
   const withTopics = conferences.filter(c => !c.paper_text?.trim() && c.topics?.trim());
@@ -153,7 +159,7 @@ async function main() {
 
     const valid = vectors.filter(Boolean) as Array<{ id: string; values: number[]; metadata: Record<string, string> }>;
     if (valid.length > 0) {
-      await upsertVectors(valid);
+      upsertVectors(valid);
     }
 
     console.log(`  batch ${Math.floor(i / BATCH_SIZE) + 1} done`);

@@ -90,15 +90,6 @@ function getConferences(): Conference[] {
 
 // ── Semantic Scholar ──────────────────────────────────────────────────────────
 
-function venueMatches(venue: string, acronym: string, title: string): boolean {
-  // Word-boundary match on acronym prevents "AC" matching "ACM", "ACSAC", etc.
-  const acronymRe = new RegExp(`\\b${acronym.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
-  if (acronymRe.test(venue)) return true;
-  // Full title substring match (long titles are specific enough without word boundaries)
-  if (venue.includes(title.toLowerCase())) return true;
-  return false;
-}
-
 // Throws on persistent rate-limiting so the caller can record a distinct
 // 'rate-limited' status instead of silently reporting "no papers found".
 async function fetchWithRetry(url: string, maxRetries = 5): Promise<Response> {
@@ -114,13 +105,17 @@ async function fetchWithRetry(url: string, maxRetries = 5): Promise<Response> {
   throw new Error('unreachable');
 }
 
-async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
+async function fetchPapers(acronym: string, _title: string): Promise<Paper[]> {
   const seen = new Set<string>();
   const papers: Paper[] = [];
 
-  // Query by acronym — Semantic Scholar search ranks by relevance so acronym
-  // queries surface papers whose venue field actually contains it.
-  const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?query=${encodeURIComponent(acronym)}&fields=title,abstract,venue&limit=100`;
+  // Use Semantic Scholar's server-side `venue` filter instead of free-text
+  // query + client-side string matching. This does the venue resolution for
+  // us (e.g. venue=ICALP correctly matches "International Colloquium on
+  // Automata, Languages and Programming" even with zero substring overlap),
+  // works without a `query` term, and avoids the "too many hits" 400 some
+  // generic acronyms triggered under free-text search.
+  const url = `https://api.semanticscholar.org/graph/v1/paper/search/bulk?venue=${encodeURIComponent(acronym)}&fields=title,abstract,venue`;
   const res = await fetchWithRetry(url);
 
   if (res.status === 429) {
@@ -135,11 +130,8 @@ async function fetchPapers(acronym: string, title: string): Promise<Paper[]> {
     for (const p of data.data ?? []) {
       if (papers.length >= PAPERS_PER_CONF) break;
       if (!p.paperId || seen.has(p.paperId) || !p.abstract) continue;
-      const venue = p.venue?.toLowerCase() ?? '';
-      if (venueMatches(venue, acronym, title)) {
-        seen.add(p.paperId);
-        papers.push({ title: p.title, abstract: p.abstract });
-      }
+      seen.add(p.paperId);
+      papers.push({ title: p.title, abstract: p.abstract });
     }
   }
 
