@@ -31,6 +31,17 @@
     </picture>
 
     <div class="container py-4">
+        <!-- Database Stats -->
+        <div class="search-box p-4 rounded-4 mb-4" id="stats-box" style="display:none;">
+            <h2 class="mb-4">Database Coverage</h2>
+            <div id="stats-loading" class="text-center py-3">
+                <div class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="stats-container" style="display:none;"></div>
+        </div>
+
         <div class="search-box p-4 rounded-4">
             <h2 class="mb-4">Conference Approvals</h2>
             <p class="text-muted mb-4">Review and approve user-submitted conferences.</p>
@@ -109,8 +120,9 @@
             }
 
             document.getElementById('danger-zone').style.display = 'block';
+            document.getElementById('stats-box').style.display = 'block';
 
-            await loadSubmissions();
+            await Promise.all([loadSubmissions(), loadStats()]);
 
             // Approve all waiting button
             approveAllBtn.addEventListener('click', async () => {
@@ -245,6 +257,86 @@
                 loading.style.display = 'none';
                 container.style.display = 'block';
             }
+        }
+
+        async function loadStats() {
+            const loading = document.getElementById('stats-loading');
+            const container = document.getElementById('stats-container');
+
+            loading.style.display = 'block';
+            container.style.display = 'none';
+
+            try {
+                const token = await getAuthToken();
+                const response = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+                const data = await response.json();
+
+                if (!data.ok) {
+                    container.innerHTML = `<p class="text-danger">${data.error || 'Failed to load stats'}</p>`;
+                    return;
+                }
+
+                renderStats(data);
+            } catch (error) {
+                console.error('Load stats error:', error);
+                container.innerHTML = '<p class="text-danger">Failed to load database stats.</p>';
+            } finally {
+                loading.style.display = 'none';
+                container.style.display = 'block';
+            }
+        }
+
+        function renderStats(data) {
+            const container = document.getElementById('stats-container');
+            const total = data.coverage.total || 0;
+
+            const pct = (n) => total > 0 ? ((n / total) * 100).toFixed(1) : '0.0';
+            const barColor = (p) => p >= 75 ? 'bg-success' : p >= 40 ? 'bg-warning' : 'bg-danger';
+
+            const fields = [
+                { label: 'Paper text (real abstracts)', n: data.coverage.has_paper_text },
+                { label: 'Topics', n: data.coverage.has_topics },
+                { label: 'URL', n: data.coverage.has_url },
+                { label: 'Start date', n: data.coverage.has_start_date },
+                { label: 'Deadline', n: data.coverage.has_deadline },
+                { label: 'h5-index (Scholar ranking)', n: data.coverage.has_h5_index },
+            ];
+
+            const coverageRows = fields.map(({ label, n }) => {
+                const p = parseFloat(pct(n));
+                return `
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>${label}</span>
+                            <span class="text-muted">${n} / ${total} (${pct(n)}%)</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar ${barColor(p)}" style="width: ${p}%"></div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            const submissionBadges = Object.entries(data.submissions).map(([status, count]) => {
+                const cls = status === 'submitted' ? 'bg-success' : status === 'waiting' ? 'bg-warning' : status === 'approved' ? 'bg-info' : 'bg-secondary';
+                return `<span class="badge ${cls} me-2">${status}: ${count}</span>`;
+            }).join('') || '<span class="text-muted small">No submissions yet</span>';
+
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-7">
+                        <h6 class="text-muted mb-3">Field coverage (${total} conferences)</h6>
+                        ${coverageRows}
+                    </div>
+                    <div class="col-md-5">
+                        <h6 class="text-muted mb-3">Vectorize indexes</h6>
+                        <p class="mb-1"><strong>${data.vectors.conferences ?? 'N/A'}</strong> conference vectors</p>
+                        <p class="mb-3"><strong>${data.vectors.papers ?? 'N/A'}</strong> per-paper vectors</p>
+                        <h6 class="text-muted mb-2">Submissions</h6>
+                        <div>${submissionBadges}</div>
+                    </div>
+                </div>`;
         }
 
         function renderSubmissions() {
