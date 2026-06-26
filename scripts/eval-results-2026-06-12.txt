@@ -1,0 +1,97 @@
+Config: TOP_K=5  SEARCH_TYPE=semantic  BASE_URL=https://scholar.kubishi.com
+
+Loading up to 50 conferences from D1...
+Loaded 50 conferences.
+
+[CSCW] Fetching papers... (node:102329) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+30 papers.
+  Hit@1: 0/30  Hit@5: not yet shown
+[ASPDAC] Fetching papers... no papers found, skipping.
+[RV] Fetching papers... 5 papers.
+  Hit@1: 0/5  Hit@5: not yet shown
+[EuroCrypt] Fetching papers... no papers found, skipping.
+[EvoCOP] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[CoNEXT] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[CSIT] Fetching papers... no papers found, skipping.
+[design methodologies,Athlone,Ireland,https://www.sigweb.sigweb.hosting.acm.org/show-all-events/eventdetail/79/31] Fetching papers... no papers found, skipping.
+[HealthCom] Fetching papers... no papers found, skipping.
+[PPSN] Fetching papers... no papers found, skipping.
+[CoDIT] Fetching papers... no papers found, skipping.
+[INFOCOM] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[PLDI] Fetching papers... no papers found, skipping.
+[CAADRIA] Fetching papers... 15 papers.
+  Hit@1: 3/15  Hit@5: not yet shown
+[ICCE] Fetching papers... 2 papers.
+  Hit@1: 0/2  Hit@5: not yet shown
+[ICT4AWE] Fetching papers... no papers found, skipping.
+[SoftCOM] Fetching papers... no papers found, skipping.
+[IV] Fetching papers... 14 papers.
+  Hit@1: 0/14  Hit@5: not yet shown
+[ACCV] Fetching papers... no papers found, skipping.
+[WACV] Fetching papers... 6 papers.
+  Hit@1: 2/6  Hit@5: not yet shown
+[WAFR] Fetching papers... no papers found, skipping.
+[RSMG] Fetching papers... no papers found, skipping.
+[AFT] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[JADT] Fetching papers... no papers found, skipping.
+[PADL] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[RSP] Fetching papers... no papers found, skipping.
+[CSEET] Fetching papers... no papers found, skipping.
+[CVPR] Fetching papers... 80 papers.
+  Hit@1: 0/80  Hit@5: not yet shown
+[SLE] Fetching papers... 1 papers.
+  Hit@1: 1/1  Hit@5: not yet shown
+[RuleML+RR] Fetching papers... no papers found, skipping.
+[ISPEC] Fetching papers... no papers found, skipping.
+[FlAIRS] Fetching papers... no papers found, skipping.
+[ICCWS] Fetching papers... no papers found, skipping.
+[DSN] Fetching papers... no papers found, skipping.
+[APCCM] Fetching papers... no papers found, skipping.
+[ECKM] Fetching papers... no papers found, skipping.
+[EGVE] Fetching papers... no papers found, skipping.
+[ICITA] Fetching papers... no papers found, skipping.
+[IPIN] Fetching papers... no papers found, skipping.
+[PAM] Fetching papers... no papers found, skipping.
+[PSD] Fetching papers... 3 papers.
+  Hit@1: 1/3  Hit@5: not yet shown
+[ICCCV] Fetching papers... no papers found, skipping.
+[SST] Fetching papers... no papers found, skipping.
+[IEEE CIMSIVP] Fetching papers... no papers found, skipping.
+[CoopIS] Fetching papers... no papers found, skipping.
+[ASIACRYPT] Fetching papers... 1 papers.
+  Hit@1: 0/1  Hit@5: not yet shown
+[IM] Fetching papers... 3 papers.
+  Hit@1: 0/3  Hit@5: not yet shown
+[ICDCIT] Fetching papers... no papers found, skipping.
+[EOMAS] Fetching papers... no papers found, skipping.
+[HOTI] Fetching papers... no papers found, skipping.
+
+──────────────────────────────────────────────────
+RESULTS
+──────────────────────────────────────────────────
+Conferences : 16 evaluated, 34 skipped
+Papers      : 165 tested
+
+  Hit@1  : 7/165  (4.2%)
+  Hit@3  : 12/165  (7.3%)
+  Hit@5  : 15/165  (9.1%)
+
+Conferences with Hit@1 = 0 (weakest embeddings):
+  CSCW (30 papers tested)
+  RV (5 papers tested)
+  EvoCOP (1 papers tested)
+  CoNEXT (1 papers tested)
+  INFOCOM (1 papers tested)
+  ICCE (2 papers tested)
+  IV (14 papers tested)
+  AFT (1 papers tested)
+  PADL (1 papers tested)
+  CVPR (80 papers tested)
+  ASIACRYPT (1 papers tested)
+  IM (3 papers tested)

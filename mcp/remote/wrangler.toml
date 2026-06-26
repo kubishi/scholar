@@ -1,0 +1,26 @@
+# Remote MCP server for kubishi-scholar (Streamable HTTP transport).
+# Deploy with: npm run deploy:mcp
+#
+# Requires the MCP_TOKEN secret (checked as a Bearer token in worker.ts):
+#   wrangler secret put MCP_TOKEN --config mcp/remote/wrangler.toml
+# For local `wrangler dev`, set MCP_TOKEN in mcp/remote/.dev.vars instead.
+
+name = "kubishi-scholar-mcp"
+main = "worker.ts"
+compatibility_date = "2025-03-10"
+compatibility_flags = ["nodejs_compat"]
+
+# Same D1 database as the main app (read access to conferences/submissions)
+[[d1_databases]]
+binding = "DB"
+database_name = "kubishi-scholar-db"
+database_id = "914c5ba6-6f29-4eaa-be83-1c9473b9e4a3"
+
+# Durable Object backing the MCP server (session state for the agent)
+[[durable_objects.bindings]]
+name = "ScholarMCP"
+class_name = "ScholarMCP"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ScholarMCP"]
